@@ -1,0 +1,49 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "functions",
+    srcs = [
+        "element_from_id.go",
+        "location_from_id.go",
+        "name_from_id.go",
+        "project_from_id.go",
+        "region_from_id.go",
+        "region_from_zone.go",
+        "zone_from_id.go",
+    ],
+    importpath = "github.com/GoogleCloudPlatform/magic-modules/mmv1/third_party/terraform/functions",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//mmv1/third_party/terraform/acctest",
+        "//mmv1/third_party/terraform/envvar",
+        "@com_github_hashicorp_terraform_plugin_framework//function",
+    ],
+)
+
+go_test(
+    name = "functions_test",
+    srcs = [
+        "element_from_id_internal_test.go",
+        "location_from_id_internal_test.go",
+        "location_from_id_test.go",
+        "name_from_id_internal_test.go",
+        "name_from_id_test.go",
+        "project_from_id_internal_test.go",
+        "project_from_id_test.go",
+        "region_from_id_internal_test.go",
+        "region_from_id_test.go",
+        "region_from_zone_internal_test.go",
+        "region_from_zone_test.go",
+        "zone_from_id_internal_test.go",
+        "zone_from_id_test.go",
+    ],
+    embed = [":functions"],
+    deps = [
+        "@com_github_google_go_cmp//cmp",
+        "@com_github_hashicorp_terraform_plugin_framework//attr",
+        "@com_github_hashicorp_terraform_plugin_framework//function",
+        "@com_github_hashicorp_terraform_plugin_framework//types",
+        "@com_github_hashicorp_terraform_plugin_framework//types/basetypes",
+        "@com_github_hashicorp_terraform_plugin_testing//helper/resource",
+    ],
+)

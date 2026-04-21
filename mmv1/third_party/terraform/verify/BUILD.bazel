@@ -1,0 +1,68 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+load("//build_defs:go.bzl", "mm_go_library")
+load("//build_defs:product.bzl", "mm_template_library")
+
+package(default_visibility = ["//mmv1:__subpackages__"])
+
+mm_go_library(
+    name = "verify_lib",
+    srcs = [
+        "path_or_contents.go",
+        "validation.go",
+    ],
+    importpath = "github.com/hashicorp/terraform-provider-google/google/verify",
+    version = "ga",
+)
+
+go_library(
+    name = "verify_go_lib",
+    srcs = [
+        ":verify_templates",
+    ],
+    importpath = "github.com/hashicorp/terraform-provider-google/google/verify",
+    deps = [
+        "@com_github_hashicorp_terraform_plugin_sdk_v2//helper/schema",
+        "@com_github_hashicorp_terraform_plugin_sdk_v2//helper/validation",
+        "@com_github_mitchellh_go_homedir//:go-homedir",
+    ],
+)
+
+mm_template_library(
+    name = "verify_templates",
+    srcs = [
+        "path_or_contents.go",
+        "validation.go",
+    ],
+    version = "ga",
+)
+
+go_library(
+    name = "verify",
+    srcs = [
+        ":verify_templates",
+    ],
+    importpath = "github.com/hashicorp/terraform-provider-google/google/verify",
+    deps = [
+        "@com_github_hashicorp_terraform_plugin_sdk_v2//helper/schema",
+        "@com_github_hashicorp_terraform_plugin_sdk_v2//helper/validation",
+        "@com_github_mitchellh_go_homedir//:go-homedir",
+    ],
+)
+
+mm_template_library(
+    name = "verify_test_templates",
+    srcs = [
+        "validation_test.go",
+    ],
+    version = "ga",
+)
+
+go_test(
+    name = "verify_test",
+    srcs = [":verify_test_templates"],
+    embed = [":verify"],
+    deps = [
+        "@com_github_hashicorp_terraform_plugin_sdk_v2//helper/schema",
+        "@com_github_hashicorp_terraform_plugin_sdk_v2//helper/validation",
+    ],
+)

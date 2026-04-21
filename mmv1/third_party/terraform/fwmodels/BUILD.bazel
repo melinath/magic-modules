@@ -1,0 +1,22 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+load("//build_defs:product.bzl", "mm_template_library")
+
+package(default_visibility = ["//mmv1:__subpackages__"])
+
+mm_template_library(
+    name = "fwmodels_templates",
+    template_srcs = [
+        "provider_model.go.tmpl",
+    ],
+    version = "ga",
+)
+
+go_library(
+    name = "fwmodels",
+    srcs = [":fwmodels_templates"],
+    importpath = "github.com/GoogleCloudPlatform/magic-modules/mmv1/third_party/terraform/fwmodels",
+    deps = [
+        "@com_github_hashicorp_terraform_plugin_framework//attr",
+        "@com_github_hashicorp_terraform_plugin_framework//types",
+    ],
+)

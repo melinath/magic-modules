@@ -1,16 +1,33 @@
 package main
 
 import (
+	"bytes"
 	"flag"
+	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
+	"text/template"
 	"time"
 
 	"github.com/GoogleCloudPlatform/magic-modules/mmv1/api"
+	"github.com/GoogleCloudPlatform/magic-modules/mmv1/google"
 	"github.com/GoogleCloudPlatform/magic-modules/mmv1/provider"
 )
+
+type stringList []string
+
+func (s *stringList) Set(val string) error {
+	*s = append(*s, strings.Split(val, ",")...)
+	return nil
+}
+
+func (s *stringList) String() string {
+	return strings.Join(*s, ",")
+}
 
 var versionFlag = flag.String("version", "", "provider version to generate")
 var productNameFlag = flag.String("product_name", "", "name of the product referenced by --product")
@@ -23,7 +40,16 @@ var typeFlag = flag.String("type", "", "type of output to generate [product|reso
 var providerFlag = flag.String("provider", "", "target provider")
 
 func main() {
+	var target stringList
+	flag.Var(&target, "target", "comma-separated list of input=output files to templatize or copy")
+
 	flag.Parse()
+
+	wd, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("could not find wd: %v", err)
+	}
+	fsys := os.DirFS(filepath.Join(wd, "mmv1"))
 
 	if *versionFlag == "" {
 		log.Fatal("--version is required")
@@ -31,36 +57,48 @@ func main() {
 	if *providerFlag == "" {
 		log.Fatal("--provider is required")
 	}
-	if *outputPathFlag == "" {
-		log.Fatal("--output is required")
-	}
-	if *productNameFlag == "" {
-		log.Fatal("--product_name is required")
-	}
-	if *productFlag == "" {
-		log.Fatal("--product is required")
-	}
 
 	switch *typeFlag {
 	case "":
 		log.Fatal("--type is required")
 	case "product":
+		if *providerFlag == "" || *outputPathFlag == "" || *productNameFlag == "" || *productFlag == "" {
+			log.Fatal("--product, --product_name, and --output are required with --type=product")
+		}
 	case "resource":
-		if *resourceFlag == "" {
-			log.Fatal("--resource is required with --type=resource")
+		if *resourceFlag == "" || *providerFlag == "" || *outputPathFlag == "" || *productNameFlag == "" || *productFlag == "" {
+			log.Fatal("--resource, --product, --product_name, and --output are required with --type=resource")
 		}
 	case "metadata":
-		if *resourceFlag == "" {
-			log.Fatal("--resource is required with --type=metadata")
+		if *resourceFlag == "" || *providerFlag == "" || *outputPathFlag == "" || *productNameFlag == "" || *productFlag == "" {
+			log.Fatal("--resource, --product, --product_name, and --output are required with --type=metadata")
 		}
 	case "operation":
-		if *resourceFlag == "" {
-			log.Fatal("--resource is required with --type=operation")
+		if *resourceFlag == "" || *providerFlag == "" || *outputPathFlag == "" || *productNameFlag == "" || *productFlag == "" {
+			log.Fatal("--resource, --product, --product_name, and --output are required with --type=operation")
 		}
 	case "sweeper":
-		if *resourceFlag == "" {
-			log.Fatal("--resource is required with --type=sweeper")
+		if *resourceFlag == "" || *providerFlag == "" || *outputPathFlag == "" || *productNameFlag == "" || *productFlag == "" {
+			log.Fatal("--resource, --product, --product_name, and --output are required with --type=sweeper")
 		}
+	case "copy":
+		files, err := parseTarget(target)
+		if err != nil {
+			log.Fatalf("parsing --target: %v", err)
+		}
+		if err := copyFiles(files); err != nil {
+			log.Fatalf("copying files: %v", err)
+		}
+		return
+	case "template":
+		files, err := parseTarget(target)
+		if err != nil {
+			log.Fatalf("parsing --target: %v", err)
+		}
+		if err := templateFiles(fsys, files); err != nil {
+			log.Fatalf("templating files: %v", err)
+		}
+		return
 	default:
 		log.Fatalf("unrecognized --type %q", *typeFlag)
 	}
@@ -94,12 +132,6 @@ func main() {
 
 	product.Validate()
 
-	wd, err := os.Getwd()
-	if err != nil {
-		log.Fatalf("could not find wd: %v", err)
-	}
-	fsys := os.DirFS(filepath.Join(wd, "mmv1"))
-
 	switch *providerFlag {
 	case "tgc", "tgc_cai2hcl", "tgc_next", "oics":
 		log.Fatalf("--provider %q is not yet supported", *providerFlag)
@@ -122,4 +154,79 @@ func main() {
 	case "sweeper":
 		generator.GenerateResourceSweeperFile(*product.Objects[0], *outputPathFlag)
 	}
+}
+
+func parseTarget(target stringList) (map[string]string, error) {
+	files := make(map[string]string)
+	for _, pair := range target {
+		split := strings.Split(pair, "=")
+		if len(split) != 2 || split[0] == "" || split[1] == "" {
+			return nil, fmt.Errorf("invalid --target %q", pair)
+		}
+		if _, ok := files[split[0]]; ok {
+			return nil, fmt.Errorf("duplicate target input %q", pair)
+		}
+		files[split[0]] = split[1]
+	}
+	return files, nil
+}
+
+func copyFiles(files map[string]string) error {
+	for in, out := range files {
+		contents, err := os.ReadFile(in)
+		if err != nil {
+			return fmt.Errorf("reading %q: %w", in, err)
+		}
+		st, err := os.Stat(in)
+		if err != nil {
+			return fmt.Errorf("statting %q: %w", in, err)
+		}
+		// TODO: insert copyrights, fix import paths, add AUTOGENERATED CODE, and format .go files
+		dir := filepath.Dir(out)
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			return fmt.Errorf("creating directory %q: %w", dir, err)
+		}
+		if err := os.WriteFile(out, contents, st.Mode()); err != nil {
+			return fmt.Errorf("writing %q: %w", out, err)
+		}
+	}
+	return nil
+}
+
+func templateFiles(fsys fs.FS, files map[string]string) error {
+	for in, out := range files {
+		input, err := os.ReadFile(in)
+		if err != nil {
+			return fmt.Errorf("reading %q: %w", in, err)
+		}
+		templateFileName := filepath.Base(out)
+
+		funcMap := template.FuncMap{
+			"TemplatePath": func() string { return in },
+		}
+		for k, v := range google.TemplateFunctions(fsys) {
+			funcMap[k] = v
+		}
+
+		tmpl, err := template.New(templateFileName).Funcs(funcMap).Parse(string(input))
+		if err != nil {
+			return fmt.Errorf("parsing template %q: %w", in, err)
+		}
+
+		data := provider.ProviderWithProducts{
+			Terraform: provider.Terraform{
+				TargetVersionName: *versionFlag,
+			},
+		}
+
+		var output bytes.Buffer
+		if err = tmpl.ExecuteTemplate(&output, templateFileName, &data); err != nil {
+			return fmt.Errorf("executing template %q: %w", in, err)
+		}
+		// TODO: insert copyrights, fix import paths, add AUTOGENERATED CODE, and format .go files
+		if err := os.WriteFile(out, output.Bytes(), 0644); err != nil {
+			return fmt.Errorf("writing %q: %w", out, err)
+		}
+	}
+	return nil
 }

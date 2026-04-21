@@ -1,0 +1,78 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+load("//build_defs:product.bzl", "mm_template_library")
+
+package(default_visibility = ["//mmv1:__subpackages__"])
+
+mm_template_library(
+    name = "fwprovider_templates",
+    srcs = [
+        "data_source_provider_config_plugin_framework.go",
+        "framework_provider_mmv1_resources.go",
+    ],
+    template_srcs = [
+        "framework_provider.go.tmpl",
+    ],
+    version = "ga",
+)
+
+mm_template_library(
+    name = "fwprovider_test_templates",
+    srcs = [
+        "framework_provider_add_terraform_attribution_label_test.go",
+        "framework_provider_credentials_test.go",
+        "framework_provider_impersonate_service_account_delegates_test.go",
+        "framework_provider_impersonate_service_account_test.go",
+        "framework_provider_internal_test.go",
+        "framework_provider_project_test.go",
+        "framework_provider_region_zone_test.go",
+        "framework_provider_request_reason_test.go",
+        "framework_provider_request_timeout_test.go",
+        "framework_provider_terraform_attribution_label_addition_strategy_test.go",
+    ],
+    template_srcs = [
+        "framework_provider_access_token_test.go.tmpl",
+        "framework_provider_billing_project_test.go.tmpl",
+        "framework_provider_scopes_test.go.tmpl",
+        "framework_provider_test.go.tmpl",
+        "framework_provider_user_project_override_test.go.tmpl",
+    ],  
+    version = "ga",
+)
+
+go_library(
+    name = "fwprovider",
+    srcs = [":fwprovider_templates"],
+    importpath = "github.com/GoogleCloudPlatform/magic-modules/mmv1/third_party/terraform/fwprovider",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//mmv1/third_party/terraform/fwmodels",
+        "@com_github_hashicorp_terraform_plugin_framework//attr",
+        "@com_github_hashicorp_terraform_plugin_framework//datasource",
+        "@com_github_hashicorp_terraform_plugin_framework//ephemeral",
+        "@com_github_hashicorp_terraform_plugin_framework//datasource/schema",
+        "@com_github_hashicorp_terraform_plugin_framework//diag",
+        "@com_github_hashicorp_terraform_plugin_framework//function",
+        "@com_github_hashicorp_terraform_plugin_framework//list",
+        "@com_github_hashicorp_terraform_plugin_framework//path",
+        "@com_github_hashicorp_terraform_plugin_framework//provider",
+        "@com_github_hashicorp_terraform_plugin_framework//provider/metaschema",
+        "@com_github_hashicorp_terraform_plugin_framework//provider/schema",
+        "@com_github_hashicorp_terraform_plugin_framework//resource",
+        "@com_github_hashicorp_terraform_plugin_framework//schema/validator",
+        "@com_github_hashicorp_terraform_plugin_framework//types",
+        "@com_github_hashicorp_terraform_plugin_framework_validators//stringvalidator",
+        "@com_github_hashicorp_terraform_plugin_sdk_v2//helper/schema",
+    ],
+)
+
+go_test(
+    name = "fwprovider_test",
+    srcs = [":fwprovider_test_templates"],
+    deps = [
+        "//mmv1/third_party/terraform/acctest",
+        "//mmv1/third_party/terraform/envvar",
+        "@com_github_hashicorp_terraform_plugin_framework//provider",
+        "@com_github_hashicorp_terraform_plugin_sdk_v2//helper/schema",
+        "@com_github_hashicorp_terraform_plugin_testing//helper/resource",
+    ],
+)

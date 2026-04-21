@@ -1,0 +1,8 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "envvar",
+    srcs = ["envvar_utils.go"],
+    importpath = "github.com/hashicorp/terraform-provider-google/google/envvar",
+    visibility = ["//visibility:public"],
+)
