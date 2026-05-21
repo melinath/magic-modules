@@ -9,6 +9,7 @@ load("@gazelle//:def.bzl", "gazelle", "gazelle_test")
 # gazelle:exclude mmv1/third_party/tgc
 # gazelle:exclude mmv1/third_party/tgc_next
 # gazelle:exclude mmv1/third_party/terraform/.teamcity
+# gazelle:exclude mmv1/third_party/terraform/allservices
 # gazelle:exclude mmv1/third_party/terraform/envvar
 # gazelle:exclude mmv1/third_party/terraform/functions
 # gazelle:exclude mmv1/third_party/terraform/fwmodels
