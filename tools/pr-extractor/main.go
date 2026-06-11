@@ -52,7 +52,9 @@ func main() {
 	client := github.NewClient(config.Token, config.Verbose, config.DelayMs)
 
 	// Map to collect and deduplicate Magic Modules PR URLs.
-	uniqueMMPRs := make(map[string]bool)
+	// Maps to collect candidates and disqualified Magic Modules PR URLs.
+	candidates := make(map[string]bool)
+	disqualified := make(map[string]bool)
 
 	for _, repo := range config.Repos {
 		if repo == "" {
@@ -78,36 +80,36 @@ func main() {
 				continue
 			}
 
-			// If the PR body has references, fetch the modified files list to verify if it's test/doc-only.
-			files, err := client.GetPRFiles(repo, pr.Number)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "Error getting files for PR %s: %v\n", pr.HTMLURL, err)
-				continue
-			}
-
-			if !filter.OnlyModifiesTestsOrDocs(files, config.Verbose, pr.HTMLURL) {
-				continue
-			}
-
-			// Extract Magic Modules PR URL.
-			if config.Verbose {
-				fmt.Fprintf(os.Stderr, "[Verbose] PR %s matches test/doc-only filter. Extracting link.\n", pr.HTMLURL)
-			}
-
 			mmURL, err := filter.ExtractMMPR(pr.Body)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Error extracting Magic Modules link from PR %s: %v\n", pr.HTMLURL, err)
 				continue
 			}
-			if mmURL != "" {
-				uniqueMMPRs[mmURL] = true
+			if mmURL == "" {
+				continue
+			}
+
+			// Fetch modified files
+			files, err := client.GetPRFiles(repo, pr.Number)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error getting files for PR %s: %v. Disqualifying %s.\n", pr.HTMLURL, err, mmURL)
+				disqualified[mmURL] = true
+				continue
+			}
+
+			if filter.OnlyModifiesTestsOrDocs(files, config.Verbose, pr.HTMLURL) {
+				candidates[mmURL] = true
+			} else {
+				disqualified[mmURL] = true
 			}
 		}
 	}
 
-	// Output the deduplicated Magic Modules PR URLs.
-	fmt.Println("\nUnique Magic Modules PR URLs:")
-	for mmPR := range uniqueMMPRs {
-		fmt.Println(mmPR)
+	// Output the valid Magic Modules PR URLs.
+	fmt.Println("\nUnique Magic Modules PR URLs (Test/Doc changes only):")
+	for mmPR := range candidates {
+		if !disqualified[mmPR] {
+			fmt.Println(mmPR)
+		}
 	}
 }
