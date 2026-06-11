@@ -12,6 +12,17 @@ var (
 	derivedFromRegex = regexp.MustCompile(`(?i)derived\s+from[^a-zA-Z0-9]*(https://github\.com/GoogleCloudPlatform/magic-modules/pull/\d+)`)
 )
 
+// IsTestFile checks if a file path is a test file or test fixture.
+func IsTestFile(filename string) bool {
+	if strings.HasSuffix(filename, "_test.go") {
+		return true
+	}
+	if strings.Contains(filename, "/testdata/") || strings.HasPrefix(filename, "testdata/") {
+		return true
+	}
+	return false
+}
+
 // IsTestOrDocFile checks if a file path qualifies as tests or documentation.
 func IsTestOrDocFile(filename string) bool {
 	// Documentation folders/files
@@ -26,30 +37,45 @@ func IsTestOrDocFile(filename string) bool {
 		return true
 	}
 	// Go test files
-	if strings.HasSuffix(filename, "_test.go") {
-		return true
-	}
-	// Testdata files/fixtures
-	if strings.Contains(filename, "/testdata/") || strings.HasPrefix(filename, "testdata/") {
-		return true
-	}
-	return false
+	return IsTestFile(filename)
 }
 
-// OnlyModifiesTestsOrDocs checks if all modified files in a PR are test or doc files.
-func OnlyModifiesTestsOrDocs(files []string, verbose bool, prHTMLURL string) bool {
+// ClassifyPR checks the modified files in a PR and classifies the changes.
+// Returns:
+// - isDisqualified: true if the PR modifies any non-test/non-doc files (e.g. code changes).
+// - isCandidate: true if the PR modifies only tests/docs AND modifies at least one test file.
+func ClassifyPR(files []string, verbose bool, prHTMLURL string) (isDisqualified, isCandidate bool) {
 	if len(files) == 0 {
-		return false
+		return false, false
 	}
+
+	hasCode := false
+	hasTest := false
+
 	for _, file := range files {
 		if !IsTestOrDocFile(file) {
 			if verbose {
-				fmt.Fprintf(os.Stderr, "[Verbose] PR %s rejected due to non-test/non-doc file: %s\n", prHTMLURL, file)
+				fmt.Fprintf(os.Stderr, "[Verbose] PR %s contains non-test/non-doc file: %s\n", prHTMLURL, file)
 			}
-			return false
+			hasCode = true
+		}
+		if IsTestFile(file) {
+			hasTest = true
 		}
 	}
-	return true
+
+	if hasCode {
+		return true, false
+	}
+	if hasTest {
+		return false, true
+	}
+
+	// Docs-only change: not disqualified, but not a candidate
+	if verbose {
+		fmt.Fprintf(os.Stderr, "[Verbose] PR %s only modifies documentation/changelog (no test changes).\n", prHTMLURL)
+	}
+	return false, false
 }
 
 // HasMMPRLink returns true if the body contains a Magic Modules PR link.

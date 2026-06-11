@@ -97,10 +97,11 @@ func main() {
 				continue
 			}
 
-			if filter.OnlyModifiesTestsOrDocs(files, config.Verbose, pr.HTMLURL) {
-				candidates[mmURL] = true
-			} else {
+			isDisqualified, isCandidate := filter.ClassifyPR(files, config.Verbose, pr.HTMLURL)
+			if isDisqualified {
 				disqualified[mmURL] = true
+			} else if isCandidate {
+				candidates[mmURL] = true
 			}
 		}
 	}

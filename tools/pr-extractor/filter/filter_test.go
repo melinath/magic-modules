@@ -41,46 +41,80 @@ func TestIsTestOrDocFile(t *testing.T) {
 	}
 }
 
-func TestOnlyModifiesTestsOrDocs(t *testing.T) {
+func TestIsTestFile(t *testing.T) {
 	tests := []struct {
-		name      string
-		files     []string
-		prHTMLURL string
-		expected  bool
+		filename string
+		expected bool
+	}{
+		{"google/services/compute/resource_compute_instance_test.go", true},
+		{"google/testdata/payload.json", true},
+		{"testdata/config.tf", true},
+		{"google/services/compute/resource_compute_instance.go", false},
+		{"website/docs/r/compute.html.markdown", false},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.filename, func(t *testing.T) {
+			actual := IsTestFile(tc.filename)
+			if actual != tc.expected {
+				t.Errorf("IsTestFile(%q) = %v; want %v", tc.filename, actual, tc.expected)
+			}
+		})
+	}
+}
+
+func TestClassifyPR(t *testing.T) {
+	tests := []struct {
+		name                 string
+		files                []string
+		expectedDisqualified bool
+		expectedCandidate    bool
 	}{
 		{
-			name: "all files are valid tests or docs",
+			name: "test and doc files (candidate)",
 			files: []string{
 				"website/docs/r/compute.html.markdown",
 				"google/services/compute/resource_compute_instance_test.go",
 				".changelog/12345.txt",
 			},
-			prHTMLURL: "https://github.com/hashicorp/terraform-provider-google/pull/1",
-			expected:  true,
+			expectedDisqualified: false,
+			expectedCandidate:    true,
 		},
 		{
-			name: "contains a non-valid file",
+			name: "contains a code file (disqualified)",
 			files: []string{
 				"website/docs/r/compute.html.markdown",
-				"google/services/compute/resource_compute_instance.go", // non-valid
+				"google/services/compute/resource_compute_instance.go",
 				".changelog/12345.txt",
 			},
-			prHTMLURL: "https://github.com/hashicorp/terraform-provider-google/pull/2",
-			expected:  false,
+			expectedDisqualified: true,
+			expectedCandidate:    false,
 		},
 		{
-			name:      "empty file list",
-			files:     []string{},
-			prHTMLURL: "https://github.com/hashicorp/terraform-provider-google/pull/3",
-			expected:  false,
+			name: "docs only files (ignored, not disqualified)",
+			files: []string{
+				"website/docs/r/compute.html.markdown",
+				".changelog/12345.txt",
+			},
+			expectedDisqualified: false,
+			expectedCandidate:    false,
+		},
+		{
+			name:                 "empty file list",
+			files:                []string{},
+			expectedDisqualified: false,
+			expectedCandidate:    false,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			actual := OnlyModifiesTestsOrDocs(tc.files, false, tc.prHTMLURL)
-			if actual != tc.expected {
-				t.Errorf("OnlyModifiesTestsOrDocs(%v) = %v; want %v", tc.files, actual, tc.expected)
+			isDisqualified, isCandidate := ClassifyPR(tc.files, false, "https://github.com/pr/1")
+			if isDisqualified != tc.expectedDisqualified {
+				t.Errorf("ClassifyPR(%v) isDisqualified = %v; want %v", tc.files, isDisqualified, tc.expectedDisqualified)
+			}
+			if isCandidate != tc.expectedCandidate {
+				t.Errorf("ClassifyPR(%v) isCandidate = %v; want %v", tc.files, isCandidate, tc.expectedCandidate)
 			}
 		})
 	}

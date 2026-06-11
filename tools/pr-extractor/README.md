@@ -7,9 +7,9 @@ This tool is useful for identifying test and documentation fixes that were synce
 ## Features
 
 - **Double Filtering**: Uses a quick, cheap description match to identify PRs that might be derived from Magic Modules before fetching full file lists, saving API requests.
-- **Strict File Categorization**: Only matches PRs where all modified files match tests (`*_test.go`, `testdata/*`), documentation (`website/*`, `docs/*`, `.md`, `.markdown`), or changelog templates (`.changelog/*`).
+- **Strict File Categorization & Classification**: Classifies modified files to identify test-modified PRs (only test/doc files, with at least one test file modified), docs-only PRs (ignored: not a candidate, but does not disqualify), and code-modified PRs (disqualifies the MM PR).
 - **Single Upstream PR Validation**: Every matched PR description must contain exactly one Magic Modules PR URL. If multiple URLs are found, it is treated as a tracking error, and the PR is skipped with a logged warning.
-- **Cross-Repository Candidate Validation**: If a Magic Modules PR generates code changes in one repository (GA) and test/doc-only changes in another (Beta), it is disqualified and excluded from the final output. An MM PR is only included if all its downstream PRs satisfy the test/doc-only criteria. If an API request to fetch PR files fails, the associated MM PR is also disqualified for safety.
+- **Cross-Repository Candidate Validation**: An MM PR is included in the final output if and only if it is a candidate (modified tests in at least one repository) and is not disqualified (did not modify source/resource code in either GA or Beta). If a file fetch fails, the MM PR is disqualified for safety.
 - **No Dependencies**: Built entirely using Go's standard library (`net/http`, `encoding/json`, etc.) for portability, lightweight footprint, and simple builds.
 - **Customizable**: Allows scanning custom repositories, setting custom start dates, and adding throttling delays.
 
