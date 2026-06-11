@@ -92,16 +92,93 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 
 // SearchMergedPRs searches for merged PRs in a repository since a specific date.
 func (c *Client) SearchMergedPRs(repo, since string) ([]PR, error) {
+	startTime, err := time.Parse(time.RFC3339, since)
+	if err != nil {
+		startTime, err = time.Parse("2006-01-02", since)
+		if err != nil {
+			return nil, fmt.Errorf("invalid start date %q: must be in YYYY-MM-DD or RFC3339 format", since)
+		}
+	}
+	endTime := time.Now()
+	return c.searchMergedPRsRange(repo, startTime, endTime)
+}
+
+func (c *Client) searchMergedPRsRange(repo string, start, end time.Time) ([]PR, error) {
+	startStr := start.Format(time.RFC3339)
+	endStr := end.Format(time.RFC3339)
+	query := fmt.Sprintf("repo:%s is:pr is:merged merged:%s..%s", repo, startStr, endStr)
+
+	totalCount, err := c.getSearchTotalCount(query)
+	if err != nil {
+		return nil, err
+	}
+
+	if totalCount == 0 {
+		return nil, nil
+	}
+
+	if totalCount <= 1000 {
+		return c.retrievePRsForQuery(query)
+	}
+
+	diff := end.Sub(start)
+	if diff <= 2*time.Second {
+		fmt.Fprintf(os.Stderr, "WARNING: More than 1000 PRs merged within 2 seconds (%s to %s). Retrieving first 1000 only.\n", startStr, endStr)
+		return c.retrievePRsForQuery(query)
+	}
+
+	mid := start.Add(diff / 2).Truncate(time.Second)
+
+	if c.verbose {
+		fmt.Fprintf(os.Stderr, "[Verbose] Range %s..%s has %d results (>1000 limit). Splitting at %s\n",
+			startStr, endStr, totalCount, mid.Format(time.RFC3339))
+	}
+
+	leftPRs, err := c.searchMergedPRsRange(repo, start, mid)
+	if err != nil {
+		return nil, err
+	}
+
+	rightPRs, err := c.searchMergedPRsRange(repo, mid.Add(time.Second), end)
+	if err != nil {
+		return nil, err
+	}
+
+	return append(leftPRs, rightPRs...), nil
+}
+
+func (c *Client) getSearchTotalCount(query string) (int, error) {
+	escapedQuery := url.QueryEscape(query)
+	apiURL := fmt.Sprintf("%s/search/issues?q=%s&per_page=1&page=1", c.BaseURL, escapedQuery)
+
+	req, err := http.NewRequest("GET", apiURL, nil)
+	if err != nil {
+		return 0, err
+	}
+
+	respBody, err := c.doRequest(req)
+	if err != nil {
+		return 0, err
+	}
+
+	var searchResp SearchIssuesResponse
+	if err := json.Unmarshal(respBody, &searchResp); err != nil {
+		return 0, err
+	}
+
+	return searchResp.TotalCount, nil
+}
+
+func (c *Client) retrievePRsForQuery(query string) ([]PR, error) {
 	var prs []PR
 	page := 1
 
 	for {
-		query := fmt.Sprintf("repo:%s is:pr is:merged merged:>=%s", repo, since)
 		escapedQuery := url.QueryEscape(query)
 		apiURL := fmt.Sprintf("%s/search/issues?q=%s&per_page=100&page=%d", c.BaseURL, escapedQuery, page)
 
 		if c.verbose {
-			fmt.Fprintf(os.Stderr, "Searching PRs in %s (page %d)... URL: %s\n", repo, page, apiURL)
+			fmt.Fprintf(os.Stderr, "Fetching page %d for query: %s\n", page, query)
 		}
 
 		req, err := http.NewRequest("GET", apiURL, nil)
@@ -117,10 +194,6 @@ func (c *Client) SearchMergedPRs(repo, since string) ([]PR, error) {
 		var searchResp SearchIssuesResponse
 		if err := json.Unmarshal(respBody, &searchResp); err != nil {
 			return nil, err
-		}
-
-		if page == 1 && searchResp.TotalCount > 1000 {
-			fmt.Fprintf(os.Stderr, "WARNING: Total merged PRs for %s since %s is %d, but GitHub Search API caps results at 1000. Some PRs may be omitted.\n", repo, since, searchResp.TotalCount)
 		}
 
 		if len(searchResp.Items) == 0 {

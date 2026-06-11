@@ -57,17 +57,24 @@ func HasMMPRLink(body string) bool {
 	return derivedFromRegex.MatchString(body)
 }
 
-// ExtractMMPRs extracts all Magic Modules PR URLs from the body.
-func ExtractMMPRs(body string) []string {
+// ExtractMMPR extracts the single Magic Modules PR URL from the body.
+// Returns an error if multiple Magic Modules PR URLs are found.
+func ExtractMMPR(body string) (string, error) {
 	matches := derivedFromRegex.FindAllStringSubmatch(body, -1)
 	if len(matches) == 0 {
-		return nil
+		return "", nil
 	}
-	var urls []string
-	for _, match := range matches {
-		if len(match) > 1 {
-			urls = append(urls, match[1])
+	if len(matches) > 1 {
+		var found []string
+		for _, m := range matches {
+			if len(m) > 1 {
+				found = append(found, m[1])
+			}
 		}
+		return "", fmt.Errorf("found multiple Magic Modules PR links in PR description: %s", strings.Join(found, ", "))
 	}
-	return urls
+	if len(matches[0]) > 1 {
+		return matches[0][1], nil
+	}
+	return "", nil
 }

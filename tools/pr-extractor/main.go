@@ -89,13 +89,17 @@ func main() {
 				continue
 			}
 
-			// Extract Magic Modules PR URLs.
+			// Extract Magic Modules PR URL.
 			if config.Verbose {
-				fmt.Fprintf(os.Stderr, "[Verbose] PR %s matches test/doc-only filter. Extracting links.\n", pr.HTMLURL)
+				fmt.Fprintf(os.Stderr, "[Verbose] PR %s matches test/doc-only filter. Extracting link.\n", pr.HTMLURL)
 			}
 
-			mmURLs := filter.ExtractMMPRs(pr.Body)
-			for _, mmURL := range mmURLs {
+			mmURL, err := filter.ExtractMMPR(pr.Body)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error extracting Magic Modules link from PR %s: %v\n", pr.HTMLURL, err)
+				continue
+			}
+			if mmURL != "" {
 				uniqueMMPRs[mmURL] = true
 			}
 		}

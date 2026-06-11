@@ -1,7 +1,6 @@
 package filter
 
 import (
-	"reflect"
 	"testing"
 )
 
@@ -87,60 +86,68 @@ func TestOnlyModifiesTestsOrDocs(t *testing.T) {
 	}
 }
 
-func TestExtractMMPRs(t *testing.T) {
+func TestExtractMMPR(t *testing.T) {
 	tests := []struct {
-		name     string
-		body     string
-		expected []string
+		name        string
+		body        string
+		expectedUrl string
+		expectErr   bool
 	}{
 		{
-			name:     "standard markdown link description",
-			body:     "Derived from https://github.com/GoogleCloudPlatform/magic-modules/pull/17934",
-			expected: []string{"https://github.com/GoogleCloudPlatform/magic-modules/pull/17934"},
+			name:        "standard markdown link description",
+			body:        "Derived from https://github.com/GoogleCloudPlatform/magic-modules/pull/17934",
+			expectedUrl: "https://github.com/GoogleCloudPlatform/magic-modules/pull/17934",
+			expectErr:   false,
 		},
 		{
-			name:     "markdown syntax with brackets",
-			body:     "[Derived from](https://github.com/GoogleCloudPlatform/magic-modules/pull/17934)",
-			expected: []string{"https://github.com/GoogleCloudPlatform/magic-modules/pull/17934"},
+			name:        "markdown syntax with brackets",
+			body:        "[Derived from](https://github.com/GoogleCloudPlatform/magic-modules/pull/17934)",
+			expectedUrl: "https://github.com/GoogleCloudPlatform/magic-modules/pull/17934",
+			expectErr:   false,
 		},
 		{
-			name:     "colon formatted",
-			body:     "Derived from: https://github.com/GoogleCloudPlatform/magic-modules/pull/17934",
-			expected: []string{"https://github.com/GoogleCloudPlatform/magic-modules/pull/17934"},
+			name:        "colon formatted",
+			body:        "Derived from: https://github.com/GoogleCloudPlatform/magic-modules/pull/17934",
+			expectedUrl: "https://github.com/GoogleCloudPlatform/magic-modules/pull/17934",
+			expectErr:   false,
 		},
 		{
-			name:     "colon and hyphen formatted",
-			body:     "derived from - https://github.com/GoogleCloudPlatform/magic-modules/pull/17934",
-			expected: []string{"https://github.com/GoogleCloudPlatform/magic-modules/pull/17934"},
+			name:        "colon and hyphen formatted",
+			body:        "derived from - https://github.com/GoogleCloudPlatform/magic-modules/pull/17934",
+			expectedUrl: "https://github.com/GoogleCloudPlatform/magic-modules/pull/17934",
+			expectErr:   false,
 		},
 		{
-			name: "multiple links in body",
+			name:        "multiple links in body - returns error",
 			body: `Some description.
 Derived from https://github.com/GoogleCloudPlatform/magic-modules/pull/17934
 Also derived from: https://github.com/GoogleCloudPlatform/magic-modules/pull/17935
 End of description.`,
-			expected: []string{
-				"https://github.com/GoogleCloudPlatform/magic-modules/pull/17934",
-				"https://github.com/GoogleCloudPlatform/magic-modules/pull/17935",
-			},
+			expectedUrl: "",
+			expectErr:   true,
 		},
 		{
-			name:     "no matching links",
-			body:     "This PR was written manually by the team.",
-			expected: nil,
+			name:        "no matching links",
+			body:        "This PR was written manually by the team.",
+			expectedUrl: "",
+			expectErr:   false,
 		},
 		{
-			name:     "partial link matches",
-			body:     "Derived from https://github.com/other-org/other-repo/pull/123",
-			expected: nil,
+			name:        "partial link matches",
+			body:        "Derived from https://github.com/other-org/other-repo/pull/123",
+			expectedUrl: "",
+			expectErr:   false,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			actual := ExtractMMPRs(tc.body)
-			if !reflect.DeepEqual(actual, tc.expected) {
-				t.Errorf("ExtractMMPRs(%q) = %v; want %v", tc.body, actual, tc.expected)
+			actualUrl, err := ExtractMMPR(tc.body)
+			if (err != nil) != tc.expectErr {
+				t.Fatalf("ExtractMMPR(%q) returned error %v; expected error presence: %v", tc.body, err, tc.expectErr)
+			}
+			if actualUrl != tc.expectedUrl {
+				t.Errorf("ExtractMMPR(%q) = %q; want %q", tc.body, actualUrl, tc.expectedUrl)
 			}
 		})
 	}

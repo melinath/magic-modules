@@ -112,3 +112,73 @@ func TestRateLimitExceeded(t *testing.T) {
 		t.Errorf("expected error %q, got %q", expectedErrorStr, err.Error())
 	}
 }
+
+func TestSearchMergedPRsSplitting(t *testing.T) {
+	callIndex := 0
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		query := r.URL.Query()
+		perPage := query.Get("per_page")
+		page := query.Get("page")
+
+		callIndex++
+
+		switch callIndex {
+		case 1: // Count check for full range
+			if perPage != "1" || page != "1" {
+				t.Errorf("call 1: expected per_page=1, page=1, got per_page=%s, page=%s", perPage, page)
+			}
+			json.NewEncoder(w).Encode(SearchIssuesResponse{TotalCount: 1200})
+		case 2: // Count check for left sub-range
+			if perPage != "1" || page != "1" {
+				t.Errorf("call 2: expected per_page=1, page=1, got per_page=%s, page=%s", perPage, page)
+			}
+			json.NewEncoder(w).Encode(SearchIssuesResponse{TotalCount: 600})
+		case 3: // Fetch for left range (page 1)
+			if perPage != "100" || page != "1" {
+				t.Errorf("call 3: expected per_page=100, page=1, got per_page=%s, page=%s", perPage, page)
+			}
+			json.NewEncoder(w).Encode(SearchIssuesResponse{
+				Items: []PR{{Number: 10, Title: "Left PR", HTMLURL: "left-url"}},
+			})
+		case 4: // Count check for right sub-range
+			if perPage != "1" || page != "1" {
+				t.Errorf("call 4: expected per_page=1, page=1, got per_page=%s, page=%s", perPage, page)
+			}
+			json.NewEncoder(w).Encode(SearchIssuesResponse{TotalCount: 600})
+		case 5: // Fetch for right range (page 1)
+			if perPage != "100" || page != "1" {
+				t.Errorf("call 5: expected per_page=100, page=1, got per_page=%s, page=%s", perPage, page)
+			}
+			json.NewEncoder(w).Encode(SearchIssuesResponse{
+				Items: []PR{{Number: 20, Title: "Right PR", HTMLURL: "right-url"}},
+			})
+		default:
+			t.Errorf("unexpected API call #%d: %s", callIndex, r.URL.String())
+		}
+	}))
+	defer server.Close()
+
+	client := NewClient("", false, 0)
+	client.BaseURL = server.URL
+
+	prs, err := client.SearchMergedPRs("owner/repo", "2026-01-01")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	expected := []PR{
+		{Number: 10, Title: "Left PR", HTMLURL: "left-url"},
+		{Number: 20, Title: "Right PR", HTMLURL: "right-url"},
+	}
+	if !reflect.DeepEqual(prs, expected) {
+		t.Errorf("expected %v, got %v", expected, prs)
+	}
+
+	if callIndex != 5 {
+		t.Errorf("expected exactly 5 API calls, got %d", callIndex)
+	}
+}
+
