@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -18,6 +19,7 @@ type Client struct {
 	httpClient *http.Client
 	verbose    bool
 	delay      time.Duration
+	sleepFunc  func(time.Duration)
 }
 
 func NewClient(token string, verbose bool, delayMs int) *Client {
@@ -27,8 +29,9 @@ func NewClient(token string, verbose bool, delayMs int) *Client {
 		httpClient: &http.Client{
 			Timeout: 15 * time.Second,
 		},
-		verbose: verbose,
-		delay:   time.Duration(delayMs) * time.Millisecond,
+		verbose:   verbose,
+		delay:     time.Duration(delayMs) * time.Millisecond,
+		sleepFunc: time.Sleep,
 	}
 }
 
@@ -60,34 +63,69 @@ func (c *Client) doRequest(req *http.Request) ([]byte, error) {
 		req.Header.Set("Authorization", "Bearer "+c.token)
 	}
 
-	// Wait to respect rate limits
-	if c.delay > 0 {
-		time.Sleep(c.delay)
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusForbidden && strings.Contains(string(body), "rate limit") {
-			resetHeader := resp.Header.Get("X-RateLimit-Reset")
-			if resetHeader != "" {
-				return nil, fmt.Errorf("GitHub API rate limit exceeded. Reset time: %s", resetHeader)
-			}
-			return nil, fmt.Errorf("GitHub API rate limit exceeded: %s", string(body))
+	for {
+		// Wait to respect rate limits delay
+		if c.delay > 0 {
+			time.Sleep(c.delay)
 		}
+
+		resp, err := c.httpClient.Do(req)
+		if err != nil {
+			return nil, err
+		}
+
+		body, err := io.ReadAll(resp.Body)
+		resp.Body.Close() // Close immediately to avoid leaking descriptors in loop
+		if err != nil {
+			return nil, err
+		}
+
+		if resp.StatusCode == http.StatusOK {
+			return body, nil
+		}
+
+		// Handle rate limiting (403 Forbidden or 429 Too Many Requests)
+		isRateLimit := resp.StatusCode == http.StatusTooManyRequests ||
+			(resp.StatusCode == http.StatusForbidden && strings.Contains(string(body), "rate limit"))
+
+		if isRateLimit {
+			var waitSecs int64 = 0
+
+			// Check Retry-After header (often used for secondary rate limits)
+			if retryAfter := resp.Header.Get("Retry-After"); retryAfter != "" {
+				if sec, err := strconv.ParseInt(retryAfter, 10, 64); err == nil {
+					waitSecs = sec
+				}
+			}
+
+			// Check X-RateLimit-Reset header (used for primary rate limits)
+			if waitSecs == 0 {
+				if resetHeader := resp.Header.Get("X-RateLimit-Reset"); resetHeader != "" {
+					if resetEpoch, err := strconv.ParseInt(resetHeader, 10, 64); err == nil {
+						nowEpoch := time.Now().Unix()
+						waitSecs = resetEpoch - nowEpoch
+					}
+				}
+			}
+
+			if waitSecs > 0 {
+				// Safety guard: don't sleep forever
+				if waitSecs > 3600 {
+					waitSecs = 3600
+				}
+
+				// Add 2 seconds padding
+				waitSecs += 2
+
+				resetTime := time.Now().Add(time.Duration(waitSecs) * time.Second)
+				fmt.Fprintf(os.Stderr, "GitHub API Rate Limit Exceeded. Waiting %d seconds (until %s) before retrying...\n", waitSecs, resetTime.Format("15:04:05"))
+				c.sleepFunc(time.Duration(waitSecs) * time.Second)
+				continue // Retry the request loop
+			}
+		}
+
 		return nil, fmt.Errorf("GitHub API returned status %d: %s", resp.StatusCode, string(body))
 	}
-
-	return body, nil
 }
 
 // SearchMergedPRs searches for merged PRs in a repository since a specific date.

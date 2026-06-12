@@ -10,6 +10,7 @@ This tool is useful for identifying test and documentation fixes that were synce
 - **Strict File Categorization & Classification**: Classifies modified files to identify test-modified PRs (only test/doc files, with at least one test file modified), docs-only PRs (ignored: not a candidate, but does not disqualify), and code-modified PRs (disqualifies the MM PR).
 - **Single Upstream PR Validation**: Every matched PR description must contain exactly one Magic Modules PR URL. If multiple URLs are found, it is treated as a tracking error, and the PR is skipped with a logged warning.
 - **Cross-Repository Candidate Validation**: An MM PR is included in the final output if and only if it is a candidate (modified tests in at least one repository) and is not disqualified (did not modify source/resource code in either GA or Beta). If a file fetch fails, the MM PR is disqualified for safety.
+- **Rate Limit Retry**: Automatically detects primary and secondary rate limit blocks (403 or 429 statuses), parses their reset windows, sleeps, and retries request loops transparently.
 - **No Dependencies**: Built entirely using Go's standard library (`net/http`, `encoding/json`, etc.) for portability, lightweight footprint, and simple builds.
 - **Customizable**: Allows scanning custom repositories, setting custom start dates, and adding throttling delays.
 

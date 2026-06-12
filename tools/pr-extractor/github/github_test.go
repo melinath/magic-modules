@@ -2,10 +2,12 @@ package github
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestSearchMergedPRs(t *testing.T) {
@@ -93,7 +95,6 @@ func TestGetPRFiles(t *testing.T) {
 
 func TestRateLimitExceeded(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("X-RateLimit-Reset", "1234567890")
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte(`{"message": "API rate limit exceeded for user"}`))
 	}))
@@ -107,9 +108,54 @@ func TestRateLimitExceeded(t *testing.T) {
 		t.Fatal("expected error due to rate limit, got nil")
 	}
 
-	expectedErrorStr := "GitHub API rate limit exceeded. Reset time: 1234567890"
+	expectedErrorStr := `GitHub API returned status 403: {"message": "API rate limit exceeded for user"}`
 	if err.Error() != expectedErrorStr {
 		t.Errorf("expected error %q, got %q", expectedErrorStr, err.Error())
+	}
+}
+
+func TestRateLimitRetry(t *testing.T) {
+	callCount := 0
+	var sleptFor time.Duration
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		callCount++
+		if callCount == 1 {
+			// First call: return 403 rate limit with reset time 10 seconds in the future
+			w.Header().Set("X-RateLimit-Reset", fmt.Sprintf("%d", time.Now().Add(10*time.Second).Unix()))
+			w.WriteHeader(http.StatusForbidden)
+			w.Write([]byte(`{"message": "rate limit exceeded"}`))
+		} else {
+			// Second call: succeed
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			json.NewEncoder(w).Encode(SearchIssuesResponse{TotalCount: 5})
+		}
+	}))
+	defer server.Close()
+
+	client := NewClient("", false, 0)
+	client.BaseURL = server.URL
+	client.sleepFunc = func(d time.Duration) {
+		sleptFor = d
+	}
+
+	count, err := client.getSearchTotalCount("test-query")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if count != 5 {
+		t.Errorf("expected count 5, got %d", count)
+	}
+
+	if callCount != 2 {
+		t.Errorf("expected 2 calls, got %d", callCount)
+	}
+
+	// Verify sleptFor is roughly 12 seconds (10s diff + 2s padding)
+	if sleptFor < 10*time.Second || sleptFor > 13*time.Second {
+		t.Errorf("expected sleep duration around 12s, got %v", sleptFor)
 	}
 }
 
