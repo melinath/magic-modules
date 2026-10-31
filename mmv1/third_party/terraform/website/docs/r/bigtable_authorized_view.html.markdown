@@ -108,7 +108,7 @@ If not provided, currently deletion protection will be set to UNPROTECTED as it 
 
 -----
 
-`subset_view` supports the following arguments:
+The `subset_view` block supports the following arguments:
 
 * `row_prefixes` - (Optional) A list of Base64-encoded row prefixes to be included in the authorized view. To provide access to all rows, include the empty string as a prefix ("").
 
@@ -116,7 +116,7 @@ If not provided, currently deletion protection will be set to UNPROTECTED as it 
 
 -----
 
-`family_subsets` supports the following arguments:
+The `family_subsets` block supports the following arguments:
 
 * `family_name` - (Required) Name of the column family to be included in the authorized view. The specified column family must exist in the parent table of this authorized view.
 

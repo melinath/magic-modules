@@ -177,7 +177,7 @@ The following arguments are supported:
 
 -----
 
-`max_age` supports the following arguments:
+The `max_age` block supports the following arguments:
 
 * `days` - (Optional, Deprecated in favor of duration) Number of days before applying GC policy.
 
@@ -185,7 +185,7 @@ The following arguments are supported:
 
 -----
 
-`max_version` supports the following arguments:
+The `max_version` block supports the following arguments:
 
 * `number` - (Required) Number of version before applying the GC policy.
 

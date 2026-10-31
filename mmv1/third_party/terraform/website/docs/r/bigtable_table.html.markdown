@@ -111,10 +111,20 @@ to delete/recreate the entire `google_bigtable_table` resource.
 
 -----
 
-`column_family` supports the following arguments:
+The `column_family` block supports the following arguments:
 
 * `family` - (Optional) The name of the column family.
 * `type`   - (Optional) The type of the column family.
+
+-----
+
+The `automated_backup_policy` block supports the following arguments:
+
+* `retention_period` - (Optional) How long the automated backups should be retained.
+
+* `frequency` - (Optional) How frequently automated backups should occur.
+
+* `locations` - (Optional) A list of Cloud Bigtable zones where automated backups are allowed to be created. If empty, automated backups will be created in all zones of the instance. Locations are in the format projects/{project}/locations/{zone}. This field can only be set for tables in Enterprise Plus instances.
 
 ## Attributes Reference
 
