@@ -319,6 +319,8 @@ region are guaranteed to support the same version.
     [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/networkpolicies/)
     feature. Structure is [documented below](#nested_network_policy).
 
+* `network_performance_config` - (Optional) Network bandwidth tier configuration. Structure is [documented below](#network_performance_config).
+
 * `node_config` -  (Optional) Parameters used in creating the default node pool.
     Generally, this field should not be used at the same time as a
     `google_container_node_pool` or a `node_pool` block; this configuration
@@ -532,6 +534,7 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
     has based on the resource usage of the existing pods.
     It is enabled by default;
     set `disabled = true` to disable.
+    * `disabled` - (Required) Whether the Horizontal Pod Autoscaling addon is disabled.
 
 * `agent_sandbox_config` - (Optional) Configuration for the Agent Sandbox addon. Structure is documented below:
     * `enabled` - (Required) Whether the Agent Sandbox addon is enabled.
@@ -539,6 +542,7 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
 * `http_load_balancing` - (Optional) The status of the HTTP (L7) load balancing
     controller addon, which makes it easy to set up HTTP load balancers for services in a
     cluster. It is enabled by default; set `disabled = true` to disable.
+    * `disabled` - (Required) Whether the HTTP (L7) load balancing addon is disabled.
 
 * `network_policy_config` - (Optional) Whether we should enable the network policy addon
     for the master.  This must be enabled in order to enable network policy for the nodes.
@@ -546,16 +550,19 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
     otherwise nothing will happen.
     It can only be disabled if the nodes already do not have network policies enabled.
     Defaults to disabled; set `disabled = false` to enable.
+    * `disabled` - (Required) Whether the network policy addon is disabled.
 
 * `gcp_filestore_csi_driver_config` - (Optional) The status of the Filestore CSI driver addon,
     which allows the usage of filestore instance as volumes.
     It is disabled by default; set `enabled = true` to enable.
+    * `enabled` - (Required) Whether the Filestore CSI driver addon is enabled.
 
 * `gcs_fuse_csi_driver_config` - (Optional) The status of the GCSFuse CSI driver addon,
     which allows the usage of a gcs bucket as volumes.
     It is disabled by default for Standard clusters; set `enabled = true` to enable.
     It is enabled by default for Autopilot clusters with version 1.24 or later; set `enabled = true` to enable it explicitly.
     See [Enable the Cloud Storage FUSE CSI driver](https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/cloud-storage-fuse-csi-driver#enable) for more information.
+    * `enabled` - (Required) Whether the GCSFuse CSI driver addon is enabled.
 
 * `cloudrun_config` - (Optional). Structure is [documented below](#nested_cloudrun_config).
 
@@ -565,27 +572,33 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
 * `dns_cache_config` - (Optional).
     The status of the NodeLocal DNSCache addon. It is disabled by default.
     Set `enabled = true` to enable.
+    * `enabled` - (Required) Whether the NodeLocal DNSCache addon is enabled.
 
     **Enabling/Disabling NodeLocal DNSCache in an existing cluster is a disruptive operation.
     All cluster nodes running GKE 1.15 and higher are recreated.**
 
 * `gce_persistent_disk_csi_driver_config` - (Optional).
     Whether this cluster should enable the Google Compute Engine Persistent Disk Container Storage Interface (CSI) Driver. Set `enabled = true` to enable.
+    * `enabled` - (Required) Whether the Compute Engine Persistent Disk CSI driver addon is enabled.
 
     **Note:** The Compute Engine persistent disk CSI Driver is enabled by default on newly created clusters for the following versions: Linux clusters: GKE version 1.18.10-gke.2100 or later, or 1.19.3-gke.2100 or later.
 
 *  `gke_backup_agent_config` -  (Optional).
     The status of the Backup for GKE agent addon. It is disabled by default; Set `enabled = true` to enable.
+    * `enabled` - (Required) Whether the Backup for GKE agent addon is enabled.
 
 * `kalm_config` - (Optional, [Beta](../guides/provider_versions.html.markdown)).
     Configuration for the KALM addon, which manages the lifecycle of k8s. It is disabled by default; Set `enabled = true` to enable.
+    * `enabled` - (Required) Whether the KALM addon is enabled.
 
 *  `config_connector_config` -  (Optional).
     The status of the ConfigConnector addon. It is disabled by default; Set `enabled = true` to enable.
+    * `enabled` - (Required) Whether the ConfigConnector addon is enabled.
 
 *  `stateful_ha_config` - (Optional).
     The status of the Stateful HA addon, which provides automatic configurable failover for stateful applications.
     It is disabled by default for Standard clusters. Set `enabled = true` to enable.
+    * `enabled` - (Required) Whether the Stateful HA addon is enabled.
 
 *  `ray_operator_config` - (Optional) The status of the [Ray Operator
    addon](https://cloud.google.com/kubernetes-engine/docs/add-on/ray-on-gke/concepts/overview).
@@ -595,6 +608,7 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
 *  `slice_controller_config` - (Optional). 
    The status of the slice controller addon.
    It is disabled by default. Set `enabled = true` to enable.
+   * `enabled` - (Required) Whether the slice controller addon is enabled.
 
 *  `parallelstore_csi_driver_config` - (Optional, Deprecated) The status of the Parallelstore CSI driver addon,
    which allows the usage of a Parallelstore instances as volumes.
@@ -602,6 +616,7 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
    It is enabled by default for Autopilot clusters with version 1.29 or later; set `enabled = true` to enable it explicitly.
    See [Enable the Parallelstore CSI driver](https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/parallelstore-csi-new-volume#enable) for more information.
    `addons_config.parallelstore_csi_driver_config` is deprecated and will be removed in a future major release. Use `addons_config.lustre_csi_driver_config` instead.
+   * `enabled` - (Required) Whether the Parallelstore CSI driver addon is enabled.
 
 *  `high_scale_checkpointing_config` - (Optional) The status of the High Scale Checkpointing addon, which enables Multi-Tier Checkpointing for Machine Learning workloads. Structure is [documented below](#nested_high_scale_checkpointing_config).
 
@@ -610,17 +625,20 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
    It is disabled by default for Standard clusters; set `enabled = true` to enable.
    It is disabled by default for Autopilot clusters; set `enabled = true` to enable.
    See [Enable Lustre CSI driver](https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/lustre-csi-driver-new-volume) for more information.
-   Lustre CSI Driver Config has optional subfields:
+   Lustre CSI Driver Config has a required `enabled` subfield and optional subfields:
+   * `enabled` - (Required) Whether the Lustre CSI driver addon is enabled.
    * `enable_legacy_lustre_port` which allows the Lustre CSI driver to initialize LNet (the virtual networklayer for Lustre kernel module) using port 6988. 
    This flag is required to workaround a port conflict with the gke-metadata-server on GKE nodes.
    * `disable_multi_nic` When set to true, this disables multi-NIC support for the Lustre CSI driver. By default, GKE enables multi-NIC support, which allows the Lustre CSI driver to automatically detect and configure all suitable network interfaces on a node to maximize I/O performance for demanding workloads.
 
 * `pod_snapshot_config` - (Optional) The status of the Pod Snapshot addon. It is disabled by default. Set `enabled = true` to enable.
+    * `enabled` - (Required) Whether the Pod Snapshot addon is enabled.
 
 * `slurm_operator_config` - (Optional) The status of the Slurm Operator addon,
     which creates slurm related CRDs and KCP pods to manage them.
     Defaults to disabled for Standard clusters; set `enabled = true` to enable.
     It can not be enabled for Autopilot clusters.
+    * `enabled` - (Required) Whether the Slurm Operator addon is enabled.
 
 * `node_readiness_config` - (Optional) The status of the Node Readiness Controller addon. It is disabled by default. Set `enabled = true` to enable.
   Structure is [documented below](#nested_node_readiness_config).
@@ -768,6 +786,8 @@ as "Intel Haswell" or "Intel Sandy Bridge".
 
 * `management` - (Optional) NodeManagement configuration for this NodePool. Structure is [documented below](#nested_management).
 
+* `upgrade_settings` - (Optional) Specifies the upgrade settings for NAP created node pools. Structure is [documented below](#nested_upgrade_settings).
+
 <a name="nested_management"></a>The `management` block supports:
 
 * `auto_upgrade` - (Optional) Specifies whether node auto-upgrade is enabled for the node pool. If enabled, node auto-upgrade helps keep the nodes in your node pool up to date with the latest release version of Kubernetes.
@@ -775,8 +795,6 @@ as "Intel Haswell" or "Intel Sandy Bridge".
 * `auto_repair` - (Optional) Specifies whether the node auto-repair is enabled for the node pool. If enabled, the nodes in this node pool will be monitored and, if they fail health checks too many times, an automatic repair action will be triggered.
 
 This block also contains several computed attributes, documented below.
-
-* `upgrade_settings` - (Optional) Specifies the upgrade settings for NAP created node pools. Structure is [documented below](#nested_upgrade_settings).
 
 <a name="nested_upgrade_settings"></a>The `upgrade_settings` block supports:
 
@@ -857,7 +875,7 @@ This block also contains several computed attributes, documented below.
 In beta, one of `recurring_window`, `recurring_maintenance_window` and `daily_maintenance_window` is required if a `maintenance_policy` block is supplied.
 
 * `daily_maintenance_window` - Time window specified for daily maintenance operations.
-    Specify `start_time` in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) format "HH:MM”,
+    * `start_time` - (Required) The start time of the window, in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) format "HH:MM”,
     where HH : \[00-23\] and MM : \[00-59\] GMT. For example:
 
 Examples:
@@ -870,6 +888,9 @@ maintenance_policy {
 ```
 
 * `recurring_window` - Time window for recurring maintenance operations.
+    * `start_time` - (Required) The start time of the window, in RFC3339 "Zulu" date format.
+    * `end_time` - (Required) The end time of the window, in RFC3339 "Zulu" date format.
+    * `recurrence` - (Required) When the window recurs, in RFC5545 RRULE format.
 
 Specify `start_time` and `end_time` in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) "Zulu" date format.  The start time's date is
 the initial date that the window starts, and the end time is used for calculating duration.  Specify `recurrence` in
@@ -1096,7 +1117,10 @@ Structure is [documented below](#nested_additional_ip_ranges_config).
 
 <a name="nested_master_auth"></a>The `master_auth` block supports:
 
-* `client_certificate_config` - (Required) Whether client certificate authorization is enabled for this cluster.  For example:
+* `client_certificate_config` - (Required) Whether client certificate authorization is enabled for this cluster.
+    * `issue_client_certificate` - (Required) Whether client certificate authorization is enabled for this cluster.
+
+For example:
 
 ```hcl
 master_auth {
@@ -1533,6 +1557,8 @@ The `node_config_defaults` block supports:
 
 * `gcfs_config` (Optional) The default Google Container Filesystem (GCFS) configuration at the cluster level. e.g. enable [image streaming](https://cloud.google.com/kubernetes-engine/docs/how-to/image-streaming) across all the node pools within the cluster. Structure is [documented below](#nested_gcfs_config).
 
+* `containerd_config` (Optional) - Parameters for containerd configuration. Structure is [documented below](#nested_containerd_config).
+
 <a name="nested_notification_config"></a>The `notification_config` block supports:
 
 * `pubsub` (Required) - The pubsub config for the cluster's upgrade notifications.
@@ -1911,6 +1937,22 @@ linux_node_config {
 
 * `custom_node_init` - (Optional) Custom node init settings. Structure is [documented below](#nested_custom_node_init).
 
+* `transparent_hugepage_enabled` - (Optional) The Linux kernel transparent hugepage setting.
+    Accepted values are:
+    * `TRANSPARENT_HUGEPAGE_ENABLED_ALWAYS`: Transparent hugepage is enabled system wide.
+    * `TRANSPARENT_HUGEPAGE_ENABLED_MADVISE`: Transparent hugepage is enabled inside MADV_HUGEPAGE regions. This is the default kernel configuration.
+    * `TRANSPARENT_HUGEPAGE_ENABLED_NEVER`: Transparent hugepage is disabled.
+    * `TRANSPARENT_HUGEPAGE_ENABLED_UNSPECIFIED`: Default value. GKE will not modify the kernel configuration.
+
+* `transparent_hugepage_defrag` - (Optional) The Linux kernel transparent hugepage defrag setting.
+    Accepted values are:
+    * `TRANSPARENT_HUGEPAGE_DEFRAG_ALWAYS`: An application requesting THP will stall on allocation failure and directly reclaim pages and compact memory in an effort to allocate a THP immediately.
+    * `TRANSPARENT_HUGEPAGE_DEFRAG_DEFER`: An application will wake kswapd in the background to reclaim pages and wake kcompactd to compact memory so that THP is available in the near future. It is the responsibility of khugepaged to then install the THP pages later.
+    * `TRANSPARENT_HUGEPAGE_DEFRAG_DEFER_WITH_MADVISE`: An application will enter direct reclaim and compaction like always, but only for regions that have used madvise(MADV_HUGEPAGE); all other regions will wake kswapd in the background to reclaim pages and wake kcompactd to compact memory so that THP is available in the near future.
+    * `TRANSPARENT_HUGEPAGE_DEFRAG_MADVISE`: An application will enter direct reclaim and compaction like always, but only for regions that have used madvise(MADV_HUGEPAGE); all other regions will wake kswapd in the background to reclaim pages and wake kcompactd to compact memory so that THP is available in the near future.
+    * `TRANSPARENT_HUGEPAGE_DEFRAG_NEVER`: An application will never enter direct reclaim or compaction.
+    * `TRANSPARENT_HUGEPAGE_DEFRAG_UNSPECIFIED`: Default value. GKE will not modify the kernel configuration.
+
 <a name="nested_swap_config"></a>The `swap_config` block supports:
 
 * `enabled` - (Optional) Enables or disables swap for the node pool.
@@ -1952,22 +1994,6 @@ linux_node_config {
 * `hugepage_size_2m` - (Optional) Amount of 2M hugepages.
 
 * `hugepage_size_1g` - (Optional) Amount of 1G hugepages.
-
-* `transparent_hugepage_enabled` - (Optional) The Linux kernel transparent hugepage setting.
-    Accepted values are:
-    * `TRANSPARENT_HUGEPAGE_ENABLED_ALWAYS`: Transparent hugepage is enabled system wide.
-    * `TRANSPARENT_HUGEPAGE_ENABLED_MADVISE`: Transparent hugepage is enabled inside MADV_HUGEPAGE regions. This is the default kernel configuration.
-    * `TRANSPARENT_HUGEPAGE_ENABLED_NEVER`: Transparent hugepage is disabled.
-    * `TRANSPARENT_HUGEPAGE_ENABLED_UNSPECIFIED`: Default value. GKE will not modify the kernel configuration.
-
-* `transparent_hugepage_defrag` - (Optional) The Linux kernel transparent hugepage defrag setting.
-    Accepted values are:
-    * `TRANSPARENT_HUGEPAGE_DEFRAG_ALWAYS`: An application requesting THP will stall on allocation failure and directly reclaim pages and compact memory in an effort to allocate a THP immediately.
-    * `TRANSPARENT_HUGEPAGE_DEFRAG_DEFER`: An application will wake kswapd in the background to reclaim pages and wake kcompactd to compact memory so that THP is available in the near future. It is the responsibility of khugepaged to then install the THP pages later.
-    * `TRANSPARENT_HUGEPAGE_DEFRAG_DEFER_WITH_MADVISE`: An application will enter direct reclaim and compaction like always, but only for regions that have used madvise(MADV_HUGEPAGE); all other regions will wake kswapd in the background to reclaim pages and wake kcompactd to compact memory so that THP is available in the near future.
-    * `TRANSPARENT_HUGEPAGE_DEFRAG_MADVISE`: An application will enter direct reclaim and compaction like always, but only for regions that have used madvise(MADV_HUGEPAGE); all other regions will wake kswapd in the background to reclaim pages and wake kcompactd to compact memory so that THP is available in the near future.
-    * `TRANSPARENT_HUGEPAGE_DEFRAG_NEVER`: An application will never enter direct reclaim or compaction.
-    * `TRANSPARENT_HUGEPAGE_DEFRAG_UNSPECIFIED`: Default value. GKE will not modify the kernel configuration.
 
 <a name="nested_node_kernel_module_loading_config"></a>The `node_kernel_module_loading` block supports:
 
@@ -2029,9 +2055,16 @@ linux_node_config {
     * `capabilities` - (Optional) Represent the capabilities of the registry host, specifying what operations a host is capable of performing. Valid values include `HOST_CAPABILITY_PULL`, `HOST_CAPABILITY_RESOLVE`, `HOST_CAPABILITY_PUSH`.
     * `override_path` - (Optional) Indicates the host's API root endpoint is defined in the URL path rather than by the API specification.
     * `dial_timeout` - (Optional) Specifies the maximum duration allowed for a connection attempt to complete.
-    * `header` - (Optional) Configures the registry host headers. Each header contains `key` (Required, string) and `value` (Required, list of strings).
-    * `ca` - (Optional) Configures the registry host certificate. Contains `gcp_secret_manager_secret_uri` (Optional).
-    * `client` - (Optional) Configures the registry host client certificate and key. Contains `cert` (Required) with `gcp_secret_manager_secret_uri` (Optional) and `key` (Optional) with `gcp_secret_manager_secret_uri` (Optional).
+    * `header` - (Optional) Configures the registry host headers.
+      * `key` - (Required) Configures the header key.
+      * `value` - (Required) Configures the header value, as a list of strings.
+    * `ca` - (Optional) Configures the registry host certificate.
+      * `gcp_secret_manager_secret_uri` - (Optional) URI for the Secret Manager secret that hosts the certificate.
+    * `client` - (Optional) Configures the registry host client certificate and key.
+      * `cert` - (Required) Configures the client certificate.
+        * `gcp_secret_manager_secret_uri` - (Optional) URI for the Secret Manager secret that hosts the client certificate.
+      * `key` - (Optional) Configures the client private key.
+        * `gcp_secret_manager_secret_uri` - (Optional) URI for the Secret Manager secret that hosts the private key.
 
   Example:
 ```hcl
