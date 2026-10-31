@@ -71,7 +71,6 @@ func TestParse(t *testing.T) {
 		"project",
 		// The below are from attributes section.
 		"id",
-		"network_interface.access_config.nat_ip",
 		"workload_identity_config",
 		"errors",
 		"workload_identity_config.identity_provider",
@@ -137,5 +136,38 @@ func TestSplitWithRegexp(t *testing.T) {
 	}
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("splitWithRegexp returned diff(-want, +got): %s", diff)
+	}
+}
+
+func TestParseIndentedAndMultiBullets(t *testing.T) {
+	doc := strings.Join([]string{
+		"## Arguments Reference",
+		"",
+		"* `feature_settings` - (Optional) Feature settings:",
+		"  * `split_health_checks` - (Optional) Split health checks.",
+		"  * `use_container_optimized_os` - (Optional) Use COS.",
+		"* `text` or `value` - (Optional) Multi-name bullet.",
+		"",
+		"## Attributes Reference",
+		"",
+		"* `dns_names.0.name` - The DNS name.",
+	}, "\n")
+
+	parser := NewParser()
+	if err := parser.Parse([]byte(doc)); err != nil {
+		t.Fatal(err)
+	}
+	got := parser.FlattenFields()
+	want := []string{
+		"dns_names",
+		"dns_names.name",
+		"feature_settings",
+		"feature_settings.split_health_checks",
+		"feature_settings.use_container_optimized_os",
+		"text",
+		"value",
+	}
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("Parse returned diff (-want, +got):\n%s", diff)
 	}
 }
