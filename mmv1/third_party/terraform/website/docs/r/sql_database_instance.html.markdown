@@ -441,6 +441,8 @@ includes an up-to-date reference of supported versions.
 
 * `blue_green_deployment` - (Optional, [Beta](https://terraform.io/docs/providers/google/guides/provider_versions.html)) The configuration for a Cloud SQL Blue-Green Deployment on this instance. The configuration is detailed below.
   ~> **WARNING:** Because `blue_green_deployment` is authoritatively managed by Terraform on the primary instance resource, if a Blue-Green Deployment is created on this instance outside of Terraform (for example, via `gcloud` or the Cloud Console) and the `blue_green_deployment` block is not present in your Terraform configuration, running `terraform apply` will delete the out-of-band Blue-Green Deployment along with its green target instance.
+
+* `node_count` - For a read pool instance, the number of nodes in the read pool. For read pools with auto scaling enabled, this field is read only.
     
 The `settings` block supports:
 
@@ -504,15 +506,13 @@ The `settings` block supports:
 
 * `replication_lag_max_seconds` - (Optional) The acceptable replication lag, in seconds, after which a read replica recreates itself. The lag must persist for at least five minutes before recreation is triggered. This is a replica level field, and must be between `300` (five minutes) and `31536000` (one year).
 
-* `node_count` - For a read pool instance, the number of nodes in the read pool. For read pools with auto scaling enabled, this field is read only.
-
 * `pricing_plan` - (Optional) Pricing plan for this instance, can only be `PER_USE`.
 
 * `time_zone` - (Optional) The time_zone to be used by the database engine (supported only for SQL Server), in SQL Server timezone format.
 
 * `retain_backups_on_delete` - (Optional) When this parameter is set to true, Cloud SQL retains backups of the instance even after the instance is deleted. The `ON_DEMAND` backup will be retained until customer deletes the backup or the project. The `AUTOMATED` backup will be retained based on the backups retention setting.
 
-The optional `final_backup_config` subblock supports:
+The optional `settings.final_backup_config` subblock supports:
 
 * `enabled` - (Optional) True if enabled final backup.
 
@@ -637,15 +637,17 @@ The optional `settings.ip_configuration.psc_config` sublist supports:
 
 * `psc_write_endpoint_dns_enabled` - (Optional) Whether PSC write endpoint DNS is enabled for this instance. This is only supported for Enterprise Plus edition instances.
 
-* `settings.ip_configuration.psc_config.psc_auto_connection_policy_enabled` - (Optional) Whether a service connection policy is created for the auto connections configured for the instance.
+* `psc_auto_connection_policy_enabled` - (Optional) Whether a service connection policy is created for the auto connections configured for the instance.
 
 * `allowed_consumer_projects` - (Optional) List of consumer projects that are allow-listed for PSC connections to this instance. This instance can be connected to with PSC from any network in these projects. Each consumer project in this list may be represented by a project number (numeric) or by a project id (alphanumeric).
 
-* The optional `psc_config.psc_auto_connections` subblock - (Optional) A comma-separated list of networks or a comma-separated list of network-project pairs. Each project in this list is represented by a project number (numeric) or by a project ID (alphanumeric). This allows Private Service Connect connections to be created automatically for the specified networks.
-
-* `consumer_network` - "The consumer network of this consumer endpoint. This must be a resource path that includes both the host project and the network name. For example, `projects/project1/global/networks/network1`. The consumer host project of this network might be different from the consumer service project."
+* `psc_auto_connections` - (Optional) A comma-separated list of networks or a comma-separated list of network-project pairs. Each project in this list is represented by a project number (numeric) or by a project ID (alphanumeric). This allows Private Service Connect connections to be created automatically for the specified networks.
 
 * `network_attachment_uri` - (Optional) Network Attachment URI in the format `projects/project1/regions/region1/networkAttachments/networkAttachment1` to enable outbound connectivity on PSC instance.
+
+The optional `settings.ip_configuration.psc_config.psc_auto_connections` subblock supports:
+
+* `consumer_network` - "The consumer network of this consumer endpoint. This must be a resource path that includes both the host project and the network name. For example, `projects/project1/global/networks/network1`. The consumer host project of this network might be different from the consumer service project."
 
 * `consumer_service_project_id` - (Optional) The project ID of consumer service project of this consumer endpoint.
 
@@ -667,9 +669,9 @@ The optional `settings.read_pool_auto_scale_config` subblock supports:
 
 * `target_metrics` - Target metrics for Read Pool Auto Scale. Must specify `target_metrics.metric` and `target_metrics.target_value` in subblock.
 
-* `metric` - Metric name for Read Pool Auto Scale.
+    * `metric` - Metric name for Read Pool Auto Scale.
 
-* `target_value` - Target value for Read Pool Auto Scale.
+    * `target_value` - Target value for Read Pool Auto Scale.
 
 The optional `settings.location_preference` subblock supports:
 
