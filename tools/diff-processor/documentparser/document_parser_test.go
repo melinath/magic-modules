@@ -62,7 +62,7 @@ func TestParse(t *testing.T) {
 		"network_interface.subnetwork",
 		"network_interface.subnetwork_project",
 		"params",
-		// "params.resource_manager_tags", // params text does not include a nested tag
+		"params.resource_manager_tags",
 		"zone",
 		"labels",
 		"description",
@@ -71,7 +71,6 @@ func TestParse(t *testing.T) {
 		"project",
 		// The below are from attributes section.
 		"id",
-		"network_interface.access_config.nat_ip",
 		"workload_identity_config",
 		"errors",
 		"workload_identity_config.identity_provider",
@@ -137,5 +136,65 @@ func TestSplitWithRegexp(t *testing.T) {
 	}
 	if diff := cmp.Diff(want, got); diff != "" {
 		t.Errorf("splitWithRegexp returned diff(-want, +got): %s", diff)
+	}
+}
+
+func TestParseHandwrittenHeadings(t *testing.T) {
+	doc := strings.Join([]string{
+		"# google_resource",
+		"",
+		"## Argument Reference",
+		"",
+		"* `settings` - (Optional) Settings block.",
+		"* `wrapped` - (Optional) Wrapped heading block.",
+		"* `linked` - (Optional) Conflicts with [other](#nested_other). Structure is [documented below](#nested_linked).",
+		"",
+		"The `settings` block supports:",
+		"",
+		"* `tier` - (Required) Machine tier.",
+		"",
+		"The optional `settings.ip_configuration` subblock supports:",
+		"",
+		"* `ipv4_enabled` - (Optional) Whether IPv4 is enabled.",
+		"",
+		"The `wrapped` block",
+		"supports the following:",
+		"",
+		"* `mode` - (Optional) Mode.",
+		"",
+		"<a name=\"nested_other\"></a>The `other` block supports:",
+		"",
+		"* `ignored_by_linked` - (Optional) Other field.",
+		"",
+		"<a name=\"nested_linked\"></a>The `linked` block supports:",
+		"",
+		"* `target` - (Optional) Linked target.",
+		"",
+		"The `unreached_top` block supports:",
+		"",
+		"* `leaf` - (Optional) Unreached block leaf.",
+	}, "\n")
+
+	parser := NewParser()
+	if err := parser.Parse([]byte(doc)); err != nil {
+		t.Fatal(err)
+	}
+	got := parser.FlattenFields()
+	want := []string{
+		"linked",
+		"linked.target",
+		"other",
+		"other.ignored_by_linked",
+		"settings",
+		"settings.ip_configuration",
+		"settings.ip_configuration.ipv4_enabled",
+		"settings.tier",
+		"unreached_top",
+		"unreached_top.leaf",
+		"wrapped",
+		"wrapped.mode",
+	}
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("Parse returned diff (-want, +got):\n%s", diff)
 	}
 }
