@@ -8,10 +8,11 @@ import (
 )
 
 var (
-	fieldNameRegex      = regexp.MustCompile("[\\*|-]\\s+`([a-z0-9_\\./]+)`") // * `xxx`
-	nestedObjectRegex   = regexp.MustCompile(`<a\s+name="([a-z0-9_]+)">`)     // <a name="xxx">
-	nestedHashTagRegex  = regexp.MustCompile(`\(#(nested_[a-z0-9_]+)\)`)      // #(nested_xxx)
-	horizontalLineRegex = regexp.MustCompile("- - -|-{3,}")                   // - - - or ---
+	fieldNameRegex      = regexp.MustCompile("[\\*|-]\\s+(?:<a\\s[^>]*>\\s*(?:</a>)?\\s*)?`([a-z0-9_\\./]+)`") // * `xxx`
+	nestedObjectRegex   = regexp.MustCompile(`(?m)^[ \t]*<a\s+(?:name|id)="([a-z0-9_-]+)"\s*>(?:\s*</a>)?`)    // <a name="xxx">
+	nestedHashTagRegex  = regexp.MustCompile(`\(#(nested_[a-z0-9_]+)\)`)                                       // #(nested_xxx)
+	horizontalLineRegex = regexp.MustCompile("- - -|-{3,}")                                                    // - - - or ---
+	codeBlockRegex      = regexp.MustCompile("(?ms)^[ \\t]*```.*?^[ \\t]*```[ \\t]*$")
 
 	sectionSeparator = "## "
 )
@@ -66,8 +67,10 @@ func traverse(paths *[]string, path string, n *node) {
 // Parse parse a resource document markdown's arguments and attributes section.
 // The parsed file format is defined in mmv1/templates/terraform/resource.html.markdown.tmpl.
 func (d *DocumentParser) Parse(src []byte) error {
+	content := strings.ReplaceAll(string(src), "\r\n", "\n")
+	content = codeBlockRegex.ReplaceAllString(content, "")
 	var argument, attribute, ephemeralAttribute string
-	for _, p := range strings.Split(string(src), "\n"+sectionSeparator) {
+	for _, p := range strings.Split(content, "\n"+sectionSeparator) {
 		if strings.HasPrefix(p, "Attributes Reference") {
 			attribute = p
 		}

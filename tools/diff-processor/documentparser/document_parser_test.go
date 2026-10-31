@@ -139,3 +139,41 @@ func TestSplitWithRegexp(t *testing.T) {
 		t.Errorf("splitWithRegexp returned diff(-want, +got): %s", diff)
 	}
 }
+
+func TestParseInlineAnchorsAndCodeBlocks(t *testing.T) {
+	doc := strings.Join([]string{
+		"# google_bigquery_table",
+		"",
+		"## Argument Reference",
+		"",
+		"* `dataset_id` - (Required) Dataset ID.",
+		"* <a name=\"schema\"></a>`schema` - (Optional) A JSON schema for the table.",
+		"* `table_id` - (Required) Table ID.",
+		"* `view` - (Optional) View configuration. Structure is [documented below](#nested_view).",
+		"",
+		"```hcl",
+		"* `ignored_code_block_bullet` - should not be parsed",
+		"<a name=\"nested_ignored\"></a>",
+		"```",
+		"",
+		"<a id=\"nested_view\"></a>The `view` block supports:",
+		"",
+		"* `query` - (Required) A query that BigQuery executes when the view is referenced.",
+	}, "\n")
+
+	parser := NewParser()
+	if err := parser.Parse([]byte(doc)); err != nil {
+		t.Fatal(err)
+	}
+	got := parser.FlattenFields()
+	want := []string{
+		"dataset_id",
+		"schema",
+		"table_id",
+		"view",
+		"view.query",
+	}
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("Parse returned diff (-want, +got):\n%s", diff)
+	}
+}
