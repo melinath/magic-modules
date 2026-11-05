@@ -3,6 +3,7 @@ package documentparser
 import (
 	"fmt"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -14,8 +15,10 @@ var (
 	nestedHashTagRegex = regexp.MustCompile(`\(#(nested_[a-z0-9_]+)\)`)  // #(nested_xxx)
 	// - - - or --- on its own line
 	horizontalLineRegex = regexp.MustCompile(`(?m)^[ \t]*(?:- - -|-{3,})[ \t]*$`)
-
-	sectionSeparator = "## "
+	// A level 2 heading.
+	sectionHeadingRegex = regexp.MustCompile(`(?m)^##[ \t]+(.*)$`)
+	// The level 2 headings of the sections that document fields.
+	fieldSectionRegex = regexp.MustCompile(`^(?:Argument|Attributes|Ephemeral Attributes) Reference\b`)
 )
 
 // DocumentParser parse *.html.markdown resource doc files.
@@ -44,7 +47,7 @@ func (d *DocumentParser) FlattenFields() []string {
 		d.root,
 	)
 	sort.Strings(paths)
-	return paths
+	return slices.Compact(paths)
 }
 
 func traverse(paths *[]string, path string, n *node) {
@@ -68,40 +71,36 @@ func traverse(paths *[]string, path string, n *node) {
 // Parse parse a resource document markdown's arguments and attributes section.
 // The parsed file format is defined in mmv1/templates/terraform/resource.html.markdown.tmpl.
 func (d *DocumentParser) Parse(src []byte) error {
-	var argument, attribute, ephemeralAttribute string
-	for _, p := range strings.Split(string(src), "\n"+sectionSeparator) {
-		if strings.HasPrefix(p, "Attributes Reference") {
-			attribute = p
+	text := strings.ReplaceAll(string(src), "\r\n", "\n")
+	headings := sectionHeadingRegex.FindAllStringSubmatchIndex(text, -1)
+	for i, h := range headings {
+		if !fieldSectionRegex.MatchString(text[h[2]:h[3]]) {
+			continue
 		}
-		if strings.HasPrefix(p, "Argument Reference") {
-			argument = p
+		end := len(text)
+		if i+1 < len(headings) {
+			end = headings[i+1][0]
 		}
-		if strings.HasPrefix(p, "Ephemeral Attributes Reference") {
-			ephemeralAttribute = p
-		}
-	}
-	for _, text := range []string{argument, attribute, ephemeralAttribute} {
-		if len(text) != 0 {
-			sections := horizontalLineRegex.Split(text, -1)
-			var allTopLevelFieldSections string
-			for _, part := range sections {
-				topLevelPropertySection, err := d.extractNestedObject(part)
-				if err != nil {
-					return err
-				}
-				allTopLevelFieldSections += topLevelPropertySection
-			}
-			root := &node{
-				text: allTopLevelFieldSections,
-			}
-			if err := d.bfs(root, d.nestedBlock); err != nil {
+		section := text[h[1]:end]
+		sections := horizontalLineRegex.Split(section, -1)
+		var allTopLevelFieldSections string
+		for _, part := range sections {
+			topLevelPropertySection, err := d.extractNestedObject(part)
+			if err != nil {
 				return err
 			}
-			if d.root == nil {
-				d.root = root
-			} else {
-				d.root.children = append(d.root.children, root.children...)
-			}
+			allTopLevelFieldSections += topLevelPropertySection
+		}
+		root := &node{
+			text: allTopLevelFieldSections,
+		}
+		if err := d.bfs(root, d.nestedBlock); err != nil {
+			return err
+		}
+		if d.root == nil {
+			d.root = root
+		} else {
+			d.root.children = append(d.root.children, root.children...)
 		}
 	}
 	return nil
