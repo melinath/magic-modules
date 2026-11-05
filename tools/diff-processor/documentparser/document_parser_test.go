@@ -71,7 +71,6 @@ func TestParse(t *testing.T) {
 		"project",
 		// The below are from attributes section.
 		"id",
-		"network_interface.access_config.nat_ip",
 		"workload_identity_config",
 		"errors",
 		"workload_identity_config.identity_provider",
@@ -240,5 +239,65 @@ func TestParseDashesInText(t *testing.T) {
 	want := []string{"project", "ssl", "ssl.ca_certificate", "ssl.ssl_certificate"}
 	if diff := cmp.Diff(want, parser.FlattenFields()); diff != "" {
 		t.Errorf("FlattenFields() returned diff (-want, +got):\n%s", diff)
+	}
+}
+
+func TestParseMultipleReferenceSections(t *testing.T) {
+	doc := strings.Join([]string{
+		"## Argument Reference for Cloud Composer 3",
+		"",
+		"* `name` - (Required) Name of the environment.",
+		"* `config` - (Optional) Configuration. Structure is [documented below](#nested_config).",
+		"",
+		"<a name=\"nested_config\"></a>The `config` block supports:",
+		"",
+		"* `environment_size` - (Optional) Size of the environment.",
+		"",
+		"## Argument Reference for Cloud Composer 2",
+		"",
+		"* `name` - (Required) Name of the environment.",
+		"* `node_count` - (Optional) Number of nodes.",
+		"",
+		"## Argument Reference for Legacy Cloud Composer 1",
+		"",
+		"* `private_environment_config` - (Optional) Private config.",
+		"",
+		"## Attributes Reference",
+		"",
+		"* `id` - The identifier.",
+		"",
+		"## Ephemeral Attributes Reference",
+		"",
+		"* `ephemeral_secret` - The ephemeral secret.",
+		"",
+		"## Arguments Reference",
+		"",
+		"* `ignored_plural_section_field` - Should not be parsed.",
+		"",
+		"## argument reference",
+		"",
+		"* `ignored_lowercase_section_field` - Should not be parsed.",
+		"",
+		"## Import",
+		"",
+		"* `ignored_import_bullet` - Should not be parsed.",
+	}, "\n")
+
+	parser := NewParser()
+	if err := parser.Parse([]byte(doc)); err != nil {
+		t.Fatal(err)
+	}
+	got := parser.FlattenFields()
+	want := []string{
+		"config",
+		"config.environment_size",
+		"ephemeral_secret",
+		"id",
+		"name",
+		"node_count",
+		"private_environment_config",
+	}
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("Parse returned diff (-want, +got):\n%s", diff)
 	}
 }
