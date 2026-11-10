@@ -228,11 +228,11 @@ When this this key is provided, the following workflow template job arguments, i
 
 * `hadoop_job` -
   (Optional)
-  Job is a Hadoop job.
+  Job is a Hadoop job. Structure is [documented below](#nested_jobs_hadoop_job).
 
 * `hive_job` -
   (Optional)
-  Job is a Hive job.
+  Job is a Hive job. Structure is [documented below](#nested_jobs_hive_job).
 
 * `labels` -
   (Optional)
@@ -240,7 +240,7 @@ When this this key is provided, the following workflow template job arguments, i
 
 * `pig_job` -
   (Optional)
-  Job is a Pig job.
+  Job is a Pig job. Structure is [documented below](#nested_jobs_pig_job).
 
 * `prerequisite_step_ids` -
   (Optional)
@@ -248,27 +248,27 @@ When this this key is provided, the following workflow template job arguments, i
 
 * `presto_job` -
   (Optional)
-  Job is a Presto job.
+  Job is a Presto job. Structure is [documented below](#nested_jobs_presto_job).
 
 * `pyspark_job` -
   (Optional)
-  Job is a PySpark job.
+  Job is a PySpark job. Structure is [documented below](#nested_jobs_pyspark_job).
 
 * `scheduling` -
   (Optional)
-  Job scheduling configuration.
+  Job scheduling configuration. Structure is [documented below](#nested_jobs_scheduling).
 
 * `spark_job` -
   (Optional)
-  Job is a Spark job.
+  Job is a Spark job. Structure is [documented below](#nested_jobs_spark_job).
 
 * `spark_r_job` -
   (Optional)
-  Job is a SparkR job.
+  Job is a SparkR job. Structure is [documented below](#nested_jobs_spark_r_job).
 
 * `spark_sql_job` -
   (Optional)
-  Job is a SparkSql job.
+  Job is a SparkSql job. Structure is [documented below](#nested_jobs_spark_sql_job).
 
 * `step_id` -
   (Required)
@@ -290,15 +290,15 @@ When this this key is provided, the following workflow template job arguments, i
 
 * `autoscaling_config` -
   (Optional)
-  Autoscaling config for the policy associated with the cluster. Cluster does not autoscale if this field is unset.
+  Autoscaling config for the policy associated with the cluster. Cluster does not autoscale if this field is unset. Structure is [documented below](#nested_autoscaling_config).
 
 * `encryption_config` -
   (Optional)
-  Encryption settings for the cluster.
+  Encryption settings for the cluster. Structure is [documented below](#nested_config_encryption_config).
 
 * `endpoint_config` -
   (Optional)
-  Port/endpoint configuration for this cluster
+  Port/endpoint configuration for this cluster. Structure is [documented below](#nested_config_endpoint_config).
 
 * `gce_cluster_config` -
   (Optional)
@@ -306,15 +306,15 @@ When this this key is provided, the following workflow template job arguments, i
 
 * `gke_cluster_config` -
   (Optional)
-  The Kubernetes Engine config for Dataproc clusters deployed to Kubernetes. Setting this is considered mutually exclusive with Compute Engine-based options such as `gce_cluster_config`, `master_config`, `worker_config`, `secondary_worker_config`, and `autoscaling_config`.
+  The Kubernetes Engine config for Dataproc clusters deployed to Kubernetes. Setting this is considered mutually exclusive with Compute Engine-based options such as `gce_cluster_config`, `master_config`, `worker_config`, `secondary_worker_config`, and `autoscaling_config`. Structure is [documented below](#nested_config_gke_cluster_config).
 
 * `initialization_actions` -
   (Optional)
-  Commands to execute on each node after config is completed. By default, executables are run on master and all worker nodes. You can test a node's `role` metadata to run an executable on a master or worker node, as shown below using `curl` (you can also use `wget`): ROLE=$(curl -H Metadata-Flavor:Google http://metadata/computeMetadata/v1/instance/attributes/dataproc-role) if ; then ... master specific actions ... else ... worker specific actions ... fi
+  Commands to execute on each node after config is completed. By default, executables are run on master and all worker nodes. You can test a node's `role` metadata to run an executable on a master or worker node, as shown below using `curl` (you can also use `wget`): ROLE=$(curl -H Metadata-Flavor:Google http://metadata/computeMetadata/v1/instance/attributes/dataproc-role) if ; then ... master specific actions ... else ... worker specific actions ... fi. Structure is [documented below](#nested_config_initialization_actions).
 
 * `lifecycle_config` -
   (Optional)
-  Lifecycle setting for the cluster.
+  Lifecycle setting for the cluster. Structure is [documented below](#nested_config_lifecycle_config).
 
 * `master_config` -
   (Optional)
@@ -326,7 +326,7 @@ When this this key is provided, the following workflow template job arguments, i
 
 * `metastore_config` -
   (Optional)
-  Metastore configuration.
+  Metastore configuration. Structure is [documented below](#nested_config_metastore_config).
 
 * `secondary_worker_config` -
   (Optional)
@@ -338,11 +338,11 @@ When this this key is provided, the following workflow template job arguments, i
 
 * `security_config` -
   (Optional)
-  Security settings for the cluster.
+  Security settings for the cluster. Structure is [documented below](#nested_config_security_config).
 
 * `software_config` -
   (Optional)
-  The config settings for software inside the cluster.
+  The config settings for software inside the cluster. Structure is [documented below](#nested_config_software_config).
 
 * `staging_bucket` -
   (Optional)
@@ -372,7 +372,7 @@ When this this key is provided, the following workflow template job arguments, i
 
 * `parameters` -
   (Optional)
-  Template parameters whose values are substituted into the template. Values for parameters must be provided when the template is instantiated.
+  Template parameters whose values are substituted into the template. Values for parameters must be provided when the template is instantiated. Structure is [documented below](#nested_parameters).
 
 * `project` -
   (Optional)
@@ -384,7 +384,7 @@ When this this key is provided, the following workflow template job arguments, i
 
 
 
-The `hadoop_job` block supports:
+<a name="nested_jobs_hadoop_job"></a>The `hadoop_job` block supports:
 
 * `archive_uris` -
   (Optional)
@@ -404,7 +404,7 @@ The `hadoop_job` block supports:
 
 * `logging_config` -
   (Optional)
-  The runtime log config for job execution.
+  The runtime log config for job execution. Structure is [documented below](#nested_jobs_hadoop_job_logging_config).
 
 * `main_class` -
   (Optional)
@@ -418,13 +418,13 @@ The `hadoop_job` block supports:
   (Optional)
   A mapping of property names to values, used to configure Hadoop. Properties that conflict with values set by the Dataproc API may be overwritten. Can include properties set in /etc/hadoop/conf/*-site and classes in user code.
 
-The `logging_config` block supports:
+<a name="nested_jobs_hadoop_job_logging_config"></a>The `logging_config` block supports:
 
 * `driver_log_levels` -
   (Optional)
   The per-package log levels for the driver. This may include "root" package name to configure rootLogger. Examples: 'com.google = FATAL', 'root = INFO', 'org.apache = DEBUG'
 
-The `hive_job` block supports:
+<a name="nested_jobs_hive_job"></a>The `hive_job` block supports:
 
 * `continue_on_failure` -
   (Optional)
@@ -444,19 +444,19 @@ The `hive_job` block supports:
 
 * `query_list` -
   (Optional)
-  A list of queries.
+  A list of queries. Structure is [documented below](#nested_jobs_hive_job_query_list).
 
 * `script_variables` -
   (Optional)
   Mapping of query variable names to values (equivalent to the Hive command: `SET name="value";`).
 
-The `query_list` block supports:
+<a name="nested_jobs_hive_job_query_list"></a>The `query_list` block supports:
 
 * `queries` -
   (Required)
   Required. The queries to execute. You do not need to end a query expression with a semicolon. Multiple queries can be specified in one string by separating each with a semicolon. Here is an example of a Dataproc API snippet that uses a QueryList to specify a HiveJob: "hiveJob": { "queryList": { "queries": } }
 
-The `pig_job` block supports:
+<a name="nested_jobs_pig_job"></a>The `pig_job` block supports:
 
 * `continue_on_failure` -
   (Optional)
@@ -468,7 +468,7 @@ The `pig_job` block supports:
 
 * `logging_config` -
   (Optional)
-  The runtime log config for job execution.
+  The runtime log config for job execution. Structure is [documented below](#nested_jobs_pig_job_logging_config).
 
 * `properties` -
   (Optional)
@@ -480,25 +480,25 @@ The `pig_job` block supports:
 
 * `query_list` -
   (Optional)
-  A list of queries.
+  A list of queries. Structure is [documented below](#nested_jobs_pig_job_query_list).
 
 * `script_variables` -
   (Optional)
   Mapping of query variable names to values (equivalent to the Pig command: `name=`).
 
-The `logging_config` block supports:
+<a name="nested_jobs_pig_job_logging_config"></a>The `logging_config` block supports:
 
 * `driver_log_levels` -
   (Optional)
   The per-package log levels for the driver. This may include "root" package name to configure rootLogger. Examples: 'com.google = FATAL', 'root = INFO', 'org.apache = DEBUG'
 
-The `query_list` block supports:
+<a name="nested_jobs_pig_job_query_list"></a>The `query_list` block supports:
 
 * `queries` -
   (Required)
   Required. The queries to execute. You do not need to end a query expression with a semicolon. Multiple queries can be specified in one string by separating each with a semicolon. Here is an example of a Dataproc API snippet that uses a QueryList to specify a HiveJob: "hiveJob": { "queryList": { "queries": } }
 
-The `presto_job` block supports:
+<a name="nested_jobs_presto_job"></a>The `presto_job` block supports:
 
 * `client_tags` -
   (Optional)
@@ -510,7 +510,7 @@ The `presto_job` block supports:
 
 * `logging_config` -
   (Optional)
-  The runtime log config for job execution.
+  The runtime log config for job execution. Structure is [documented below](#nested_jobs_presto_job_logging_config).
 
 * `output_format` -
   (Optional)
@@ -526,21 +526,21 @@ The `presto_job` block supports:
 
 * `query_list` -
   (Optional)
-  A list of queries.
+  A list of queries. Structure is [documented below](#nested_jobs_presto_job_query_list).
 
-The `logging_config` block supports:
+<a name="nested_jobs_presto_job_logging_config"></a>The `logging_config` block supports:
 
 * `driver_log_levels` -
   (Optional)
   The per-package log levels for the driver. This may include "root" package name to configure rootLogger. Examples: 'com.google = FATAL', 'root = INFO', 'org.apache = DEBUG'
 
-The `query_list` block supports:
+<a name="nested_jobs_presto_job_query_list"></a>The `query_list` block supports:
 
 * `queries` -
   (Required)
   Required. The queries to execute. You do not need to end a query expression with a semicolon. Multiple queries can be specified in one string by separating each with a semicolon. Here is an example of a Dataproc API snippet that uses a QueryList to specify a HiveJob: "hiveJob": { "queryList": { "queries": } }
 
-The `pyspark_job` block supports:
+<a name="nested_jobs_pyspark_job"></a>The `pyspark_job` block supports:
 
 * `archive_uris` -
   (Optional)
@@ -560,7 +560,7 @@ The `pyspark_job` block supports:
 
 * `logging_config` -
   (Optional)
-  The runtime log config for job execution.
+  The runtime log config for job execution. Structure is [documented below](#nested_jobs_pyspark_job_logging_config).
 
 * `main_python_file_uri` -
   (Required)
@@ -574,13 +574,13 @@ The `pyspark_job` block supports:
   (Optional)
   HCFS file URIs of Python files to pass to the PySpark framework. Supported file types: .py, .egg, and .zip.
 
-The `logging_config` block supports:
+<a name="nested_jobs_pyspark_job_logging_config"></a>The `logging_config` block supports:
 
 * `driver_log_levels` -
   (Optional)
   The per-package log levels for the driver. This may include "root" package name to configure rootLogger. Examples: 'com.google = FATAL', 'root = INFO', 'org.apache = DEBUG'
 
-The `scheduling` block supports:
+<a name="nested_jobs_scheduling"></a>The `scheduling` block supports:
 
 * `max_failures_per_hour` -
   (Optional)
@@ -590,7 +590,7 @@ The `scheduling` block supports:
   (Optional)
   Maximum number of times in total a driver may be restarted as a result of driver exiting with non-zero code before job is reported failed. Maximum value is 240
 
-The `spark_job` block supports:
+<a name="nested_jobs_spark_job"></a>The `spark_job` block supports:
 
 * `archive_uris` -
   (Optional)
@@ -610,7 +610,7 @@ The `spark_job` block supports:
 
 * `logging_config` -
   (Optional)
-  The runtime log config for job execution.
+  The runtime log config for job execution. Structure is [documented below](#nested_jobs_spark_job_logging_config).
 
 * `main_class` -
   (Optional)
@@ -624,13 +624,13 @@ The `spark_job` block supports:
   (Optional)
   A mapping of property names to values, used to configure Spark. Properties that conflict with values set by the Dataproc API may be overwritten. Can include properties set in /etc/spark/conf/spark-defaults.conf and classes in user code.
 
-The `logging_config` block supports:
+<a name="nested_jobs_spark_job_logging_config"></a>The `logging_config` block supports:
 
 * `driver_log_levels` -
   (Optional)
   The per-package log levels for the driver. This may include "root" package name to configure rootLogger. Examples: 'com.google = FATAL', 'root = INFO', 'org.apache = DEBUG'
 
-The `spark_r_job` block supports:
+<a name="nested_jobs_spark_r_job"></a>The `spark_r_job` block supports:
 
 * `archive_uris` -
   (Optional)
@@ -646,7 +646,7 @@ The `spark_r_job` block supports:
 
 * `logging_config` -
   (Optional)
-  The runtime log config for job execution.
+  The runtime log config for job execution. Structure is [documented below](#nested_jobs_spark_r_job_logging_config).
 
 * `main_r_file_uri` -
   (Required)
@@ -656,13 +656,13 @@ The `spark_r_job` block supports:
   (Optional)
   A mapping of property names to values, used to configure SparkR. Properties that conflict with values set by the Dataproc API may be overwritten. Can include properties set in /etc/spark/conf/spark-defaults.conf and classes in user code.
 
-The `logging_config` block supports:
+<a name="nested_jobs_spark_r_job_logging_config"></a>The `logging_config` block supports:
 
 * `driver_log_levels` -
   (Optional)
   The per-package log levels for the driver. This may include "root" package name to configure rootLogger. Examples: 'com.google = FATAL', 'root = INFO', 'org.apache = DEBUG'
 
-The `spark_sql_job` block supports:
+<a name="nested_jobs_spark_sql_job"></a>The `spark_sql_job` block supports:
 
 * `jar_file_uris` -
   (Optional)
@@ -670,7 +670,7 @@ The `spark_sql_job` block supports:
 
 * `logging_config` -
   (Optional)
-  The runtime log config for job execution.
+  The runtime log config for job execution. Structure is [documented below](#nested_jobs_spark_sql_job_logging_config).
 
 * `properties` -
   (Optional)
@@ -682,25 +682,25 @@ The `spark_sql_job` block supports:
 
 * `query_list` -
   (Optional)
-  A list of queries.
+  A list of queries. Structure is [documented below](#nested_jobs_spark_sql_job_query_list).
 
 * `script_variables` -
   (Optional)
   Mapping of query variable names to values (equivalent to the Spark SQL command: SET `name="value";`).
 
-The `logging_config` block supports:
+<a name="nested_jobs_spark_sql_job_logging_config"></a>The `logging_config` block supports:
 
 * `driver_log_levels` -
   (Optional)
   The per-package log levels for the driver. This may include "root" package name to configure rootLogger. Examples: 'com.google = FATAL', 'root = INFO', 'org.apache = DEBUG'
 
-The `query_list` block supports:
+<a name="nested_jobs_spark_sql_job_query_list"></a>The `query_list` block supports:
 
 * `queries` -
   (Required)
   Required. The queries to execute. You do not need to end a query expression with a semicolon. Multiple queries can be specified in one string by separating each with a semicolon. Here is an example of a Dataproc API snippet that uses a QueryList to specify a HiveJob: "hiveJob": { "queryList": { "queries": } }
 
-The `parameters` block supports:
+<a name="nested_parameters"></a>The `parameters` block supports:
 
 * `description` -
   (Optional)
@@ -716,25 +716,25 @@ The `parameters` block supports:
 
 * `validation` -
   (Optional)
-  Validation rules to be applied to this parameter's value.
+  Validation rules to be applied to this parameter's value. Structure is [documented below](#nested_parameters_validation).
 
-The `validation` block supports:
+<a name="nested_parameters_validation"></a>The `validation` block supports:
 
 * `regex` -
   (Optional)
-  Validation based on regular expressions.
+  Validation based on regular expressions. Structure is [documented below](#nested_parameters_validation_regex).
 
 * `values` -
   (Optional)
-  Validation based on a list of allowed values.
+  Validation based on a list of allowed values. Structure is [documented below](#nested_parameters_validation_values).
 
-The `regex` block supports:
+<a name="nested_parameters_validation_regex"></a>The `regex` block supports:
 
 * `regexes` -
   (Required)
   Required. RE2 regular expressions used to validate the parameter's value. The value must match the regex in its entirety (substring matches are not sufficient).
 
-The `values` block supports:
+<a name="nested_parameters_validation_values"></a>The `values` block supports:
 
 * `values` -
   (Required)
@@ -801,7 +801,7 @@ The `values` block supports:
   Output only. Specifies that this instance group contains preemptible instances.
 
 * `managed_group_config` -
-  Output only. The config for Compute Engine Instance Group Manager that manages this group. This is only used for preemptible instance groups.
+  Output only. The config for Compute Engine Instance Group Manager that manages this group. This is only used for preemptible instance groups. Structure is [documented below](#nested_managed_group_config).
 
 * `instance_flexibility_policy` -
   (Optional)
@@ -844,7 +844,7 @@ The `values` block supports:
   Output only. Specifies that this instance group contains preemptible instances.
 
 * `managed_group_config` -
-  Output only. The config for Compute Engine Instance Group Manager that manages this group.
+  Output only. The config for Compute Engine Instance Group Manager that manages this group. Structure is [documented below](#nested_managed_group_config).
 
 * `instance_flexibility_policy` -
   (Optional)
@@ -876,6 +876,10 @@ The `values` block supports:
   (Optional)
   The number of worker instances in the cluster.
 
+* `preemptibility` -
+  (Optional)
+  Specifies the preemptibility of the instance group. The default value for master and worker groups is `NON_PREEMPTIBLE`. This default cannot be changed. The default value for secondary instances is `PREEMPTIBLE`. Possible values: PREEMPTIBILITY_UNSPECIFIED, NON_PREEMPTIBLE, PREEMPTIBLE
+
 * `instance_names` -
   Output only. The list of instance names.
 
@@ -883,7 +887,7 @@ The `values` block supports:
   Output only. Specifies that this instance group contains preemptible instances.
 
 * `managed_group_config` -
-  Output only. The config for Compute Engine Instance Group Manager that manages this group.
+  Output only. The config for Compute Engine Instance Group Manager that manages this group. Structure is [documented below](#nested_managed_group_config).
 
 * `instance_flexibility_policy` -
   (Optional)
@@ -1005,6 +1009,14 @@ The `values` block supports:
   (Optional)
   Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle.
 
+<a name="nested_managed_group_config"></a>The `managed_group_config` block supports:
+
+* `instance_group_manager_name` -
+  Output only. The name of the Instance Group Manager for this group.
+
+* `instance_template_name` -
+  Output only. The name of the Instance Template used for the Managed Instance Group.
+
 <a name="nested_instance_flexibility_policy"></a>The `instance_flexibility_policy` block supports:
 
 * `instance_selection_list` -
@@ -1059,13 +1071,13 @@ The `values` block supports:
   (Optional)
   The autoscaling policy used by the cluster. Only resource names including projectid and location (region) are valid. Examples: * `https://www.googleapis.com/compute/v1/projects/` Note that the policy must be in the same project and Dataproc region.
 
-The `encryption_config` block supports:
+<a name="nested_config_encryption_config"></a>The `encryption_config` block supports:
 
 * `gce_pd_kms_key_name` -
   (Optional)
   The Cloud KMS key name to use for PD disk encryption for all instances in the cluster.
 
-The `endpoint_config` block supports:
+<a name="nested_config_endpoint_config"></a>The `endpoint_config` block supports:
 
 * `enable_http_port_access` -
   (Optional)
@@ -1094,7 +1106,7 @@ The `endpoint_config` block supports:
 
 * `node_group_affinity` -
   (Optional)
-  Node Group Affinity for sole-tenant clusters.
+  Node Group Affinity for sole-tenant clusters. Structure is [documented below](#nested_gce_cluster_config_node_group_affinity).
 
 * `private_ipv6_google_access` -
   (Optional)
@@ -1102,7 +1114,7 @@ The `endpoint_config` block supports:
 
 * `reservation_affinity` -
   (Optional)
-  Reservation Affinity for consuming Zonal reservation.
+  Reservation Affinity for consuming Zonal reservation. Structure is [documented below](#nested_gce_cluster_config_reservation_affinity).
 
 * `service_account` -
   (Optional)
@@ -1128,13 +1140,13 @@ The `endpoint_config` block supports:
   (Optional)
   The zone where the Compute Engine cluster will be located. On a create request, it is required in the "global" region. If omitted in a non-global Dataproc region, the service will pick a zone in the corresponding Compute Engine region. On a get request, zone will always be present. A full URL, partial URI, or short name are valid. Examples: * `https://www.googleapis.com/compute/v1/projects/` * `us-central1-f`
 
-The `node_group_affinity` block supports:
+<a name="nested_gce_cluster_config_node_group_affinity"></a>The `node_group_affinity` block supports:
 
 * `node_group` -
   (Required)
   Required. The URI of a sole-tenant /zones/us-central1-a/nodeGroups/node-group-1` * `node-group-1`
 
-The `reservation_affinity` block supports:
+<a name="nested_gce_cluster_config_reservation_affinity"></a>The `reservation_affinity` block supports:
 
 * `consume_reservation_type` -
   (Optional)
@@ -1180,13 +1192,13 @@ cluster_config {
   (Optional)
   Specifies the target shape of the cluster. Possible values: `TARGET_SHAPE_UNSPECIFIED`, `ANY`.
 
-The `gke_cluster_config` block supports:
+<a name="nested_config_gke_cluster_config"></a>The `gke_cluster_config` block supports:
 
 * `namespaced_gke_deployment_target` -
   (Optional)
-  A target for the deployment.
+  A target for the deployment. Structure is [documented below](#nested_gke_cluster_config_namespaced_gke_deployment_target).
 
-The `namespaced_gke_deployment_target` block supports:
+<a name="nested_gke_cluster_config_namespaced_gke_deployment_target"></a>The `namespaced_gke_deployment_target` block supports:
 
 * `cluster_namespace` -
   (Optional)
@@ -1196,7 +1208,7 @@ The `namespaced_gke_deployment_target` block supports:
   (Optional)
   The target GKE cluster to deploy to. Format: 'projects/{project}/locations/{location}/clusters/{cluster_id}'
 
-The `initialization_actions` block supports:
+<a name="nested_config_initialization_actions"></a>The `initialization_actions` block supports:
 
 * `executable_file` -
   (Optional)
@@ -1206,7 +1218,7 @@ The `initialization_actions` block supports:
   (Optional)
   Amount of time executable has to complete. Default is 10 minutes (see JSON representation of [JSON Mapping - Language Guide (proto 3)](https://developers.google.com/protocol-buffers/docs/proto3#json)). Cluster creation fails with an explanatory error message (the name of the executable that caused the error and the exceeded timeout period) if the executable is not completed at end of the timeout period.
 
-The `lifecycle_config` block supports:
+<a name="nested_config_lifecycle_config"></a>The `lifecycle_config` block supports:
 
 * `auto_delete_time` -
   (Optional)
@@ -1223,19 +1235,19 @@ The `lifecycle_config` block supports:
 * `idle_start_time` -
   Output only. The time when cluster became idle (most recent job finished) and became eligible for deletion due to idleness (see JSON representation of [JSON Mapping - Language Guide (proto 3)](https://developers.google.com/protocol-buffers/docs/proto3#json)).
 
-The `metastore_config` block supports:
+<a name="nested_config_metastore_config"></a>The `metastore_config` block supports:
 
 * `dataproc_metastore_service` -
   (Required)
   Required. Resource name of an existing Dataproc Metastore service. Example: * `projects/`
 
-The `security_config` block supports:
+<a name="nested_config_security_config"></a>The `security_config` block supports:
 
 * `kerberos_config` -
   (Optional)
-  Kerberos related configuration.
+  Kerberos related configuration. Structure is [documented below](#nested_security_config_kerberos_config).
 
-The `kerberos_config` block supports:
+<a name="nested_security_config_kerberos_config"></a>The `kerberos_config` block supports:
 
 * `cross_realm_trust_admin_server` -
   (Optional)
@@ -1297,7 +1309,7 @@ The `kerberos_config` block supports:
   (Optional)
   The Cloud Storage URI of a KMS encrypted file containing the password to the user provided truststore. For the self-signed certificate, this password is generated by Dataproc.
 
-The `software_config` block supports:
+<a name="nested_config_software_config"></a>The `software_config` block supports:
 
 * `image_version` -
   (Optional)
@@ -1337,6 +1349,12 @@ In addition to the arguments listed above, the following computed attributes are
 
 * `update_time` -
   Output only. The time template was last updated.
+
+* `effective_labels` -
+  All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
+
+* `terraform_labels` -
+  The combination of labels configured directly on the resource and default labels configured on the provider.
 
 ## Timeouts
 
