@@ -138,7 +138,7 @@ The following arguments are supported:
 
 * `authorization` -
   (Required)
-  Configuration related to the cluster RBAC settings.
+  Configuration related to the cluster RBAC settings. Structure is [documented below](#nested_authorization).
   
 * `azure_region` -
   (Required)
@@ -146,11 +146,11 @@ The following arguments are supported:
   
 * `control_plane` -
   (Required)
-  Configuration related to the cluster control plane.
+  Configuration related to the cluster control plane. Structure is [documented below](#nested_control_plane).
   
 * `fleet` -
   (Required)
-  Fleet configuration.
+  Fleet configuration. Structure is [documented below](#nested_fleet).
   
 * `location` -
   (Required)
@@ -162,7 +162,7 @@ The following arguments are supported:
   
 * `networking` -
   (Required)
-  Cluster-wide networking configuration.
+  Cluster-wide networking configuration. Structure is [documented below](#nested_networking).
   
 * `resource_group_id` -
   (Required)
@@ -176,41 +176,41 @@ The following arguments are supported:
     When set to "DELETE", deleting the resource is allowed.
 
 
-The `authorization` block supports:
+<a name="nested_authorization"></a>The `authorization` block supports:
     
 * `admin_groups` -
   (Optional)
-  Groups of users that can perform operations as a cluster admin. A managed ClusterRoleBinding will be created to grant the `cluster-admin` ClusterRole to the groups. Up to ten admin groups can be provided. For more info on RBAC, see https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles
+  Groups of users that can perform operations as a cluster admin. A managed ClusterRoleBinding will be created to grant the `cluster-admin` ClusterRole to the groups. Up to ten admin groups can be provided. For more info on RBAC, see https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles. Structure is [documented below](#nested_authorization_admin_groups).
     
 * `admin_users` -
   (Required)
-  Users that can perform operations as a cluster admin. A new ClusterRoleBinding will be created to grant the cluster-admin ClusterRole to the users. Up to ten admin users can be provided. For more info on RBAC, see https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles
+  Users that can perform operations as a cluster admin. A new ClusterRoleBinding will be created to grant the cluster-admin ClusterRole to the users. Up to ten admin users can be provided. For more info on RBAC, see https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles. Structure is [documented below](#nested_authorization_admin_users).
     
-The `control_plane` block supports:
+<a name="nested_control_plane"></a>The `control_plane` block supports:
     
 * `database_encryption` -
   (Optional)
-  Optional. Configuration related to application-layer secrets encryption.
+  Optional. Configuration related to application-layer secrets encryption. Structure is [documented below](#nested_control_plane_database_encryption).
     
 * `main_volume` -
   (Optional)
-  Optional. Configuration related to the main volume provisioned for each control plane replica. The main volume is in charge of storing all of the cluster's etcd state. When unspecified, it defaults to a 8-GiB Azure Disk.
+  Optional. Configuration related to the main volume provisioned for each control plane replica. The main volume is in charge of storing all of the cluster's etcd state. When unspecified, it defaults to a 8-GiB Azure Disk. Structure is [documented below](#nested_control_plane_main_volume).
     
 * `proxy_config` -
   (Optional)
-  Proxy configuration for outbound HTTP(S) traffic.
+  Proxy configuration for outbound HTTP(S) traffic. Structure is [documented below](#nested_control_plane_proxy_config).
     
 * `replica_placements` -
   (Optional)
-  Configuration for where to place the control plane replicas. Up to three replica placement instances can be specified. If replica_placements is set, the replica placement instances will be applied to the three control plane replicas as evenly as possible.
+  Configuration for where to place the control plane replicas. Up to three replica placement instances can be specified. If replica_placements is set, the replica placement instances will be applied to the three control plane replicas as evenly as possible. Structure is [documented below](#nested_control_plane_replica_placements).
     
 * `root_volume` -
   (Optional)
-  Optional. Configuration related to the root volume provisioned for each control plane replica. When unspecified, it defaults to 32-GiB Azure Disk.
+  Optional. Configuration related to the root volume provisioned for each control plane replica. When unspecified, it defaults to 32-GiB Azure Disk. Structure is [documented below](#nested_control_plane_root_volume).
     
 * `ssh_config` -
   (Required)
-  SSH configuration for how to access the underlying control plane machines.
+  SSH configuration for how to access the underlying control plane machines. Structure is [documented below](#nested_control_plane_ssh_config).
     
 * `subnet_id` -
   (Required)
@@ -228,7 +228,7 @@ The `control_plane` block supports:
   (Optional)
   Optional. The Azure VM size name. Example: `Standard_DS2_v2`. For available VM sizes, see https://docs.microsoft.com/en-us/azure/virtual-machines/vm-naming-conventions. When unspecified, it defaults to `Standard_DS2_v2`.
     
-The `fleet` block supports:
+<a name="nested_fleet"></a>The `fleet` block supports:
     
 * `membership` -
   The name of the managed Hub Membership resource associated to this cluster. Membership names are formatted as projects/<project-number>/locations/global/membership/<cluster-id>.
@@ -237,7 +237,7 @@ The `fleet` block supports:
   (Optional)
   The number of the Fleet host project where this cluster will be registered.
     
-The `networking` block supports:
+<a name="nested_networking"></a>The `networking` block supports:
     
 * `pod_address_cidr_blocks` -
   (Required)
@@ -262,7 +262,7 @@ Please refer to the field `effective_annotations` for all of the annotations pre
   
 * `azure_services_authentication` -
   (Optional)
-  Azure authentication configuration for management of Azure resources
+  Azure authentication configuration for management of Azure resources. Structure is [documented below](#nested_azure_services_authentication).
   
 * `client` -
   (Optional)
@@ -274,7 +274,7 @@ Please refer to the field `effective_annotations` for all of the annotations pre
   
 * `logging_config` -
   (Optional)
-  (Beta only) Logging configuration.
+  (Beta only) Logging configuration. Structure is [documented below](#nested_logging_config).
   
 * `project` -
   (Optional)
@@ -282,19 +282,19 @@ Please refer to the field `effective_annotations` for all of the annotations pre
   
 
 
-The `admin_groups` block supports:
+<a name="nested_authorization_admin_groups"></a>The `admin_groups` block supports:
     
 * `group` -
   (Required)
   The name of the group, e.g. `my-group@domain.com`.
     
-The `admin_users` block supports:
+<a name="nested_authorization_admin_users"></a>The `admin_users` block supports:
     
 * `username` -
   (Required)
   The name of the user, e.g. `my-gcp-id@gmail.com`.
     
-The `azure_services_authentication` block supports:
+<a name="nested_azure_services_authentication"></a>The `azure_services_authentication` block supports:
     
 * `application_id` -
   (Required)
@@ -304,19 +304,19 @@ The `azure_services_authentication` block supports:
   (Required)
   The Azure Active Directory Tenant ID for Authentication configuration.
     
-The `database_encryption` block supports:
+<a name="nested_control_plane_database_encryption"></a>The `database_encryption` block supports:
     
 * `key_id` -
   (Required)
   The ARM ID of the Azure Key Vault key to encrypt / decrypt data. For example: `/subscriptions/<subscription-id>/resourceGroups/<resource-group-id>/providers/Microsoft.KeyVault/vaults/<key-vault-id>/keys/<key-name>` Encryption will always take the latest version of the key and hence specific version is not supported.
     
-The `main_volume` block supports:
+<a name="nested_control_plane_main_volume"></a>The `main_volume` block supports:
     
 * `size_gib` -
   (Optional)
   Optional. The size of the disk, in GiBs. When unspecified, a default value is provided. See the specific reference in the parent resource.
     
-The `proxy_config` block supports:
+<a name="nested_control_plane_proxy_config"></a>The `proxy_config` block supports:
     
 * `resource_group_id` -
   (Required)
@@ -326,7 +326,7 @@ The `proxy_config` block supports:
   (Required)
   The URL the of the proxy setting secret with its version. Secret ids are formatted as `https:<key-vault-name>.vault.azure.net/secrets/<secret-name>/<secret-version>`.
     
-The `replica_placements` block supports:
+<a name="nested_control_plane_replica_placements"></a>The `replica_placements` block supports:
     
 * `azure_availability_zone` -
   (Required)
@@ -336,25 +336,25 @@ The `replica_placements` block supports:
   (Required)
   For a given replica, the ARM ID of the subnet where the control plane VM is deployed. Make sure it's a subnet under the virtual network in the cluster configuration.
     
-The `root_volume` block supports:
+<a name="nested_control_plane_root_volume"></a>The `root_volume` block supports:
     
 * `size_gib` -
   (Optional)
   Optional. The size of the disk, in GiBs. When unspecified, a default value is provided. See the specific reference in the parent resource.
     
-The `ssh_config` block supports:
+<a name="nested_control_plane_ssh_config"></a>The `ssh_config` block supports:
     
 * `authorized_key` -
   (Required)
   The SSH public key data for VMs managed by Anthos. This accepts the authorized_keys file format used in OpenSSH according to the sshd(8) manual page.
     
-The `logging_config` block supports:
+<a name="nested_logging_config"></a>The `logging_config` block supports:
     
 * `component_config` -
   (Optional)
-  Configuration of the logging components.
+  Configuration of the logging components. Structure is [documented below](#nested_logging_config_component_config).
     
-The `component_config` block supports:
+<a name="nested_logging_config_component_config"></a>The `component_config` block supports:
     
 * `enable_components` -
   (Optional)
@@ -391,8 +391,19 @@ In addition to the arguments listed above, the following computed attributes are
   Output only. The time at which this cluster was last updated.
   
 * `workload_identity_config` -
-  Output only. Workload Identity settings.
+  Output only. Workload Identity settings. Structure is [documented below](#nested_workload_identity_config).
   
+<a name="nested_workload_identity_config"></a>The `workload_identity_config` block contains:
+
+* `identity_provider` -
+  The ID of the OIDC Identity Provider (IdP) associated to the Workload Identity Pool.
+
+* `issuer_uri` -
+  The OIDC issuer URL for this cluster.
+
+* `workload_pool` -
+  The Workload Identity Pool associated to the cluster.
+
 ## Timeouts
 
 This resource provides the following
