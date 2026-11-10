@@ -198,7 +198,7 @@ for more details. Structure is [documented below](#nested_cluster_autoscaling).
     Structure is [documented below](#nested_service_external_ips_config).
 
 * `mesh_certificates` - (Optional)
-    Structure is [documented below](#nested_mesh_encryption).
+    Structure is [documented below](#nested_mesh_certificates).
 
 * `database_encryption` - (Optional)
     Structure is [documented below](#nested_database_encryption).
@@ -503,10 +503,10 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
   (DEPRECATED) Configuration for [Enterprise edition].(https://cloud.google.com/kubernetes-engine/enterprise/docs/concepts/gke-editions). Structure is [documented below](#nested_enterprise_config). Deprecated as GKE Enterprise features are now available without an Enterprise tier. See https://cloud.google.com/blog/products/containers-kubernetes/gke-gets-new-pricing-and-capabilities-on-10th-birthday for the announcement of this change.
 
 * `anonymous_authentication_config` - (Optional)
-  Configuration for [anonymous authentication restrictions](https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#restrict-anon-access). Structure is [documented below](#anonymous_authentication_config).
+  Configuration for [anonymous authentication restrictions](https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#restrict-anon-access). Structure is [documented below](#nested_anonymous_authentication_config).
 
 * `node_creation_config` - (Optional)
-  Configuration for [node creation config](https://clouddocs.devsite.corp.google.com/kubernetes-engine/security/control-plane-node-creation). Structure is [documented below](#node_creation_config).
+  Configuration for [node creation config](https://clouddocs.devsite.corp.google.com/kubernetes-engine/security/control-plane-node-creation). Structure is [documented below](#nested_node_creation_config).
 
 * `rbac_binding_config` - (Optional)
   RBACBindingConfig allows user to restrict ClusterRoleBindings an RoleBindings that can be created. Structure is [documented below](#nested_rbac_binding_config).
@@ -533,31 +533,30 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
     addon, which increases or decreases the number of replica pods a replication controller
     has based on the resource usage of the existing pods.
     It is enabled by default;
-    set `disabled = true` to disable.
+    set `disabled = true` to disable. Structure is [documented below](#nested_addons_config_horizontal_pod_autoscaling).
 
-* `agent_sandbox_config` - (Optional) Configuration for the Agent Sandbox addon. Structure is documented below:
-    * `enabled` - (Required) Whether the Agent Sandbox addon is enabled.
+* `agent_sandbox_config` - (Optional) Configuration for the Agent Sandbox addon. Structure is [documented below](#nested_addons_config_agent_sandbox_config).
 
 * `http_load_balancing` - (Optional) The status of the HTTP (L7) load balancing
     controller addon, which makes it easy to set up HTTP load balancers for services in a
-    cluster. It is enabled by default; set `disabled = true` to disable.
+    cluster. It is enabled by default; set `disabled = true` to disable. Structure is [documented below](#nested_addons_config_http_load_balancing).
 
 * `network_policy_config` - (Optional) Whether we should enable the network policy addon
     for the master.  This must be enabled in order to enable network policy for the nodes.
     To enable this, you must also define a [`network_policy`](#network_policy) block,
     otherwise nothing will happen.
     It can only be disabled if the nodes already do not have network policies enabled.
-    Defaults to disabled; set `disabled = false` to enable.
+    Defaults to disabled; set `disabled = false` to enable. Structure is [documented below](#nested_addons_config_network_policy_config).
 
 * `gcp_filestore_csi_driver_config` - (Optional) The status of the Filestore CSI driver addon,
     which allows the usage of filestore instance as volumes.
-    It is disabled by default; set `enabled = true` to enable.
+    It is disabled by default; set `enabled = true` to enable. Structure is [documented below](#nested_addons_config_gcp_filestore_csi_driver_config).
 
 * `gcs_fuse_csi_driver_config` - (Optional) The status of the GCSFuse CSI driver addon,
     which allows the usage of a gcs bucket as volumes.
     It is disabled by default for Standard clusters; set `enabled = true` to enable.
     It is enabled by default for Autopilot clusters with version 1.24 or later; set `enabled = true` to enable it explicitly.
-    See [Enable the Cloud Storage FUSE CSI driver](https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/cloud-storage-fuse-csi-driver#enable) for more information.
+    See [Enable the Cloud Storage FUSE CSI driver](https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/cloud-storage-fuse-csi-driver#enable) for more information. Structure is [documented below](#nested_addons_config_gcs_fuse_csi_driver_config).
 
 * `cloudrun_config` - (Optional). Structure is [documented below](#nested_cloudrun_config).
 
@@ -566,28 +565,28 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
 
 * `dns_cache_config` - (Optional).
     The status of the NodeLocal DNSCache addon. It is disabled by default.
-    Set `enabled = true` to enable.
+    Set `enabled = true` to enable. Structure is [documented below](#nested_addons_config_dns_cache_config).
 
     **Enabling/Disabling NodeLocal DNSCache in an existing cluster is a disruptive operation.
     All cluster nodes running GKE 1.15 and higher are recreated.**
 
 * `gce_persistent_disk_csi_driver_config` - (Optional).
-    Whether this cluster should enable the Google Compute Engine Persistent Disk Container Storage Interface (CSI) Driver. Set `enabled = true` to enable.
+    Whether this cluster should enable the Google Compute Engine Persistent Disk Container Storage Interface (CSI) Driver. Set `enabled = true` to enable. Structure is [documented below](#nested_addons_config_gce_persistent_disk_csi_driver_config).
 
     **Note:** The Compute Engine persistent disk CSI Driver is enabled by default on newly created clusters for the following versions: Linux clusters: GKE version 1.18.10-gke.2100 or later, or 1.19.3-gke.2100 or later.
 
 *  `gke_backup_agent_config` -  (Optional).
-    The status of the Backup for GKE agent addon. It is disabled by default; Set `enabled = true` to enable.
+    The status of the Backup for GKE agent addon. It is disabled by default; Set `enabled = true` to enable. Structure is [documented below](#nested_addons_config_gke_backup_agent_config).
 
 * `kalm_config` - (Optional, [Beta](../guides/provider_versions.html.markdown)).
-    Configuration for the KALM addon, which manages the lifecycle of k8s. It is disabled by default; Set `enabled = true` to enable.
+    Configuration for the KALM addon, which manages the lifecycle of k8s. It is disabled by default; Set `enabled = true` to enable. Structure is [documented below](#nested_addons_config_kalm_config).
 
 *  `config_connector_config` -  (Optional).
-    The status of the ConfigConnector addon. It is disabled by default; Set `enabled = true` to enable.
+    The status of the ConfigConnector addon. It is disabled by default; Set `enabled = true` to enable. Structure is [documented below](#nested_addons_config_config_connector_config).
 
 *  `stateful_ha_config` - (Optional).
     The status of the Stateful HA addon, which provides automatic configurable failover for stateful applications.
-    It is disabled by default for Standard clusters. Set `enabled = true` to enable.
+    It is disabled by default for Standard clusters. Set `enabled = true` to enable. Structure is [documented below](#nested_addons_config_stateful_ha_config).
 
 *  `ray_operator_config` - (Optional) The status of the [Ray Operator
    addon](https://cloud.google.com/kubernetes-engine/docs/add-on/ray-on-gke/concepts/overview).
@@ -596,7 +595,7 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
 
 *  `slice_controller_config` - (Optional). 
    The status of the slice controller addon.
-   It is disabled by default. Set `enabled = true` to enable.
+   It is disabled by default. Set `enabled = true` to enable. Structure is [documented below](#nested_addons_config_slice_controller_config).
 
 *  `parallelstore_csi_driver_config` - (Optional, Deprecated) The status of the Parallelstore CSI driver addon,
    which allows the usage of a Parallelstore instances as volumes.
@@ -604,6 +603,7 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
    It is enabled by default for Autopilot clusters with version 1.29 or later; set `enabled = true` to enable it explicitly.
    See [Enable the Parallelstore CSI driver](https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/parallelstore-csi-new-volume#enable) for more information.
    `addons_config.parallelstore_csi_driver_config` is deprecated and will be removed in a future major release. Use `addons_config.lustre_csi_driver_config` instead.
+   Structure is [documented below](#nested_addons_config_parallelstore_csi_driver_config).
 
 *  `high_scale_checkpointing_config` - (Optional) The status of the High Scale Checkpointing addon, which enables Multi-Tier Checkpointing for Machine Learning workloads. Structure is [documented below](#nested_high_scale_checkpointing_config).
 
@@ -612,17 +612,14 @@ Fleet configuration for the cluster. Structure is [documented below](#nested_fle
    It is disabled by default for Standard clusters; set `enabled = true` to enable.
    It is disabled by default for Autopilot clusters; set `enabled = true` to enable.
    See [Enable Lustre CSI driver](https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/lustre-csi-driver-new-volume) for more information.
-   Lustre CSI Driver Config has optional subfields:
-   * `enable_legacy_lustre_port` which allows the Lustre CSI driver to initialize LNet (the virtual networklayer for Lustre kernel module) using port 6988. 
-   This flag is required to workaround a port conflict with the gke-metadata-server on GKE nodes.
-   * `disable_multi_nic` When set to true, this disables multi-NIC support for the Lustre CSI driver. By default, GKE enables multi-NIC support, which allows the Lustre CSI driver to automatically detect and configure all suitable network interfaces on a node to maximize I/O performance for demanding workloads.
+   Structure is [documented below](#nested_addons_config_lustre_csi_driver_config).
 
-* `pod_snapshot_config` - (Optional) The status of the Pod Snapshot addon. It is disabled by default. Set `enabled = true` to enable.
+* `pod_snapshot_config` - (Optional) The status of the Pod Snapshot addon. It is disabled by default. Set `enabled = true` to enable. Structure is [documented below](#nested_addons_config_pod_snapshot_config).
 
 * `slurm_operator_config` - (Optional) The status of the Slurm Operator addon,
     which creates slurm related CRDs and KCP pods to manage them.
     Defaults to disabled for Standard clusters; set `enabled = true` to enable.
-    It can not be enabled for Autopilot clusters.
+    It can not be enabled for Autopilot clusters. Structure is [documented below](#nested_addons_config_slurm_operator_config).
 
 * `node_readiness_config` - (Optional) The status of the Node Readiness Controller addon. It is disabled by default. Set `enabled = true` to enable.
   Structure is [documented below](#nested_node_readiness_config).
@@ -640,6 +637,80 @@ addons_config {
   }
 }
 ```
+
+<a name="nested_addons_config_horizontal_pod_autoscaling"></a>The `horizontal_pod_autoscaling` block supports:
+
+* `disabled` - (Required) Whether the Horizontal Pod Autoscaling addon is disabled.
+
+<a name="nested_addons_config_agent_sandbox_config"></a>The `agent_sandbox_config` block supports:
+
+* `enabled` - (Required) Whether the Agent Sandbox addon is enabled.
+
+<a name="nested_addons_config_http_load_balancing"></a>The `http_load_balancing` block supports:
+
+* `disabled` - (Required) Whether the HTTP (L7) load balancing controller addon is disabled.
+
+<a name="nested_addons_config_network_policy_config"></a>The `network_policy_config` block supports:
+
+* `disabled` - (Required) Whether the network policy addon is disabled.
+
+<a name="nested_addons_config_gcp_filestore_csi_driver_config"></a>The `gcp_filestore_csi_driver_config` block supports:
+
+* `enabled` - (Required) Whether the Filestore CSI driver addon is enabled.
+
+<a name="nested_addons_config_gcs_fuse_csi_driver_config"></a>The `gcs_fuse_csi_driver_config` block supports:
+
+* `enabled` - (Required) Whether the GCSFuse CSI driver addon is enabled.
+
+<a name="nested_addons_config_dns_cache_config"></a>The `dns_cache_config` block supports:
+
+* `enabled` - (Required) Whether the NodeLocal DNSCache addon is enabled.
+
+<a name="nested_addons_config_gce_persistent_disk_csi_driver_config"></a>The `gce_persistent_disk_csi_driver_config` block supports:
+
+* `enabled` - (Required) Whether the Compute Engine Persistent Disk CSI Driver is enabled.
+
+<a name="nested_addons_config_gke_backup_agent_config"></a>The `gke_backup_agent_config` block supports:
+
+* `enabled` - (Required) Whether the Backup for GKE agent addon is enabled.
+
+<a name="nested_addons_config_kalm_config"></a>The `kalm_config` block supports:
+
+* `enabled` - (Required) Whether the KALM addon is enabled.
+
+<a name="nested_addons_config_config_connector_config"></a>The `config_connector_config` block supports:
+
+* `enabled` - (Required) Whether the ConfigConnector addon is enabled.
+
+<a name="nested_addons_config_stateful_ha_config"></a>The `stateful_ha_config` block supports:
+
+* `enabled` - (Required) Whether the Stateful HA addon is enabled.
+
+<a name="nested_addons_config_slice_controller_config"></a>The `slice_controller_config` block supports:
+
+* `enabled` - (Required) Whether the slice controller addon is enabled.
+
+<a name="nested_addons_config_parallelstore_csi_driver_config"></a>The `parallelstore_csi_driver_config` block supports:
+
+* `enabled` - (Required) Whether the Parallelstore CSI driver addon is enabled.
+
+<a name="nested_addons_config_lustre_csi_driver_config"></a>The `lustre_csi_driver_config` block supports:
+
+* `enabled` - (Required) Whether the Lustre CSI driver is enabled for this cluster.
+
+* `enable_legacy_lustre_port` - (Optional) Allows the Lustre CSI driver to initialize LNet (the virtual networklayer for Lustre kernel module) using port 6988.
+    This flag is required to workaround a port conflict with the gke-metadata-server on GKE nodes.
+
+* `disable_multi_nic` - (Optional) When set to true, this disables multi-NIC support for the Lustre CSI driver. By default, GKE enables multi-NIC support, which allows the Lustre CSI driver to automatically detect and configure all suitable network interfaces on a node to maximize I/O performance for demanding workloads.
+
+<a name="nested_addons_config_pod_snapshot_config"></a>The `pod_snapshot_config` block supports:
+
+* `enabled` - (Required) Whether the Pod Snapshot addon is enabled for this cluster.
+
+<a name="nested_addons_config_slurm_operator_config"></a>The `slurm_operator_config` block supports:
+
+* `enabled` - (Required) Whether the Slurm Operator addon is enabled.
+
 <a name="nested_node_readiness_config"></a>The `node_readiness_config` block supports:
 
 * `enabled` - (Required) Enable the Node Readiness Controller addon for your cluster.
@@ -838,9 +909,9 @@ This block also contains several computed attributes, documented below.
 <a name="nested_managed_prometheus"></a>The `managed_prometheus` block supports:
 
 * `enabled` - (Required) Whether or not the managed collection is enabled.
-* `auto_monitoring_config` - (Optional) Configuration options for GKE Auto-Monitoring.
+* `auto_monitoring_config` - (Optional) Configuration options for GKE Auto-Monitoring. Structure is [documented below](#nested_auto_monitoring_config).
 
-<a name="auto_monitoring_config"></a>The `auto_monitoring_config` block supports:
+<a name="nested_auto_monitoring_config"></a>The `auto_monitoring_config` block supports:
 
 * `scope` - (Required) Whether or not to enable GKE Auto-Monitoring. Supported values include: `ALL`, `NONE`.
 
@@ -850,16 +921,17 @@ This block also contains several computed attributes, documented below.
 * `enable_relay` - (Required) Whether or not Relay is enabled.
 
 <a name="nested_maintenance_policy"></a>The `maintenance_policy` block supports:
-* `daily_maintenance_window` - (Optional) structure documented below.
-* `recurring_window` - (Optional) structure documented below
-* `recurring_maintenance_window` - (Optional) structure documented below
-* `maintenance_exclusion` - (Optional) structure documented below
-* `disruption_budget` - (Optional) structure documented below
+* `daily_maintenance_window` - (Optional) Time window specified for daily maintenance operations. Structure is [documented below](#nested_maintenance_policy_daily_maintenance_window).
+* `recurring_window` - (Optional) Time window for recurring maintenance operations. Structure is [documented below](#nested_maintenance_policy_recurring_window).
+* `recurring_maintenance_window` - (Optional) Defines a recurring window for maintenance operations. Structure is [documented below](#nested_maintenance_policy_recurring_maintenance_window).
+* `maintenance_exclusion` - (Optional) Exceptions to maintenance window. Non-emergency maintenance should not occur in these windows. A cluster can have up to 20 maintenance exclusions at a time [Maintenance Window and Exclusions](https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions). Structure is [documented below](#nested_maintenance_exclusion).
+* `disruption_budget` - (Optional) cluster control plane minor and patch version disruption interval. Structure is [documented below](#nested_disruption_budget).
 
 In beta, one of `recurring_window`, `recurring_maintenance_window` and `daily_maintenance_window` is required if a `maintenance_policy` block is supplied.
 
-* `daily_maintenance_window` - Time window specified for daily maintenance operations.
-    Specify `start_time` in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) format "HH:MM”,
+<a name="nested_maintenance_policy_daily_maintenance_window"></a>The `daily_maintenance_window` block supports:
+
+* `start_time` - (Required) Specify `start_time` in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) format "HH:MM”,
     where HH : \[00-23\] and MM : \[00-59\] GMT. For example:
 
 Examples:
@@ -871,7 +943,13 @@ maintenance_policy {
 }
 ```
 
-* `recurring_window` - Time window for recurring maintenance operations.
+<a name="nested_maintenance_policy_recurring_window"></a>The `recurring_window` block supports:
+
+* `start_time` - (Required) The start time of the window, in RFC3339 "Zulu" date format.
+
+* `end_time` - (Required) The end time of the window, in RFC3339 "Zulu" date format.
+
+* `recurrence` - (Required) Defines when the window recurs, in RFC5545 RRULE format.
 
 Specify `start_time` and `end_time` in [RFC3339](https://www.ietf.org/rfc/rfc3339.txt) "Zulu" date format.  The start time's date is
 the initial date that the window starts, and the end time is used for calculating duration.  Specify `recurrence` in
@@ -899,20 +977,15 @@ maintenance_policy {
 }
 ```
 
-* `recurring_maintenance_window` - Defines a recurring window for maintenance operations.
-  *   `delay_until`: (Optional) Specifies the initial date when the recurring window can start.
-      *   `day`: The day of the month (integer value between 1 and 31).
-      *   `month`: The month of the year (integer value between 1 and 12).
-      *   `year`: The year (integer value).
+<a name="nested_maintenance_policy_recurring_maintenance_window"></a>The `recurring_maintenance_window` block supports:
 
-  *   `window_start_time`: The time of day when each maintenance window instance begins.
-      *   `hours`: The hour of the day (integer value between 0 and 23).
-      *   `minutes`: The minute of the hour (integer value between 0 and 59).
-      *   `seconds`: The second of the minute (integer value between 0 and 59).
+* `delay_until` - (Optional) Specifies the initial date when the recurring window can start. Structure is [documented below](#nested_maintenance_policy_recurring_maintenance_window_delay_until).
 
-  *   `window_duration`: The length of each maintenance window instance. Specified as a sequence of decimal numbers, each with an optional fraction and a unit suffix, such as `"300s"`, `"1.5m"`, and `"2h45m"`. Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h". The value must be a positive duration.
+* `window_start_time` - (Required) The time of day when each maintenance window instance begins. Structure is [documented below](#nested_maintenance_policy_recurring_maintenance_window_window_start_time).
 
-  *   `recurrence`: Defines when the window recurs, using the [RFC5545](https://tools.ietf.org/html/rfc5545#section-3.8.5.3) RRULE format.
+* `window_duration` - (Required) The length of each maintenance window instance. Specified as a sequence of decimal numbers, each with an optional fraction and a unit suffix, such as `"300s"`, `"1.5m"`, and `"2h45m"`. Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h". The value must be a positive duration.
+
+* `recurrence` - (Required) Defines when the window recurs, using the [RFC5545](https://tools.ietf.org/html/rfc5545#section-3.8.5.3) RRULE format.
 
 Examples:
 ```
@@ -953,7 +1026,21 @@ maintenance_policy {
 }
 ```
 
-* `maintenance_exclusion` - Exceptions to maintenance window. Non-emergency maintenance should not occur in these windows. A cluster can have up to 20 maintenance exclusions at a time [Maintenance Window and Exclusions](https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions)
+<a name="nested_maintenance_policy_recurring_maintenance_window_delay_until"></a>The `delay_until` block supports:
+
+* `day` - (Required) The day of the month (integer value between 1 and 31).
+
+* `month` - (Required) The month of the year (integer value between 1 and 12).
+
+* `year` - (Required) The year (integer value).
+
+<a name="nested_maintenance_policy_recurring_maintenance_window_window_start_time"></a>The `window_start_time` block supports:
+
+* `hours` - (Required) The hour of the day (integer value between 0 and 23).
+
+* `minutes` - (Required) The minute of the hour (integer value between 0 and 59).
+
+* `seconds` - (Required) The second of the minute (integer value between 0 and 59).
 
 <a name="nested_maintenance_exclusion"></a>The `maintenance_exclusion` block supports:
 
@@ -999,8 +1086,6 @@ maintenance_policy {
   }
 }
 ```
-
-* `disruption_budget` - cluster control plane minor and patch version disruption interval.
 
 <a name="nested_disruption_budget"></a>The `disruption_budget` block supports:
 * `minor_version_disruption_interval` - (Optional) The minimum duration between two minor version upgrades of the control plane.
@@ -1098,7 +1183,7 @@ Structure is [documented below](#nested_additional_ip_ranges_config).
 
 <a name="nested_master_auth"></a>The `master_auth` block supports:
 
-* `client_certificate_config` - (Required) Whether client certificate authorization is enabled for this cluster.  For example:
+* `client_certificate_config` - (Required) Whether client certificate authorization is enabled for this cluster. Structure is [documented below](#nested_master_auth_client_certificate_config). For example:
 
 ```hcl
 master_auth {
@@ -1110,17 +1195,21 @@ master_auth {
 
 This block also contains several computed attributes, documented below.
 
+<a name="nested_master_auth_client_certificate_config"></a>The `client_certificate_config` block supports:
+
+* `issue_client_certificate` - (Required) Whether client certificate authorization is enabled for this cluster.
+
 <a name="nested_master_authorized_networks_config"></a>The `master_authorized_networks_config` block supports:
 
 * `cidr_blocks` - (Optional) External networks that can access the
-    Kubernetes cluster master through HTTPS.
+    Kubernetes cluster master through HTTPS. Structure is [documented below](#nested_master_authorized_networks_config_cidr_blocks).
 
 * `gcp_public_cidrs_access_enabled` - (Optional) Whether Kubernetes master is
     accessible via Google Compute Engine Public IPs.
 
 * `private_endpoint_enforcement_enabled` - (Optional) Whether authorized networks is enforced on the private endpoint or not.
 
-The `master_authorized_networks_config.cidr_blocks` block supports:
+<a name="nested_master_authorized_networks_config_cidr_blocks"></a>The `cidr_blocks` block supports:
 
 * `cidr_block` - (Optional) External network that can access Kubernetes master through HTTPS.
     Must be specified in CIDR notation.
@@ -1551,9 +1640,9 @@ node_pool_auto_config {
 
 <a name="nested_notification_config"></a>The `notification_config` block supports:
 
-* `pubsub` (Required) - The pubsub config for the cluster's upgrade notifications.
+* `pubsub` (Required) - The pubsub config for the cluster's upgrade notifications. Structure is [documented below](#nested_notification_config_pubsub).
 
-The `pubsub` block supports:
+<a name="nested_notification_config_pubsub"></a>The `pubsub` block supports:
 
 * `enabled` (Required) - Whether or not the notification config is enabled
 
@@ -1598,9 +1687,9 @@ notification_config {
 <a name="nested_secret_manager_config"></a>The `secret_manager_config` block supports:
 
 * `enabled` (Required) - Enable the Secret Manager add-on for this cluster.
-* `rotation_config` (Optional) - config for secret manager auto rotation. Structure is [documented below](#rotation_config)
+* `rotation_config` (Optional) - config for secret manager auto rotation. Structure is [documented below](#nested_secret_manager_config_rotation_config)
 
-<a name="rotation_config"></a>The `rotation_config` block supports:
+<a name="nested_secret_manager_config_rotation_config"></a>The `rotation_config` block supports:
 
 * `enabled` (Optional) - Enable the roation in Secret Manager add-on for this cluster.
 * `rotation_interval` (Optional) - The interval between two consecutive rotations. Default rotation interval is 2 minutes.
@@ -1608,9 +1697,9 @@ notification_config {
 <a name="nested_secret_sync_config"></a>The `secret_sync_config` block supports:
 
 * `enabled` (Required) - Enable the Sync as K8s secret feature for this cluster.
-* `rotation_config` (Optional) - config for secret sync auto rotation. Structure is [docuemented below](#sync_rotation_config)
+* `rotation_config` (Optional) - config for secret sync auto rotation. Structure is [documented below](#nested_secret_sync_config_rotation_config)
 
-<a name="sync_rotation_config"></a>The `rotation_config` block supports:
+<a name="nested_secret_sync_config_rotation_config"></a>The `rotation_config` block supports:
 
 * `enabled` (Optional) - Enable the roation in Sync as K8s secret feature for this cluster.
 * `rotation_interval` (Optional) - The interval between two consecutive rotations. Default rotation interval is 2 minutes.
@@ -1628,10 +1717,10 @@ notification_config {
 
 <a name="nested_control_plane_endpoints_config"></a>The `control_plane_endpoints_config` block supports:
 
-* `dns_endpoint_config` - (Optional) DNS endpoint configuration.
-* `ip_endpoints_config` - (Optional) IP endpoint configuration.
+* `dns_endpoint_config` - (Optional) DNS endpoint configuration. Structure is [documented below](#nested_control_plane_endpoints_config_dns_endpoint_config).
+* `ip_endpoints_config` - (Optional) IP endpoint configuration. Structure is [documented below](#nested_control_plane_endpoints_config_ip_endpoints_config).
 
-The `control_plane_endpoints_config.dns_endpoint_config` block supports:
+<a name="nested_control_plane_endpoints_config_dns_endpoint_config"></a>The `dns_endpoint_config` block supports:
 
 * `endpoint` - (Output) The cluster's DNS endpoint.
 
@@ -1641,7 +1730,7 @@ The `control_plane_endpoints_config.dns_endpoint_config` block supports:
 
 * `enable_k8s_certs_via_dns` - (Optional) Controls whether the k8s certs auth is allowed via Dns.
 
-The `control_plane_endpoints_config.ip_endpoints_config` block supports:
+<a name="nested_control_plane_endpoints_config_ip_endpoints_config"></a>The `ip_endpoints_config` block supports:
 
 * `enabled` - (Optional) Controls whether to allow direct IP access. Defaults to `true`.
 
@@ -2011,45 +2100,53 @@ linux_node_config {
 
 <a name="nested_containerd_config"></a>The `containerd_config` block supports:
 
-* `private_registry_access_config` (Optional) - Configuration for private container registries. There are two fields in this config:
+* `private_registry_access_config` (Optional) - Configuration for private container registries. Structure is [documented below](#nested_containerd_config_private_registry_access_config).
 
-  * `enabled` (Required) - Enables private registry config. If set to false, all other fields in this object must not be set.
+* `writable_cgroups` (Optional) - Configuration for writable cgroups. This allows containers to have a writable `/sys/fs/cgroup` directory, which is required for some workloads to create their own sub-cgroups. Structure is [documented below](#nested_containerd_config_writable_cgroups).
 
-  * `certificate_authority_domain_config` (Optional) - List of configuration objects for CA and domains. Each object identifies a certificate and its assigned domains. See [how to configure for private container registries](https://cloud.google.com/kubernetes-engine/docs/how-to/access-private-registries-private-certificates) for more detail.
-    * `fqdns` - (Required) List of fully-qualified-domain-names. IPv4s and port specification are supported.
-    * `gcp_secret_manager_certificate_config` - (Required) Parameters for configuring a certificate hosted in GCP SecretManager:
-      * `secret_uri` - (Required) URI for the secret that hosts a certificate. Must be in the format `projects/PROJECT_NUM/secrets/SECRET_NAME/versions/VERSION_OR_LATEST`.
+* `registry_hosts` (Optional) - Defines containerd registry host configuration. Each `registry_hosts` entry represents a `hosts.toml` file. See [customize containerd configuration in GKE nodes](https://docs.cloud.google.com/kubernetes-engine/docs/how-to/customize-containerd-configuration#registryHosts) for more detail. Structure is [documented below](#nested_containerd_config_registry_hosts).
 
-  Example:
-  ```hcl
-  certificate_authority_domain_config {
-    fqdns = [
-      "my.custom.domain",
-      "10.4.5.6",
-      "127.0.0.1:8888",
-    ]
-    gcp_secret_manager_certificate_config {
-      secret_uri = "projects/99999/secrets/my-ca-cert/versions/1"
-    }
+<a name="nested_containerd_config_private_registry_access_config"></a>The `private_registry_access_config` block supports:
+
+* `enabled` (Required) - Enables private registry config. If set to false, all other fields in this object must not be set.
+
+* `certificate_authority_domain_config` (Optional) - List of configuration objects for CA and domains. Each object identifies a certificate and its assigned domains. See [how to configure for private container registries](https://cloud.google.com/kubernetes-engine/docs/how-to/access-private-registries-private-certificates) for more detail. Structure is [documented below](#nested_containerd_config_certificate_authority_domain_config).
+
+<a name="nested_containerd_config_certificate_authority_domain_config"></a>The `certificate_authority_domain_config` block supports:
+
+* `fqdns` - (Required) List of fully-qualified-domain-names. IPv4s and port specification are supported.
+
+* `gcp_secret_manager_certificate_config` - (Required) Parameters for configuring a certificate hosted in GCP SecretManager. Structure is [documented below](#nested_containerd_config_gcp_secret_manager_certificate_config).
+
+Example:
+```hcl
+certificate_authority_domain_config {
+  fqdns = [
+    "my.custom.domain",
+    "10.4.5.6",
+    "127.0.0.1:8888",
+  ]
+  gcp_secret_manager_certificate_config {
+    secret_uri = "projects/99999/secrets/my-ca-cert/versions/1"
   }
-  ```
+}
+```
 
-* `writable_cgroups` (Optional) - Configuration for writable cgroups. This allows containers to have a writable `/sys/fs/cgroup` directory, which is required for some workloads to create their own sub-cgroups. The `writable_cgroups` block supports:
+<a name="nested_containerd_config_gcp_secret_manager_certificate_config"></a>The `gcp_secret_manager_certificate_config` block supports:
 
-  * `enabled` (Required) - Whether writable cgroups are enabled.
+* `secret_uri` - (Required) URI for the secret that hosts a certificate. Must be in the format `projects/PROJECT_NUM/secrets/SECRET_NAME/versions/VERSION_OR_LATEST`.
 
-* `registry_hosts` (Optional) - Defines containerd registry host configuration. Each `registry_hosts` entry represents a `hosts.toml` file. See [customize containerd configuration in GKE nodes](https://docs.cloud.google.com/kubernetes-engine/docs/how-to/customize-containerd-configuration#registryHosts) for more detail.
-  * `server` - (Required) Defines the host name of the registry server.
-  * `hosts` - (Optional) Configures a list of host-specific configurations for the server:
-    * `host` - (Required) Configures the registry host/mirror.
-    * `capabilities` - (Optional) Represent the capabilities of the registry host, specifying what operations a host is capable of performing. Valid values include `HOST_CAPABILITY_PULL`, `HOST_CAPABILITY_RESOLVE`, `HOST_CAPABILITY_PUSH`.
-    * `override_path` - (Optional) Indicates the host's API root endpoint is defined in the URL path rather than by the API specification.
-    * `dial_timeout` - (Optional) Specifies the maximum duration allowed for a connection attempt to complete.
-    * `header` - (Optional) Configures the registry host headers. Each header contains `key` (Required, string) and `value` (Required, list of strings).
-    * `ca` - (Optional) Configures the registry host certificate. Contains `gcp_secret_manager_secret_uri` (Optional).
-    * `client` - (Optional) Configures the registry host client certificate and key. Contains `cert` (Required) with `gcp_secret_manager_secret_uri` (Optional) and `key` (Optional) with `gcp_secret_manager_secret_uri` (Optional).
+<a name="nested_containerd_config_writable_cgroups"></a>The `writable_cgroups` block supports:
 
-  Example:
+* `enabled` (Required) - Whether writable cgroups are enabled.
+
+<a name="nested_containerd_config_registry_hosts"></a>The `registry_hosts` block supports:
+
+* `server` - (Required) Defines the host name of the registry server.
+
+* `hosts` - (Optional) Configures a list of host-specific configurations for the server. Structure is [documented below](#nested_containerd_config_registry_hosts_hosts).
+
+Example:
 ```hcl
 registry_hosts {
   server = "REGISTRY_SERVER_FQDN"
@@ -2083,6 +2180,46 @@ registry_hosts {
   }
 }
 ```
+
+<a name="nested_containerd_config_registry_hosts_hosts"></a>The `hosts` block supports:
+
+* `host` - (Required) Configures the registry host/mirror.
+
+* `capabilities` - (Optional) Represent the capabilities of the registry host, specifying what operations a host is capable of performing. Valid values include `HOST_CAPABILITY_PULL`, `HOST_CAPABILITY_RESOLVE`, `HOST_CAPABILITY_PUSH`.
+
+* `override_path` - (Optional) Indicates the host's API root endpoint is defined in the URL path rather than by the API specification.
+
+* `dial_timeout` - (Optional) Specifies the maximum duration allowed for a connection attempt to complete.
+
+* `header` - (Optional) Configures the registry host headers. Structure is [documented below](#nested_containerd_config_registry_hosts_hosts_header).
+
+* `ca` - (Optional) Configures the registry host certificate. Structure is [documented below](#nested_containerd_config_registry_hosts_hosts_ca).
+
+* `client` - (Optional) Configures the registry host client certificate and key. Structure is [documented below](#nested_containerd_config_registry_hosts_hosts_client).
+
+<a name="nested_containerd_config_registry_hosts_hosts_header"></a>The `header` block supports:
+
+* `key` - (Required) Configures the header key.
+
+* `value` - (Required) Configures the header value, as a list of strings.
+
+<a name="nested_containerd_config_registry_hosts_hosts_ca"></a>The `ca` block supports:
+
+* `gcp_secret_manager_secret_uri` - (Optional) URI for the Secret Manager secret that hosts the certificate.
+
+<a name="nested_containerd_config_registry_hosts_hosts_client"></a>The `client` block supports:
+
+* `cert` - (Required) Configures the client certificate. Structure is [documented below](#nested_containerd_config_registry_hosts_hosts_client_cert).
+
+* `key` - (Optional) Configures the client private key. Structure is [documented below](#nested_containerd_config_registry_hosts_hosts_client_key).
+
+<a name="nested_containerd_config_registry_hosts_hosts_client_cert"></a>The `cert` block supports:
+
+* `gcp_secret_manager_secret_uri` - (Optional) URI for the Secret Manager secret that hosts the client certificate.
+
+<a name="nested_containerd_config_registry_hosts_hosts_client_key"></a>The `key` block supports:
+
+* `gcp_secret_manager_secret_uri` - (Optional) URI for the Secret Manager secret that hosts the private key.
 
 <a name="nested_vertical_pod_autoscaling"></a>The `vertical_pod_autoscaling` block supports:
 
@@ -2139,11 +2276,11 @@ registry_hosts {
 
 * `desired_tier` - (Optional) (DEPRECATED) Sets the tier of the cluster. Available options include `STANDARD` and `ENTERPRISE`. Deprecated as GKE Enterprise features are now available without an Enterprise tier. See https://cloud.google.com/blog/products/containers-kubernetes/gke-gets-new-pricing-and-capabilities-on-10th-birthday for the announcement of this change.
 
-<a name="anonymous_authentication_config"></a>The `anonymous_authentication_config` block supports:
+<a name="nested_anonymous_authentication_config"></a>The `anonymous_authentication_config` block supports:
 
 * `mode` - (Optional) Sets or removes authentication restrictions. Available options include `LIMITED` and `ENABLED`.
 
-<a name="node_creation_config"></a>The `node_creation_config` block supports:
+<a name="nested_node_creation_config"></a>The `node_creation_config` block supports:
 
 * `node_creation_mode` - (Required) Sets the node creation mode. Available options include `VIA_KUBELET` and `VIA_CONTROL_PLANE`.
 
@@ -2206,7 +2343,7 @@ exported:
   notation (e.g. `1.2.3.4/29`). Service addresses are typically put in the last
   `/16` from the container CIDR.
 
-* `cluster_autoscaling.0.auto_provisioning_defaults.0.management.0.upgrade_options` - Specifies the [Auto Upgrade knobs](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/NodeManagement#AutoUpgradeOptions) for the node pool.
+* `cluster_autoscaling.0.auto_provisioning_defaults.0.management.0.upgrade_options` - Specifies the [Auto Upgrade knobs](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/NodeManagement#AutoUpgradeOptions) for the node pool. Structure is [documented below](#nested_cluster_autoscaling_auto_provisioning_defaults_management_upgrade_options).
 
 * `node_config.0.effective_taints` - List of kubernetes taints applied to each node. Structure is [documented above](#nested_taint).
 
@@ -2225,6 +2362,12 @@ exported:
 * `user_managed_keys_config.0.control_plane_disk_encryption_key_versions` - The Cloud KMS cryptoKey versions to use for Confidential Hyperdisk on the control plane nodes.
 
 * `tpu_config.0.ipv4_cidr_block` - The IPv4 CIDR block reserved for Cloud TPU in the VPC.
+
+<a name="nested_cluster_autoscaling_auto_provisioning_defaults_management_upgrade_options"></a>The `upgrade_options` block contains:
+
+* `auto_upgrade_start_time` - This field is set when upgrades are about to commence with the approximate start time for the upgrades, in RFC3339 text format.
+
+* `description` - This field is set when upgrades are about to commence with the description of the upgrade.
 
 ## Timeouts
 
