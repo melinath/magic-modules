@@ -241,12 +241,18 @@ resource "google_dataproc_cluster" "accelerated_cluster" {
 ```
 
 * `metastore_config` (Optional) The Hive Metastore configuration for this workload. 
-
-  * `dataproc_metastore_service` (Required) Resource name of an existing Dataproc Metastore service.
+   Structure is [documented below](#nested_virtual_cluster_config_auxiliary_services_config_metastore_config).
 
 * `spark_history_server_config` (Optional) The Spark History Server configuration for the workload.
+   Structure is [documented below](#nested_virtual_cluster_config_auxiliary_services_config_spark_history_server_config).
 
-  * `dataproc_cluster` (Optional) Resource name of an existing Dataproc Cluster to act as a Spark History Server for the workload.
+<a name="nested_virtual_cluster_config_auxiliary_services_config_metastore_config"></a>The `metastore_config` block supports:
+
+* `dataproc_metastore_service` (Required) Resource name of an existing Dataproc Metastore service.
+
+<a name="nested_virtual_cluster_config_auxiliary_services_config_spark_history_server_config"></a>The `spark_history_server_config` block supports:
+
+* `dataproc_cluster` (Optional) Resource name of an existing Dataproc Cluster to act as a Spark History Server for the workload.
 - - -
 
 <a name="nested_kubernetes_cluster_config"></a>The `kubernetes_cluster_config` block supports:
@@ -300,59 +306,77 @@ resource "google_dataproc_cluster" "accelerated_cluster" {
    If not specified, the name of the Dataproc Cluster is used.
 
 * `kubernetes_software_config` (Required) The software configuration for this Dataproc cluster running on Kubernetes.
-
-  * `component_version` (Required) The components that should be installed in this Dataproc cluster. The key must be a string from the   
-     KubernetesComponent enumeration. The value is the version of the software to be installed. At least one entry must be specified.
-    * **NOTE** : `component_version[SPARK]` is mandatory to set, or the creation of the cluster will fail.
-
-  * `properties` (Optional) The properties to set on daemon config files. Property keys are specified in prefix:property format, 
-     for example spark:spark.kubernetes.container.image.
+   Structure is [documented below](#nested_virtual_cluster_config_kubernetes_cluster_config_kubernetes_software_config).
 
 * `gke_cluster_config` (Required) The configuration for running the Dataproc cluster on GKE.
+   Structure is [documented below](#nested_virtual_cluster_config_kubernetes_cluster_config_gke_cluster_config).
 
-  * `gke_cluster_target` (Optional) A target GKE cluster to deploy to. It must be in the same project and region as the Dataproc cluster 
-     (the GKE cluster can be zonal or regional)
+<a name="nested_virtual_cluster_config_kubernetes_cluster_config_kubernetes_software_config"></a>The `kubernetes_software_config` block supports:
 
-  * `node_pool_target` (Optional) GKE node pools where workloads will be scheduled. At least one node pool must be assigned the `DEFAULT` 
-     GkeNodePoolTarget.Role. If a GkeNodePoolTarget is not specified, Dataproc constructs a `DEFAULT` GkeNodePoolTarget. 
-     Each role can be given to only one GkeNodePoolTarget. All node pools must have the same location settings.
+* `component_version` (Required) The components that should be installed in this Dataproc cluster. The key must be a string from the   
+   KubernetesComponent enumeration. The value is the version of the software to be installed. At least one entry must be specified.
+  * **NOTE** : `component_version[SPARK]` is mandatory to set, or the creation of the cluster will fail.
 
-    * `node_pool` (Required) The target GKE node pool.
+* `properties` (Optional) The properties to set on daemon config files. Property keys are specified in prefix:property format, 
+   for example spark:spark.kubernetes.container.image.
 
-    * `roles` (Required) The roles associated with the GKE node pool. 
-       One of `"DEFAULT"`, `"CONTROLLER"`, `"SPARK_DRIVER"` or `"SPARK_EXECUTOR"`.
+<a name="nested_virtual_cluster_config_kubernetes_cluster_config_gke_cluster_config"></a>The `gke_cluster_config` block supports:
 
-    * `node_pool_config` (Input only) The configuration for the GKE node pool. 
-       If specified, Dataproc attempts to create a node pool with the specified shape. 
-       If one with the same name already exists, it is verified against all specified fields. 
-       If a field differs, the virtual cluster creation will fail.
+* `gke_cluster_target` (Optional) A target GKE cluster to deploy to. It must be in the same project and region as the Dataproc cluster 
+   (the GKE cluster can be zonal or regional)
 
-      * `autoscaling` (Optional) The autoscaler configuration for this node pool. 
-         The autoscaler is enabled only when a valid configuration is present.
+* `node_pool_target` (Optional) GKE node pools where workloads will be scheduled. At least one node pool must be assigned the `DEFAULT` 
+   GkeNodePoolTarget.Role. If a GkeNodePoolTarget is not specified, Dataproc constructs a `DEFAULT` GkeNodePoolTarget. 
+   Each role can be given to only one GkeNodePoolTarget. All node pools must have the same location settings.
+   Structure is [documented below](#nested_virtual_cluster_config_kubernetes_cluster_config_gke_cluster_config_node_pool_target).
 
-        * `min_node_count` (Optional) The minimum number of nodes in the node pool. Must be >= 0 and <= maxNodeCount.
+<a name="nested_virtual_cluster_config_kubernetes_cluster_config_gke_cluster_config_node_pool_target"></a>The `node_pool_target` block supports:
 
-        * `max_node_count` (Optional) The maximum number of nodes in the node pool. Must be >= minNodeCount, and must be > 0.
+* `node_pool` (Required) The target GKE node pool.
 
-      * `config` (Optional) The node pool configuration.
+* `roles` (Required) The roles associated with the GKE node pool. 
+   One of `"DEFAULT"`, `"CONTROLLER"`, `"SPARK_DRIVER"` or `"SPARK_EXECUTOR"`.
 
-        * `machine_type` (Optional) The name of a Compute Engine machine type.
+* `node_pool_config` (Input only) The configuration for the GKE node pool. 
+   If specified, Dataproc attempts to create a node pool with the specified shape. 
+   If one with the same name already exists, it is verified against all specified fields. 
+   If a field differs, the virtual cluster creation will fail.
+   Structure is [documented below](#nested_virtual_cluster_config_kubernetes_cluster_config_gke_cluster_config_node_pool_target_node_pool_config).
 
-        * `local_ssd_count` (Optional) The number of local SSD disks to attach to the node, 
-           which is limited by the maximum number of disks allowable per zone.
+<a name="nested_virtual_cluster_config_kubernetes_cluster_config_gke_cluster_config_node_pool_target_node_pool_config"></a>The `node_pool_config` block supports:
 
-        * `preemptible` (Optional) Whether the nodes are created as preemptible VM instances. 
-           Preemptible nodes cannot be used in a node pool with the CONTROLLER role or in the DEFAULT node pool if the 
-           CONTROLLER role is not assigned (the DEFAULT node pool will assume the CONTROLLER role).
+* `autoscaling` (Optional) The autoscaler configuration for this node pool. 
+   The autoscaler is enabled only when a valid configuration is present.
+   Structure is [documented below](#nested_virtual_cluster_config_kubernetes_cluster_config_gke_cluster_config_node_pool_target_node_pool_config_autoscaling).
 
-        * `min_cpu_platform` (Optional) Minimum CPU platform to be used by this instance. 
-           The instance may be scheduled on the specified or a newer CPU platform. 
-           Specify the friendly names of CPU platforms, such as "Intel Haswell" or "Intel Sandy Bridge".
+* `config` (Optional) The node pool configuration.
+   Structure is [documented below](#nested_virtual_cluster_config_kubernetes_cluster_config_gke_cluster_config_node_pool_target_node_pool_config_config).
 
-        * `spot` (Optional) Spot flag for enabling Spot VM, which is a rebrand of the existing preemptible flag.
+* `locations` (Optional) The list of Compute Engine zones where node pool nodes associated 
+   with a Dataproc on GKE virtual cluster will be located.
 
-      * `locations` (Optional) The list of Compute Engine zones where node pool nodes associated 
-         with a Dataproc on GKE virtual cluster will be located.
+<a name="nested_virtual_cluster_config_kubernetes_cluster_config_gke_cluster_config_node_pool_target_node_pool_config_autoscaling"></a>The `autoscaling` block supports:
+
+* `min_node_count` (Optional) The minimum number of nodes in the node pool. Must be >= 0 and <= maxNodeCount.
+
+* `max_node_count` (Optional) The maximum number of nodes in the node pool. Must be >= minNodeCount, and must be > 0.
+
+<a name="nested_virtual_cluster_config_kubernetes_cluster_config_gke_cluster_config_node_pool_target_node_pool_config_config"></a>The `config` block supports:
+
+* `machine_type` (Optional) The name of a Compute Engine machine type.
+
+* `local_ssd_count` (Optional) The number of local SSD disks to attach to the node, 
+   which is limited by the maximum number of disks allowable per zone.
+
+* `preemptible` (Optional) Whether the nodes are created as preemptible VM instances. 
+   Preemptible nodes cannot be used in a node pool with the CONTROLLER role or in the DEFAULT node pool if the 
+   CONTROLLER role is not assigned (the DEFAULT node pool will assume the CONTROLLER role).
+
+* `min_cpu_platform` (Optional) Minimum CPU platform to be used by this instance. 
+   The instance may be scheduled on the specified or a newer CPU platform. 
+   Specify the friendly names of CPU platforms, such as "Intel Haswell" or "Intel Sandy Bridge".
+
+* `spot` (Optional) Spot flag for enabling Spot VM, which is a rebrand of the existing preemptible flag.
 - - -
 
 <a name="nested_cluster_config"></a>The `cluster_config` block supports:
@@ -391,6 +415,8 @@ resource "google_dataproc_cluster" "accelerated_cluster" {
 * `cluster_tier` - (Optional) The tier of the cluster.
 
 * `engine` - (Optional) The cluster engine.
+
+* `cluster_type` - (Optional) The type of the cluster.
 
 * `gce_cluster_config` (Optional) Common config settings for resources of Google Compute Engine cluster
    instances, applicable to all instances in the cluster. Structure [defined below](#nested_gce_cluster_config).
@@ -510,24 +536,38 @@ resource "google_dataproc_cluster" "accelerated_cluster" {
    (see [Secure tags](https://cloud.google.com/dataproc/docs/guides/use-secure-tags)).
 
 * `reservation_affinity` - (Optional) Reservation Affinity for consuming zonal reservation.
-    * `consume_reservation_type` - (Optional) Corresponds to the type of reservation consumption.
-    * `key` - (Optional) Corresponds to the label key of reservation resource.
-    * `values` - (Optional) Corresponds to the label values of reservation resource.
+   Structure is [documented below](#nested_cluster_config_gce_cluster_config_reservation_affinity).
 
 * `node_group_affinity` - (Optional) Node Group Affinity for sole-tenant clusters.
-    * `node_group_uri` - (Required) The URI of a sole-tenant node group resource that the cluster will be created on.
+   Structure is [documented below](#nested_cluster_config_gce_cluster_config_node_group_affinity).
 
 * `confidential_instance_config` - (Optional) Confidential Instance Config for clusters using [Confidential VMs](https://cloud.google.com/dataproc/docs/concepts/configuring-clusters/confidential-compute)
-    * `enable_confidential_compute` - (Optional) Defines whether the instance should have confidential compute enabled. `enable_confidential_compute` is deprecated and will be removed in a future major release. Use `confidential_instance_type` instead.
-    
-    * `confidential_instance_type` - (Optional) Defines the confidential compute type of the instance. Valid values are `"CONFIDENTIAL_INSTANCE_TYPE_UNSPECIFIED"`, `"SEV"`, `"SEV_SNP"`, `"TDX"`.
+   Structure is [documented below](#nested_cluster_config_gce_cluster_config_confidential_instance_config).
 
 * `shielded_instance_config` (Optional) Shielded Instance Config for clusters using [Compute Engine Shielded VMs](https://cloud.google.com/security/shielded-cloud/shielded-vm).
+   Structure is [documented below](#nested_cluster_config_gce_cluster_config_shielded_instance_config).
+
+<a name="nested_cluster_config_gce_cluster_config_reservation_affinity"></a>The `cluster_config.gce_cluster_config.reservation_affinity` block supports:
+
+* `consume_reservation_type` - (Optional) Corresponds to the type of reservation consumption.
+
+* `key` - (Optional) Corresponds to the label key of reservation resource.
+
+* `values` - (Optional) Corresponds to the label values of reservation resource.
+
+<a name="nested_cluster_config_gce_cluster_config_node_group_affinity"></a>The `cluster_config.gce_cluster_config.node_group_affinity` block supports:
+
+* `node_group_uri` - (Required) The URI of a sole-tenant node group resource that the cluster will be created on.
+
+<a name="nested_cluster_config_gce_cluster_config_confidential_instance_config"></a>The `cluster_config.gce_cluster_config.confidential_instance_config` block supports:
+
+* `enable_confidential_compute` - (Optional) Defines whether the instance should have confidential compute enabled. `enable_confidential_compute` is deprecated and will be removed in a future major release. Use `confidential_instance_type` instead.
+
+* `confidential_instance_type` - (Optional) Defines the confidential compute type of the instance. Valid values are `"CONFIDENTIAL_INSTANCE_TYPE_UNSPECIFIED"`, `"SEV"`, `"SEV_SNP"`, `"TDX"`.
 
 - - -
 
-
-The `cluster_config.gce_cluster_config.shielded_instance_config` block supports:
+<a name="nested_cluster_config_gce_cluster_config_shielded_instance_config"></a>The `cluster_config.gce_cluster_config.shielded_instance_config` block supports:
 
 ```hcl
 cluster_config{
@@ -601,64 +641,104 @@ cluster_config {
     for more information.
 
 * `disk_config` (Optional) Disk Config
+   Structure is [documented below](#nested_cluster_config_master_config_disk_config).
 
-	* `boot_disk_type` - (Optional) The disk type of the primary disk attached to each node.
-	One of `"pd-ssd"` or `"pd-standard"`. Defaults to `"pd-standard"`.
-
-	* `boot_disk_size_gb` - (Optional, Computed) Size of the primary disk attached to each node, specified
-	in GB. The primary disk contains the boot volume and system libraries, and the
-	smallest allowed disk size is 10GB. GCP will default to a predetermined
-	computed value if not set (currently 500GB). Note: If SSDs are not
-	attached, it also contains the HDFS data blocks and Hadoop working directories.
-
-	* `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle.
-
-	* `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle.
-
-	* `num_local_ssds` - (Optional) The amount of local SSD disks that will be
-	attached to each master cluster node. Defaults to 0.
-
-	* `local_ssd_interface` - Optional. Interface type of local SSDs (default is "scsi").
-	Valid values: "scsi" (Small Computer System Interface), "nvme" (Non-Volatile
-	Memory Express). See
-	[local SSD performance](https://cloud.google.com/compute/docs/disks/local-ssd#performance).
-
-        * `attached_disk_config` - (Optional) Attached disk configuration.
-            * `disk_size_gb` - (Optional) Size of the attached disk, specified in GB.
-            * `disk_type` - (Optional, Deprecated) The disk type of the attached disk. Such as "pd-ssd" or "pd-standard". `disk_type` is deprecated and will be removed in a future major release. Use `type` instead.
-            * `type` - (Optional) The disk type of the attached disk. Currently only supports Hyperdisks: "hyperdisk-balanced", "hyperdisk-extreme", "hyperdisk-ml", "hyperdisk-throughput".
-            * `provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
-            * `provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
 * `instance_flexibility_policy` (Optional) Instance flexibility Policy allowing a mixture of VM shapes.
-
-    * `instance_selection_list` - (Optional) List of instance selection options that the group will use when creating new VMs.
-        * `machine_types` - (Optional) Full machine-type names, e.g. `"n1-standard-16"`.
-
-        * `rank` - (Optional) Preference of this instance selection. A lower number means higher preference. Dataproc will first try to create a VM based on the machine-type with priority rank and fallback to next rank based on availability. Machine types and instance selections with the same priority have the same preference.
-
-        * `disk_config` - (Optional) Disk configuration to apply to the instances in this instance selection.
-            * `boot_disk_size_gb` - (Optional) Size of the primary disk attached to each node, specified in GB. The smallest allowed disk size is 10GB.
-            * `boot_disk_type` - (Optional) The disk type of the primary disk attached to each node. Such as "pd-ssd" or "pd-standard".
-            * `num_local_ssds` - (Optional) The amount of local SSD disks that will be attached to each cluster node. Defaults to 0.
-            * `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
-            * `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
-            * `local_ssd_interface` - (Optional) Interface type of local SSDs (no Local SSDs or NVMe).
-            * `attached_disk_config` - (Optional) Attached disk configuration.
-                * `disk_size_gb` - (Optional) Size of the attached disk, specified in GB.
-                * `disk_type` - (Optional, Deprecated) The disk type of the attached disk. Such as "pd-ssd" or "pd-standard". `disk_type` is deprecated and will be removed in a future major release. Use `type` instead.
-                * `type` - (Optional) The disk type of the attached disk. Currently only supports Hyperdisks: "hyperdisk-balanced", "hyperdisk-extreme", "hyperdisk-ml", "hyperdisk-throughput".
-                * `provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
-                * `provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+   Structure is [documented below](#nested_cluster_config_master_config_instance_flexibility_policy).
 
 * `accelerators` (Optional) The Compute Engine accelerator (GPU) configuration for these instances. Can be specified multiple times.
-
-    * `accelerator_type` - (Required) The short name of the accelerator type to expose to this instance. For example, `nvidia-tesla-k80`.
-
-    * `accelerator_count` - (Required) The number of the accelerator cards of this type exposed to this instance. Often restricted to one of `1`, `2`, `4`, or `8`.
+   Structure is [documented below](#nested_cluster_config_master_config_accelerators).
 
 ~> The Cloud Dataproc API can return unintuitive error messages when using accelerators; even when you have defined an accelerator, Auto Zone Placement does not exclusively select
 zones that have that accelerator available. If you get a 400 error that the accelerator can't be found, this is a likely cause. Make sure you check [accelerator availability by zone](https://cloud.google.com/compute/docs/reference/rest/v1/acceleratorTypes/list)
 if you are trying to use accelerators in a given zone.
+
+<a name="nested_cluster_config_master_config_disk_config"></a>The `cluster_config.master_config.disk_config` block supports:
+
+* `boot_disk_type` - (Optional) The disk type of the primary disk attached to each node.
+   One of `"pd-ssd"` or `"pd-standard"`. Defaults to `"pd-standard"`.
+
+* `boot_disk_size_gb` - (Optional, Computed) Size of the primary disk attached to each node, specified
+   in GB. The primary disk contains the boot volume and system libraries, and the
+   smallest allowed disk size is 10GB. GCP will default to a predetermined
+   computed value if not set (currently 500GB). Note: If SSDs are not
+   attached, it also contains the HDFS data blocks and Hadoop working directories.
+
+* `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle.
+
+* `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle.
+
+* `num_local_ssds` - (Optional) The amount of local SSD disks that will be
+   attached to each master cluster node. Defaults to 0.
+
+* `local_ssd_interface` - Optional. Interface type of local SSDs (default is "scsi").
+   Valid values: "scsi" (Small Computer System Interface), "nvme" (Non-Volatile
+   Memory Express). See
+   [local SSD performance](https://cloud.google.com/compute/docs/disks/local-ssd#performance).
+
+* `attached_disk_config` - (Optional) Attached disk configuration.
+   Structure is [documented below](#nested_cluster_config_master_config_disk_config_attached_disk_config).
+
+<a name="nested_cluster_config_master_config_disk_config_attached_disk_config"></a>The `attached_disk_config` block supports:
+
+* `disk_size_gb` - (Optional) Size of the attached disk, specified in GB.
+
+* `disk_type` - (Optional, Deprecated) The disk type of the attached disk. Such as "pd-ssd" or "pd-standard". `disk_type` is deprecated and will be removed in a future major release. Use `type` instead.
+
+* `type` - (Optional) The disk type of the attached disk. Currently only supports Hyperdisks: "hyperdisk-balanced", "hyperdisk-extreme", "hyperdisk-ml", "hyperdisk-throughput".
+
+* `provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
+
+* `provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+
+<a name="nested_cluster_config_master_config_instance_flexibility_policy"></a>The `cluster_config.master_config.instance_flexibility_policy` block supports:
+
+* `instance_selection_list` - (Optional) List of instance selection options that the group will use when creating new VMs.
+   Structure is [documented below](#nested_cluster_config_master_config_instance_flexibility_policy_instance_selection_list).
+
+<a name="nested_cluster_config_master_config_instance_flexibility_policy_instance_selection_list"></a>The `instance_selection_list` block supports:
+
+* `machine_types` - (Optional) Full machine-type names, e.g. `"n1-standard-16"`.
+
+* `rank` - (Optional) Preference of this instance selection. A lower number means higher preference. Dataproc will first try to create a VM based on the machine-type with priority rank and fallback to next rank based on availability. Machine types and instance selections with the same priority have the same preference.
+
+* `disk_config` - (Optional) Disk configuration to apply to the instances in this instance selection.
+   Structure is [documented below](#nested_cluster_config_master_config_instance_flexibility_policy_instance_selection_list_disk_config).
+
+<a name="nested_cluster_config_master_config_instance_flexibility_policy_instance_selection_list_disk_config"></a>The `disk_config` block supports:
+
+* `boot_disk_size_gb` - (Optional) Size of the primary disk attached to each node, specified in GB. The smallest allowed disk size is 10GB.
+
+* `boot_disk_type` - (Optional) The disk type of the primary disk attached to each node. Such as "pd-ssd" or "pd-standard".
+
+* `num_local_ssds` - (Optional) The amount of local SSD disks that will be attached to each cluster node. Defaults to 0.
+
+* `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
+
+* `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+
+* `local_ssd_interface` - (Optional) Interface type of local SSDs (no Local SSDs or NVMe).
+
+* `attached_disk_config` - (Optional) Attached disk configuration.
+   Structure is [documented below](#nested_cluster_config_master_config_instance_flexibility_policy_instance_selection_list_disk_config_attached_disk_config).
+
+<a name="nested_cluster_config_master_config_instance_flexibility_policy_instance_selection_list_disk_config_attached_disk_config"></a>The `attached_disk_config` block supports:
+
+* `disk_size_gb` - (Optional) Size of the attached disk, specified in GB.
+
+* `disk_type` - (Optional, Deprecated) The disk type of the attached disk. Such as "pd-ssd" or "pd-standard". `disk_type` is deprecated and will be removed in a future major release. Use `type` instead.
+
+* `type` - (Optional) The disk type of the attached disk. Currently only supports Hyperdisks: "hyperdisk-balanced", "hyperdisk-extreme", "hyperdisk-ml", "hyperdisk-throughput".
+
+* `provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
+
+* `provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+
+<a name="nested_cluster_config_master_config_accelerators"></a>The `cluster_config.master_config.accelerators` block supports:
+
+* `accelerator_type` - (Required) The short name of the accelerator type to expose to this instance. For example, `nvidia-tesla-k80`.
+
+* `accelerator_count` - (Required) The number of the accelerator cards of this type exposed to this instance. Often restricted to one of `1`, `2`, `4`, or `8`.
 
 - - -
 
@@ -716,63 +796,105 @@ cluster_config {
    for details about which CPU families are available (and defaulted) for each zone.
 
 * `disk_config` (Optional) Disk Config
-
-    * `boot_disk_type` - (Optional) The disk type of the primary disk attached to each node.
-	One of `"pd-ssd"` or `"pd-standard"`. Defaults to `"pd-standard"`.
-
-    * `boot_disk_size_gb` - (Optional, Computed) Size of the primary disk attached to each worker node, specified
-    in GB. The smallest allowed disk size is 10GB. GCP will default to a predetermined
-    computed value if not set (currently 500GB). Note: If SSDs are not
-	attached, it also contains the HDFS data blocks and Hadoop working directories.
-
-    * `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle.
-
-    * `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle.
-
-    * `num_local_ssds` - (Optional) The amount of local SSD disks that will be
-	attached to each worker cluster node. Defaults to 0.
-
-    * `attached_disk_config` - (Optional) Attached disk configuration.
-        * `disk_size_gb` - (Optional) Size of the attached disk, specified in GB.
-        * `disk_type` - (Optional, Deprecated) The disk type of the attached disk. Such as "pd-ssd" or "pd-standard". `disk_type` is deprecated and will be removed in a future major release. Use `type` instead.
-        * `type` - (Optional) The disk type of the attached disk. Currently only supports Hyperdisks: "hyperdisk-balanced", "hyperdisk-extreme", "hyperdisk-ml", "hyperdisk-throughput".
-        * `provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
-        * `provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+   Structure is [documented below](#nested_cluster_config_worker_config_disk_config).
 
 * `image_uri` (Optional) The URI for the image to use for this worker.  See [the guide](https://cloud.google.com/dataproc/docs/guides/dataproc-images)
     for more information.
 
 * `min_num_instances` (Optional) The minimum number of primary worker instances to create.  If `min_num_instances` is set, cluster creation will succeed if the number of primary workers created is at least equal to the `min_num_instances` number.
+
 * `instance_flexibility_policy` (Optional) Instance flexibility Policy allowing a mixture of VM shapes.
-
-    * `instance_selection_list` - (Optional) List of instance selection options that the group will use when creating new VMs.
-        * `machine_types` - (Optional) Full machine-type names, e.g. `"n1-standard-16"`.
-
-        * `rank` - (Optional) Preference of this instance selection. A lower number means higher preference. Dataproc will first try to create a VM based on the machine-type with priority rank and fallback to next rank based on availability. Machine types and instance selections with the same priority have the same preference.
-
-        * `disk_config` - (Optional) Disk configuration to apply to the instances in this instance selection.
-            * `boot_disk_size_gb` - (Optional) Size of the primary disk attached to each node, specified in GB. The smallest allowed disk size is 10GB.
-            * `boot_disk_type` - (Optional) The disk type of the primary disk attached to each node. Such as "pd-ssd" or "pd-standard".
-            * `num_local_ssds` - (Optional) The amount of local SSD disks that will be attached to each cluster node. Defaults to 0.
-            * `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
-            * `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
-            * `local_ssd_interface` - (Optional) Interface type of local SSDs (no Local SSDs or NVMe).
-            * `attached_disk_config` - (Optional) Attached disk configuration.
-                * `disk_size_gb` - (Optional) Size of the attached disk, specified in GB.
-                * `disk_type` - (Optional, Deprecated) The disk type of the attached disk. Such as "pd-ssd" or "pd-standard". `disk_type` is deprecated and will be removed in a future major release. Use `type` instead.
-                * `type` - (Optional) The disk type of the attached disk. Currently only supports Hyperdisks: "hyperdisk-balanced", "hyperdisk-extreme", "hyperdisk-ml", "hyperdisk-throughput".
-                * `provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
-                * `provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+   Structure is [documented below](#nested_cluster_config_worker_config_instance_flexibility_policy).
 
 * `accelerators` (Optional) The Compute Engine accelerator configuration for these instances. Can be specified multiple times.
-
-    * `accelerator_type` - (Required) The short name of the accelerator type to expose to this instance. For example, `nvidia-tesla-k80`.
-
-    * `accelerator_count` - (Required) The number of the accelerator cards of this type exposed to this instance. Often restricted to one of `1`, `2`, `4`, or `8`.
+   Structure is [documented below](#nested_cluster_config_worker_config_accelerators).
 
 ~> The Cloud Dataproc API can return unintuitive error messages when using accelerators; even when you have defined an accelerator, Auto Zone Placement does not exclusively select
 zones that have that accelerator available. If you get a 400 error that the accelerator can't be found, this is a likely cause. Make sure you check [accelerator availability by zone](https://cloud.google.com/compute/docs/reference/rest/v1/acceleratorTypes/list)
 if you are trying to use accelerators in a given zone.
+
+<a name="nested_cluster_config_worker_config_disk_config"></a>The `cluster_config.worker_config.disk_config` block supports:
+
+* `boot_disk_type` - (Optional) The disk type of the primary disk attached to each node.
+   One of `"pd-ssd"` or `"pd-standard"`. Defaults to `"pd-standard"`.
+
+* `boot_disk_size_gb` - (Optional, Computed) Size of the primary disk attached to each worker node, specified
+   in GB. The smallest allowed disk size is 10GB. GCP will default to a predetermined
+   computed value if not set (currently 500GB). Note: If SSDs are not
+   attached, it also contains the HDFS data blocks and Hadoop working directories.
+
+* `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle.
+
+* `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle.
+
+* `num_local_ssds` - (Optional) The amount of local SSD disks that will be
+   attached to each worker cluster node. Defaults to 0.
+
+* `local_ssd_interface` - (Optional) Interface type of local SSDs (default is "scsi"). Valid values: "scsi" (Small Computer System Interface), "nvme" (Non-Volatile Memory Express).
+
+* `attached_disk_config` - (Optional) Attached disk configuration.
+   Structure is [documented below](#nested_cluster_config_worker_config_disk_config_attached_disk_config).
+
+<a name="nested_cluster_config_worker_config_disk_config_attached_disk_config"></a>The `attached_disk_config` block supports:
+
+* `disk_size_gb` - (Optional) Size of the attached disk, specified in GB.
+
+* `disk_type` - (Optional, Deprecated) The disk type of the attached disk. Such as "pd-ssd" or "pd-standard". `disk_type` is deprecated and will be removed in a future major release. Use `type` instead.
+
+* `type` - (Optional) The disk type of the attached disk. Currently only supports Hyperdisks: "hyperdisk-balanced", "hyperdisk-extreme", "hyperdisk-ml", "hyperdisk-throughput".
+
+* `provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
+
+* `provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+
+<a name="nested_cluster_config_worker_config_instance_flexibility_policy"></a>The `cluster_config.worker_config.instance_flexibility_policy` block supports:
+
+* `instance_selection_list` - (Optional) List of instance selection options that the group will use when creating new VMs.
+   Structure is [documented below](#nested_cluster_config_worker_config_instance_flexibility_policy_instance_selection_list).
+
+<a name="nested_cluster_config_worker_config_instance_flexibility_policy_instance_selection_list"></a>The `instance_selection_list` block supports:
+
+* `machine_types` - (Optional) Full machine-type names, e.g. `"n1-standard-16"`.
+
+* `rank` - (Optional) Preference of this instance selection. A lower number means higher preference. Dataproc will first try to create a VM based on the machine-type with priority rank and fallback to next rank based on availability. Machine types and instance selections with the same priority have the same preference.
+
+* `disk_config` - (Optional) Disk configuration to apply to the instances in this instance selection.
+   Structure is [documented below](#nested_cluster_config_worker_config_instance_flexibility_policy_instance_selection_list_disk_config).
+
+<a name="nested_cluster_config_worker_config_instance_flexibility_policy_instance_selection_list_disk_config"></a>The `disk_config` block supports:
+
+* `boot_disk_size_gb` - (Optional) Size of the primary disk attached to each node, specified in GB. The smallest allowed disk size is 10GB.
+
+* `boot_disk_type` - (Optional) The disk type of the primary disk attached to each node. Such as "pd-ssd" or "pd-standard".
+
+* `num_local_ssds` - (Optional) The amount of local SSD disks that will be attached to each cluster node. Defaults to 0.
+
+* `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
+
+* `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+
+* `local_ssd_interface` - (Optional) Interface type of local SSDs (no Local SSDs or NVMe).
+
+* `attached_disk_config` - (Optional) Attached disk configuration.
+   Structure is [documented below](#nested_cluster_config_worker_config_instance_flexibility_policy_instance_selection_list_disk_config_attached_disk_config).
+
+<a name="nested_cluster_config_worker_config_instance_flexibility_policy_instance_selection_list_disk_config_attached_disk_config"></a>The `attached_disk_config` block supports:
+
+* `disk_size_gb` - (Optional) Size of the attached disk, specified in GB.
+
+* `disk_type` - (Optional, Deprecated) The disk type of the attached disk. Such as "pd-ssd" or "pd-standard". `disk_type` is deprecated and will be removed in a future major release. Use `type` instead.
+
+* `type` - (Optional) The disk type of the attached disk. Currently only supports Hyperdisks: "hyperdisk-balanced", "hyperdisk-extreme", "hyperdisk-ml", "hyperdisk-throughput".
+
+* `provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
+
+* `provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+
+<a name="nested_cluster_config_worker_config_accelerators"></a>The `cluster_config.worker_config.accelerators` block supports:
+
+* `accelerator_type` - (Required) The short name of the accelerator type to expose to this instance. For example, `nvidia-tesla-k80`.
+
+* `accelerator_count` - (Required) The number of the accelerator cards of this type exposed to this instance. Often restricted to one of `1`, `2`, `4`, or `8`.
 
 - - -
 
@@ -820,40 +942,96 @@ will be set for you based on whatever was set for the `worker_config.machine_typ
   * SPOT
 
 * `disk_config` (Optional) Disk Config
-
-    * `boot_disk_type` - (Optional) The disk type of the primary disk attached to each preemptible worker node.
-	One of `"pd-ssd"` or `"pd-standard"`. Defaults to `"pd-standard"`.
-
-    * `boot_disk_size_gb` - (Optional, Computed) Size of the primary disk attached to each preemptible worker node, specified
-    in GB. The smallest allowed disk size is 10GB. GCP will default to a predetermined
-    computed value if not set (currently 500GB). Note: If SSDs are not
-	attached, it also contains the HDFS data blocks and Hadoop working directories.
-
-	* `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle.
-
-	* `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle.
-
-	* `num_local_ssds` - (Optional) The amount of local SSD disks that will be
-	attached to each preemptible worker node. Defaults to 0.
-
-        * `attached_disk_config` - (Optional) Attached disk configuration.
-            * `disk_size_gb` - (Optional) Size of the attached disk, specified in GB.
-            * `disk_type` - (Optional, Deprecated) The disk type of the attached disk. Such as "pd-ssd" or "pd-standard". `disk_type` is deprecated and will be removed in a future major release. Use `type` instead.
-            * `type` - (Optional) The disk type of the attached disk. Currently only supports Hyperdisks: "hyperdisk-balanced", "hyperdisk-extreme", "hyperdisk-ml", "hyperdisk-throughput".
-            * `provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
-            * `provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+   Structure is [documented below](#nested_cluster_config_preemptible_worker_config_disk_config).
 
 * `instance_flexibility_policy` (Optional) Instance flexibility Policy allowing a mixture of VM shapes and provisioning models.
+   Structure is [documented below](#nested_cluster_config_preemptible_worker_config_instance_flexibility_policy).
 
-    * `instance_selection_list` - (Optional) List of instance selection options that the group will use when creating new VMs.
-      * `machine_types` - (Optional) Full machine-type names, e.g. `"n1-standard-16"`.
+<a name="nested_cluster_config_preemptible_worker_config_disk_config"></a>The `cluster_config.preemptible_worker_config.disk_config` block supports:
 
-      * `rank` - (Optional) Preference of this instance selection. A lower number means higher preference. Dataproc will first try to create a VM based on the machine-type with priority rank and fallback to next rank based on availability. Machine types and instance selections with the same priority have the same preference.
+* `boot_disk_type` - (Optional) The disk type of the primary disk attached to each preemptible worker node.
+   One of `"pd-ssd"` or `"pd-standard"`. Defaults to `"pd-standard"`.
 
-    * `provisioning_model_mix` - (Optional) Defines how the Group selects the provisioning model to ensure required reliability.
-      * `standard_capacity_base` - (Optional) The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standardCapacityBase, then it will start using standardCapacityPercentAboveBase to mix Spot with Standard VMs. eg. If 15 instances are requested and standardCapacityBase is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+* `boot_disk_size_gb` - (Optional, Computed) Size of the primary disk attached to each preemptible worker node, specified
+   in GB. The smallest allowed disk size is 10GB. GCP will default to a predetermined
+   computed value if not set (currently 500GB). Note: If SSDs are not
+   attached, it also contains the HDFS data blocks and Hadoop working directories.
 
-      * `standard_capacity_percent_above_base` - (Optional) The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standardCapacityBase. eg. If 15 instances are requested and standardCapacityBase is 5 and standardCapacityPercentAboveBase is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
+* `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle.
+
+* `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle.
+
+* `num_local_ssds` - (Optional) The amount of local SSD disks that will be
+   attached to each preemptible worker node. Defaults to 0.
+
+* `local_ssd_interface` - (Optional) Interface type of local SSDs (default is "scsi"). Valid values: "scsi" (Small Computer System Interface), "nvme" (Non-Volatile Memory Express).
+
+* `attached_disk_config` - (Optional) Attached disk configuration.
+   Structure is [documented below](#nested_cluster_config_preemptible_worker_config_disk_config_attached_disk_config).
+
+<a name="nested_cluster_config_preemptible_worker_config_disk_config_attached_disk_config"></a>The `attached_disk_config` block supports:
+
+* `disk_size_gb` - (Optional) Size of the attached disk, specified in GB.
+
+* `disk_type` - (Optional, Deprecated) The disk type of the attached disk. Such as "pd-ssd" or "pd-standard". `disk_type` is deprecated and will be removed in a future major release. Use `type` instead.
+
+* `type` - (Optional) The disk type of the attached disk. Currently only supports Hyperdisks: "hyperdisk-balanced", "hyperdisk-extreme", "hyperdisk-ml", "hyperdisk-throughput".
+
+* `provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
+
+* `provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+
+<a name="nested_cluster_config_preemptible_worker_config_instance_flexibility_policy"></a>The `cluster_config.preemptible_worker_config.instance_flexibility_policy` block supports:
+
+* `instance_selection_list` - (Optional) List of instance selection options that the group will use when creating new VMs.
+   Structure is [documented below](#nested_cluster_config_preemptible_worker_config_instance_flexibility_policy_instance_selection_list).
+
+* `provisioning_model_mix` - (Optional) Defines how the Group selects the provisioning model to ensure required reliability.
+   Structure is [documented below](#nested_cluster_config_preemptible_worker_config_instance_flexibility_policy_provisioning_model_mix).
+
+<a name="nested_cluster_config_preemptible_worker_config_instance_flexibility_policy_instance_selection_list"></a>The `instance_selection_list` block supports:
+
+* `machine_types` - (Optional) Full machine-type names, e.g. `"n1-standard-16"`.
+
+* `rank` - (Optional) Preference of this instance selection. A lower number means higher preference. Dataproc will first try to create a VM based on the machine-type with priority rank and fallback to next rank based on availability. Machine types and instance selections with the same priority have the same preference.
+
+* `disk_config` - (Optional) Disk configuration to apply to the instances in this instance selection.
+   Structure is [documented below](#nested_cluster_config_preemptible_worker_config_instance_flexibility_policy_instance_selection_list_disk_config).
+
+<a name="nested_cluster_config_preemptible_worker_config_instance_flexibility_policy_instance_selection_list_disk_config"></a>The `disk_config` block supports:
+
+* `boot_disk_size_gb` - (Optional) Size of the primary disk attached to each node, specified in GB. The smallest allowed disk size is 10GB.
+
+* `boot_disk_type` - (Optional) The disk type of the primary disk attached to each node. Such as "pd-ssd" or "pd-standard".
+
+* `num_local_ssds` - (Optional) The amount of local SSD disks that will be attached to each cluster node. Defaults to 0.
+
+* `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
+
+* `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+
+* `local_ssd_interface` - (Optional) Interface type of local SSDs (no Local SSDs or NVMe).
+
+* `attached_disk_config` - (Optional) Attached disk configuration.
+   Structure is [documented below](#nested_cluster_config_preemptible_worker_config_instance_flexibility_policy_instance_selection_list_disk_config_attached_disk_config).
+
+<a name="nested_cluster_config_preemptible_worker_config_instance_flexibility_policy_instance_selection_list_disk_config_attached_disk_config"></a>The `attached_disk_config` block supports:
+
+* `disk_size_gb` - (Optional) Size of the attached disk, specified in GB.
+
+* `disk_type` - (Optional, Deprecated) The disk type of the attached disk. Such as "pd-ssd" or "pd-standard". `disk_type` is deprecated and will be removed in a future major release. Use `type` instead.
+
+* `type` - (Optional) The disk type of the attached disk. Currently only supports Hyperdisks: "hyperdisk-balanced", "hyperdisk-extreme", "hyperdisk-ml", "hyperdisk-throughput".
+
+* `provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk.
+
+* `provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk.
+
+<a name="nested_cluster_config_preemptible_worker_config_instance_flexibility_policy_provisioning_model_mix"></a>The `provisioning_model_mix` block supports:
+
+* `standard_capacity_base` - (Optional) The base capacity that will always use Standard VMs to avoid risk of more preemption than the minimum capacity you need. Dataproc will create only standard VMs until it reaches standardCapacityBase, then it will start using standardCapacityPercentAboveBase to mix Spot with Standard VMs. eg. If 15 instances are requested and standardCapacityBase is 5, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances.
+
+* `standard_capacity_percent_above_base` - (Optional) The percentage of target capacity that should use Standard VM. The remaining percentage will use Spot VMs. The percentage applies only to the capacity above standardCapacityBase. eg. If 15 instances are requested and standardCapacityBase is 5 and standardCapacityPercentAboveBase is 30, Dataproc will create 5 standard VMs and then start mixing spot and standard VMs for remaining 10 instances. The mix will be 30% standard and 70% spot.
 - - -
 
 <a name="nested_master_flexible_config"></a>The `cluster_config.master_flexible_config` block supports:
@@ -986,59 +1164,65 @@ cluster_config {
 ```
 
 * `kerberos_config` (Optional) Kerberos Configuration. At least one of `identity_config`
-       or `kerberos_config` is required.
-
-    * `cross_realm_trust_admin_server` - (Optional) The admin server (IP or hostname) for the
-       remote trusted realm in a cross realm trust relationship.
-
-    * `cross_realm_trust_kdc` - (Optional) The KDC (IP or hostname) for the
-       remote trusted realm in a cross realm trust relationship.
-
-    * `cross_realm_trust_realm` - (Optional) The remote realm the Dataproc on-cluster KDC will
-       trust, should the user enable cross realm trust.
-
-    * `cross_realm_trust_shared_password_uri` - (Optional) The Cloud Storage URI of a KMS
-       encrypted file containing the shared password between the on-cluster Kerberos realm
-       and the remote trusted realm, in a cross realm trust relationship.
-
-    * `enable_kerberos` - (Optional) Flag to indicate whether to Kerberize the cluster.
-
-    * `kdc_db_key_uri` - (Optional) The Cloud Storage URI of a KMS encrypted file containing
-       the master key of the KDC database.
-
-    * `key_password_uri` - (Optional) The Cloud Storage URI of a KMS encrypted file containing
-       the password to the user provided key. For the self-signed certificate, this password
-       is generated by Dataproc.
-
-    * `keystore_uri` - (Optional) The Cloud Storage URI of the keystore file used for SSL encryption.
-       If not provided, Dataproc will provide a self-signed certificate.
-
-    * `keystore_password_uri` - (Optional) The Cloud Storage URI of a KMS encrypted file containing
-       the password to the user provided keystore. For the self-signed certificated, the password
-       is generated by Dataproc.
-
-    * `kms_key_uri` - (Required) The URI of the KMS key used to encrypt various sensitive files.
-
-    * `realm` - (Optional) The name of the on-cluster Kerberos realm. If not specified, the
-       uppercased domain of hostnames will be the realm.
-
-    * `root_principal_password_uri` - (Required) The Cloud Storage URI of a KMS encrypted file
-       containing the root principal password.
-
-    * `tgt_lifetime_hours` - (Optional) The lifetime of the ticket granting ticket, in hours.
-
-    * `truststore_password_uri` - (Optional) The Cloud Storage URI of a KMS encrypted file
-       containing the password to the user provided truststore. For the self-signed
-       certificate, this password is generated by Dataproc.
-
-    * `truststore_uri` - (Optional) The Cloud Storage URI of the truststore file used for
-       SSL encryption. If not provided, Dataproc will provide a self-signed certificate.
+   or `kerberos_config` is required.
+   Structure is [documented below](#nested_cluster_config_security_config_kerberos_config).
 
 * `identity_config` (Optional) Identity Configuration. At least one of `identity_config`
-       or `kerberos_config` is required.
+   or `kerberos_config` is required.
+   Structure is [documented below](#nested_cluster_config_security_config_identity_config).
 
-    * `user_service_account_mapping` - (Required) The end user to service account mappings
-       in a service account based multi-tenant cluster
+<a name="nested_cluster_config_security_config_kerberos_config"></a>The `cluster_config.security_config.kerberos_config` block supports:
+
+* `cross_realm_trust_admin_server` - (Optional) The admin server (IP or hostname) for the
+   remote trusted realm in a cross realm trust relationship.
+
+* `cross_realm_trust_kdc` - (Optional) The KDC (IP or hostname) for the
+   remote trusted realm in a cross realm trust relationship.
+
+* `cross_realm_trust_realm` - (Optional) The remote realm the Dataproc on-cluster KDC will
+   trust, should the user enable cross realm trust.
+
+* `cross_realm_trust_shared_password_uri` - (Optional) The Cloud Storage URI of a KMS
+   encrypted file containing the shared password between the on-cluster Kerberos realm
+   and the remote trusted realm, in a cross realm trust relationship.
+
+* `enable_kerberos` - (Optional) Flag to indicate whether to Kerberize the cluster.
+
+* `kdc_db_key_uri` - (Optional) The Cloud Storage URI of a KMS encrypted file containing
+   the master key of the KDC database.
+
+* `key_password_uri` - (Optional) The Cloud Storage URI of a KMS encrypted file containing
+   the password to the user provided key. For the self-signed certificate, this password
+   is generated by Dataproc.
+
+* `keystore_uri` - (Optional) The Cloud Storage URI of the keystore file used for SSL encryption.
+   If not provided, Dataproc will provide a self-signed certificate.
+
+* `keystore_password_uri` - (Optional) The Cloud Storage URI of a KMS encrypted file containing
+   the password to the user provided keystore. For the self-signed certificated, the password
+   is generated by Dataproc.
+
+* `kms_key_uri` - (Required) The URI of the KMS key used to encrypt various sensitive files.
+
+* `realm` - (Optional) The name of the on-cluster Kerberos realm. If not specified, the
+   uppercased domain of hostnames will be the realm.
+
+* `root_principal_password_uri` - (Required) The Cloud Storage URI of a KMS encrypted file
+   containing the root principal password.
+
+* `tgt_lifetime_hours` - (Optional) The lifetime of the ticket granting ticket, in hours.
+
+* `truststore_password_uri` - (Optional) The Cloud Storage URI of a KMS encrypted file
+   containing the password to the user provided truststore. For the self-signed
+   certificate, this password is generated by Dataproc.
+
+* `truststore_uri` - (Optional) The Cloud Storage URI of the truststore file used for
+   SSL encryption. If not provided, Dataproc will provide a self-signed certificate.
+
+<a name="nested_cluster_config_security_config_identity_config"></a>The `cluster_config.security_config.identity_config` block supports:
+
+* `user_service_account_mapping` - (Required) The end user to service account mappings
+   in a service account based multi-tenant cluster
 
 - - -
 
@@ -1112,10 +1296,13 @@ dataproc_metric_config {
 
 
 * `metrics` - (Required) Metrics sources to enable.
+   Structure is [documented below](#nested_cluster_config_dataproc_metric_config_metrics).
 
-  * `metric_source` - (Required) A source for the collection of Dataproc OSS metrics (see [available OSS metrics](https://cloud.google.com//dataproc/docs/guides/monitoring#available_oss_metrics)).
+<a name="nested_cluster_config_dataproc_metric_config_metrics"></a>The `metrics` block supports:
 
-  * `metric_overrides` - (Optional) One or more [available OSS metrics] (https://cloud.google.com/dataproc/docs/guides/monitoring#available_oss_metrics) to collect for the metric course.
+* `metric_source` - (Required) A source for the collection of Dataproc OSS metrics (see [available OSS metrics](https://cloud.google.com//dataproc/docs/guides/monitoring#available_oss_metrics)).
+
+* `metric_overrides` - (Optional) One or more [available OSS metrics] (https://cloud.google.com/dataproc/docs/guides/monitoring#available_oss_metrics) to collect for the metric course.
 
 - - -
 
@@ -1145,50 +1332,66 @@ auxiliary_node_groups{
 
 
 * `node_group` - (Required) Node group configuration.
+   Structure is [documented below](#nested_cluster_config_auxiliary_node_groups_node_group).
 
-  * `roles` - (Required) Node group roles. 
-     One of `"DRIVER"`.
+* `node_group_id` - (Optional, Computed) A node group ID. Generated if not specified. The ID must contain only letters (a-z, A-Z), numbers (0-9), underscores (_), and hyphens (-). Cannot begin or end with underscore or hyphen. Must consist of from 3 to 33 characters.
 
-  * `name` - (Optional) The Node group resource name.
+<a name="nested_cluster_config_auxiliary_node_groups_node_group"></a>The `node_group` block supports:
 
-  * `node_group_config` - (Optional) The node group instance group configuration.
+* `roles` - (Required) Node group roles. 
+   One of `"DRIVER"`.
 
-    * `num_instances`- (Optional, Computed) Specifies the number of master nodes to create.
-       Please set a number greater than 0. Node Group must have at least 1 instance.
-   
-    * `machine_type` - (Optional, Computed) The name of a Google Compute Engine machine type
-       to create for the node group. If not specified, GCP will default to a predetermined 
-       computed value (currently `n1-standard-4`).
-       
-    * `min_cpu_platform` - (Optional, Computed) The name of a minimum generation of CPU family
-       for the node group. If not specified, GCP will default to a predetermined computed value
-       for each zone. See [the guide](https://cloud.google.com/compute/docs/instances/specify-min-cpu-platform)
-       for details about which CPU families are available (and defaulted) for each zone.
-       
-    * `disk_config` (Optional) Disk Config
-    
-      * `boot_disk_type` - (Optional) The disk type of the primary disk attached to each node.
-         One of `"pd-ssd"` or `"pd-standard"`. Defaults to `"pd-standard"`.
-      
-      * `boot_disk_size_gb` - (Optional, Computed) Size of the primary disk attached to each node, specified
-         in GB. The primary disk contains the boot volume and system libraries, and the
-         smallest allowed disk size is 10GB. GCP will default to a predetermined
-         computed value if not set (currently 500GB). Note: If SSDs are not
-         attached, it also contains the HDFS data blocks and Hadoop working directories.
-         
-      * `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle.
+* `name` - (Optional) The Node group resource name.
 
-      * `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle.
+* `node_group_config` - (Optional) The node group instance group configuration.
+   Structure is [documented below](#nested_cluster_config_auxiliary_node_groups_node_group_node_group_config).
 
-      * `num_local_ssds` - (Optional) The amount of local SSD disks that will be attached to each master cluster node. 
-         Defaults to 0.
+<a name="nested_cluster_config_auxiliary_node_groups_node_group_node_group_config"></a>The `node_group_config` block supports:
 
-    * `accelerators` (Optional) The Compute Engine accelerator (GPU) configuration for these instances. Can be specified 
-       multiple times.
-       
-      * `accelerator_type` - (Required) The short name of the accelerator type to expose to this instance. For example, `nvidia-tesla-k80`.
-      
-      * `accelerator_count` - (Required) The number of the accelerator cards of this type exposed to this instance. Often restricted to one of `1`, `2`, `4`, or `8`.
+* `num_instances`- (Optional, Computed) Specifies the number of master nodes to create.
+   Please set a number greater than 0. Node Group must have at least 1 instance.
+
+* `machine_type` - (Optional, Computed) The name of a Google Compute Engine machine type
+   to create for the node group. If not specified, GCP will default to a predetermined 
+   computed value (currently `n1-standard-4`).
+
+* `min_cpu_platform` - (Optional, Computed) The name of a minimum generation of CPU family
+   for the node group. If not specified, GCP will default to a predetermined computed value
+   for each zone. See [the guide](https://cloud.google.com/compute/docs/instances/specify-min-cpu-platform)
+   for details about which CPU families are available (and defaulted) for each zone.
+
+* `disk_config` (Optional) Disk Config
+   Structure is [documented below](#nested_cluster_config_auxiliary_node_groups_node_group_node_group_config_disk_config).
+
+* `accelerators` (Optional) The Compute Engine accelerator (GPU) configuration for these instances. Can be specified 
+   multiple times.
+   Structure is [documented below](#nested_cluster_config_auxiliary_node_groups_node_group_node_group_config_accelerators).
+
+<a name="nested_cluster_config_auxiliary_node_groups_node_group_node_group_config_disk_config"></a>The `disk_config` block supports:
+
+* `boot_disk_type` - (Optional) The disk type of the primary disk attached to each node.
+   One of `"pd-ssd"` or `"pd-standard"`. Defaults to `"pd-standard"`.
+
+* `boot_disk_size_gb` - (Optional, Computed) Size of the primary disk attached to each node, specified
+   in GB. The primary disk contains the boot volume and system libraries, and the
+   smallest allowed disk size is 10GB. GCP will default to a predetermined
+   computed value if not set (currently 500GB). Note: If SSDs are not
+   attached, it also contains the HDFS data blocks and Hadoop working directories.
+
+* `boot_disk_provisioned_iops` - (Optional) Indicates how many IOPS to provision for the disk. This sets the number of I/O operations per second that the disk can handle.
+
+* `boot_disk_provisioned_throughput` - (Optional) Indicates how much throughput to provision for the disk. This sets the number of throughput mb per second that the disk can handle.
+
+* `num_local_ssds` - (Optional) The amount of local SSD disks that will be attached to each master cluster node. 
+   Defaults to 0.
+
+* `local_ssd_interface` - (Optional) Interface type of local SSDs (default is "scsi"). Valid values: "scsi" (Small Computer System Interface), "nvme" (Non-Volatile Memory Express).
+
+<a name="nested_cluster_config_auxiliary_node_groups_node_group_node_group_config_accelerators"></a>The `accelerators` block supports:
+
+* `accelerator_type` - (Required) The short name of the accelerator type to expose to this instance. For example, `nvidia-tesla-k80`.
+
+* `accelerator_count` - (Required) The number of the accelerator cards of this type exposed to this instance. Often restricted to one of `1`, `2`, `4`, or `8`.
 
 
 - - -
@@ -1278,6 +1481,35 @@ exported:
 
 * `cluster_config.0.endpoint_config.0.http_ports` - The map of port descriptions to URLs. Will only be populated if
   `enable_http_port_access` is true.
+
+* `cluster_config.0.master_config.0.instance_flexibility_policy.0.instance_selection_results` - A list of instance selection results in the group.
+   Structure is [documented below](#nested_cluster_config_master_config_instance_flexibility_policy_instance_selection_results).
+
+* `cluster_config.0.worker_config.0.instance_flexibility_policy.0.instance_selection_results` - A list of instance selection results in the group.
+   Structure is [documented below](#nested_cluster_config_worker_config_instance_flexibility_policy_instance_selection_results).
+
+* `cluster_config.0.preemptible_worker_config.0.instance_flexibility_policy.0.instance_selection_results` - A list of instance selection results in the group.
+   Structure is [documented below](#nested_cluster_config_preemptible_worker_config_instance_flexibility_policy_instance_selection_results).
+
+* `cluster_config.0.auxiliary_node_groups.0.node_group.0.node_group_config.0.instance_names` - List of auxiliary node group instance names which have been assigned to the cluster.
+
+<a name="nested_cluster_config_master_config_instance_flexibility_policy_instance_selection_results"></a>The `cluster_config.master_config.instance_flexibility_policy.instance_selection_results` block contains:
+
+* `machine_type` - Full machine-type names, e.g. "n1-standard-16".
+
+* `vm_count` - Number of VM provisioned with the machine_type.
+
+<a name="nested_cluster_config_worker_config_instance_flexibility_policy_instance_selection_results"></a>The `cluster_config.worker_config.instance_flexibility_policy.instance_selection_results` block contains:
+
+* `machine_type` - Full machine-type names, e.g. "n1-standard-16".
+
+* `vm_count` - Number of VM provisioned with the machine_type.
+
+<a name="nested_cluster_config_preemptible_worker_config_instance_flexibility_policy_instance_selection_results"></a>The `cluster_config.preemptible_worker_config.instance_flexibility_policy.instance_selection_results` block contains:
+
+* `machine_type` - Full machine-type names, e.g. "n1-standard-16".
+
+* `vm_count` - Number of VM provisioned with the machine_type.
 
 ## Import
 
