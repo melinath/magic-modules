@@ -269,7 +269,7 @@ Please refer to the field `effective_labels` for all of the labels present on th
   
 * `serial_pipeline` -
   (Optional)
-  SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`.
+  SerialPipeline defines a sequential set of stages for a `DeliveryPipeline`. Structure is [documented below](#nested_serial_pipeline).
   
 * `suspended` -
   (Optional)
@@ -283,17 +283,17 @@ Please refer to the field `effective_labels` for all of the labels present on th
     When set to "DELETE", deleting the resource is allowed.
 
 
-The `serial_pipeline` block supports:
+<a name="nested_serial_pipeline"></a>The `serial_pipeline` block supports:
     
 * `stages` -
   (Optional)
-  Each stage specifies configuration for a `Target`. The ordering of this list defines the promotion flow.
+  Each stage specifies configuration for a `Target`. The ordering of this list defines the promotion flow. Structure is [documented below](#nested_serial_pipeline_stages).
     
-The `stages` block supports:
+<a name="nested_serial_pipeline_stages"></a>The `stages` block supports:
     
 * `deploy_parameters` -
   (Optional)
-  Optional. The deploy parameters to use for the target in this stage.
+  Optional. The deploy parameters to use for the target in this stage. Structure is [documented below](#nested_serial_pipeline_stages_deploy_parameters).
     
 * `profiles` -
   (Optional)
@@ -301,13 +301,13 @@ The `stages` block supports:
     
 * `strategy` -
   (Optional)
-  Optional. The strategy to use for a `Rollout` to this stage.
+  Optional. The strategy to use for a `Rollout` to this stage. Structure is [documented below](#nested_serial_pipeline_stages_strategy).
     
 * `target_id` -
   (Optional)
   The target_id to which this stage points. This field refers exclusively to the last segment of a target name. For example, this field would just be `my-target` (rather than `projects/project/locations/location/targets/my-target`). The location of the `Target` is inferred to be the same as the location of the `DeliveryPipeline` that contains this `Stage`.
     
-The `deploy_parameters` block supports:
+<a name="nested_serial_pipeline_stages_deploy_parameters"></a>The `deploy_parameters` block supports:
     
 * `match_target_labels` -
   (Optional)
@@ -317,31 +317,31 @@ The `deploy_parameters` block supports:
   (Required)
   Required. Values are deploy parameters in key-value pairs.
     
-The `strategy` block supports:
+<a name="nested_serial_pipeline_stages_strategy"></a>The `strategy` block supports:
     
 * `canary` -
   (Optional)
-  Canary deployment strategy provides progressive percentage based deployments to a Target.
+  Canary deployment strategy provides progressive percentage based deployments to a Target. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary).
     
 * `standard` -
   (Optional)
-  Standard deployment strategy executes a single deploy and allows verifying the deployment.
+  Standard deployment strategy executes a single deploy and allows verifying the deployment. Structure is [documented below](#nested_serial_pipeline_stages_strategy_standard).
     
-The `canary` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary"></a>The `canary` block supports:
     
 * `canary_deployment` -
   (Optional)
-  Configures the progressive based deployment for a Target.
+  Configures the progressive based deployment for a Target. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_canary_deployment).
     
 * `custom_canary_deployment` -
   (Optional)
-  Configures the progressive based deployment for a Target, but allows customizing at the phase level where a phase represents each of the percentage deployments.
+  Configures the progressive based deployment for a Target, but allows customizing at the phase level where a phase represents each of the percentage deployments. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_custom_canary_deployment).
     
 * `runtime_config` -
   (Optional)
-  Optional. Runtime specific configurations for the deployment strategy. The runtime configuration is used to determine how Cloud Deploy will split traffic to enable a progressive deployment.
+  Optional. Runtime specific configurations for the deployment strategy. The runtime configuration is used to determine how Cloud Deploy will split traffic to enable a progressive deployment. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_runtime_config).
     
-The `canary_deployment` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_canary_deployment"></a>The `canary_deployment` block supports:
     
 * `percentages` -
   (Required)
@@ -349,11 +349,11 @@ The `canary_deployment` block supports:
     
 * `postdeploy` -
   (Optional)
-  Optional. Configuration for the postdeploy job of the last phase. If this is not configured, postdeploy job will not be present.
+  Optional. Configuration for the postdeploy job of the last phase. If this is not configured, postdeploy job will not be present. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_canary_deployment_postdeploy).
     
 * `predeploy` -
   (Optional)
-  Optional. Configuration for the predeploy job of the first phase. If this is not configured, predeploy job will not be present.
+  Optional. Configuration for the predeploy job of the first phase. If this is not configured, predeploy job will not be present. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_canary_deployment_predeploy).
     
 * `verify` -
   (Optional)
@@ -361,13 +361,13 @@ The `canary_deployment` block supports:
 
 * `verify_config` -
   (Optional)
-  Optional. Configuration for the verify job.
+  Optional. Configuration for the verify job. Structure is [documented below](#nested_serial_pipeline_stages_strategy_verify_config).
 
 * `analysis` -
   (Optional)
-  Optional. Configuration for the analysis job.
+  Optional. Configuration for the analysis job. Structure is [documented below](#nested_serial_pipeline_stages_strategy_analysis).
     
-The `postdeploy` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_canary_deployment_postdeploy"></a>The `postdeploy` block supports:
     
 * `actions` -
   (Optional)
@@ -377,7 +377,7 @@ The `postdeploy` block supports:
   (Optional)
   Optional. The tasks that will run as a part of the postdeploy job. Only one of `actions` or `tasks` can be specified.
 
-The `predeploy` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_canary_deployment_predeploy"></a>The `predeploy` block supports:
     
 * `actions` -
   (Optional)
@@ -387,13 +387,13 @@ The `predeploy` block supports:
   (Optional)
   Optional. The tasks that will run as a part of the predeploy job. Only one of `actions` or `tasks` can be specified.
 
-The `custom_canary_deployment` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_custom_canary_deployment"></a>The `custom_canary_deployment` block supports:
     
 * `phase_configs` -
   (Required)
-  Required. Configuration for each phase in the canary deployment in the order executed.
+  Required. Configuration for each phase in the canary deployment in the order executed. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_custom_canary_deployment_phase_configs).
     
-The `phase_configs` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_custom_canary_deployment_phase_configs"></a>The `phase_configs` block supports:
     
 * `percentage` -
   (Required)
@@ -405,11 +405,11 @@ The `phase_configs` block supports:
     
 * `postdeploy` -
   (Optional)
-  Optional. Configuration for the postdeploy job of this phase. If this is not configured, postdeploy job will not be present for this phase.
+  Optional. Configuration for the postdeploy job of this phase. If this is not configured, postdeploy job will not be present for this phase. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_custom_canary_deployment_phase_configs_postdeploy).
     
 * `predeploy` -
   (Optional)
-  Optional. Configuration for the predeploy job of this phase. If this is not configured, predeploy job will not be present for this phase.
+  Optional. Configuration for the predeploy job of this phase. If this is not configured, predeploy job will not be present for this phase. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_custom_canary_deployment_phase_configs_predeploy).
     
 * `profiles` -
   (Optional)
@@ -421,13 +421,13 @@ The `phase_configs` block supports:
 
 * `verify_config` -
   (Optional)
-  Optional. Configuration for the verify job.
+  Optional. Configuration for the verify job. Structure is [documented below](#nested_serial_pipeline_stages_strategy_verify_config).
 
 * `analysis` -
   (Optional)
-  Optional. Configuration for the analysis job.
+  Optional. Configuration for the analysis job. Structure is [documented below](#nested_serial_pipeline_stages_strategy_analysis).
 
-The `postdeploy` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_custom_canary_deployment_phase_configs_postdeploy"></a>The `postdeploy` block supports:
     
 * `actions` -
   (Optional)
@@ -437,7 +437,7 @@ The `postdeploy` block supports:
   (Optional)
   Optional. The tasks that will run as a part of the postdeploy job. Only one of `actions` or `tasks` can be specified.
 
-The `predeploy` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_custom_canary_deployment_phase_configs_predeploy"></a>The `predeploy` block supports:
     
 * `actions` -
   (Optional)
@@ -447,17 +447,17 @@ The `predeploy` block supports:
   (Optional)
   Optional. The tasks that will run as a part of the predeploy job. Only one of `actions` or `tasks` can be specified.
 
-The `runtime_config` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_runtime_config"></a>The `runtime_config` block supports:
     
 * `cloud_run` -
   (Optional)
-  Cloud Run runtime configuration.
+  Cloud Run runtime configuration. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_runtime_config_cloud_run).
     
 * `kubernetes` -
   (Optional)
-  Kubernetes runtime configuration.
+  Kubernetes runtime configuration. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_runtime_config_kubernetes).
     
-The `cloud_run` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_runtime_config_cloud_run"></a>The `cloud_run` block supports:
     
 * `automatic_traffic_control` -
   (Optional)
@@ -475,17 +475,17 @@ The `cloud_run` block supports:
   (Optional)
   Optional. A list of tags that are added to the final stable revision when the stable phase is applied.
     
-The `kubernetes` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_runtime_config_kubernetes"></a>The `kubernetes` block supports:
     
 * `gateway_service_mesh` -
   (Optional)
-  Kubernetes Gateway API service mesh configuration.
+  Kubernetes Gateway API service mesh configuration. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_runtime_config_kubernetes_gateway_service_mesh).
     
 * `service_networking` -
   (Optional)
-  Kubernetes Service networking configuration.
+  Kubernetes Service networking configuration. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_runtime_config_kubernetes_service_networking).
     
-The `gateway_service_mesh` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_runtime_config_kubernetes_gateway_service_mesh"></a>The `gateway_service_mesh` block supports:
     
 * `deployment` -
   (Required)
@@ -501,7 +501,7 @@ The `gateway_service_mesh` block supports:
     
 * `route_destinations` -
   (Optional)
-  Optional. Route destinations allow configuring the Gateway API HTTPRoute to be deployed to additional clusters. This option is available for multi-cluster service mesh set ups that require the route to exist in the clusters that call the service. If unspecified, the HTTPRoute will only be deployed to the Target cluster.
+  Optional. Route destinations allow configuring the Gateway API HTTPRoute to be deployed to additional clusters. This option is available for multi-cluster service mesh set ups that require the route to exist in the clusters that call the service. If unspecified, the HTTPRoute will only be deployed to the Target cluster. Structure is [documented below](#nested_serial_pipeline_stages_strategy_canary_runtime_config_kubernetes_gateway_service_mesh_route_destinations).
     
 * `route_update_wait_time` -
   (Optional)
@@ -515,7 +515,7 @@ The `gateway_service_mesh` block supports:
   (Optional)
   Optional. The amount of time to migrate traffic back from the canary Service to the original Service during the stable phase deployment. If specified, must be between 15s and 3600s. If unspecified, there is no cutback time.
     
-The `route_destinations` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_runtime_config_kubernetes_gateway_service_mesh_route_destinations"></a>The `route_destinations` block supports:
     
 * `destination_ids` -
   (Required)
@@ -525,7 +525,7 @@ The `route_destinations` block supports:
   (Optional)
   Optional. Whether to propagate the Kubernetes Service to the route destination clusters. The Service will always be deployed to the Target cluster even if the HTTPRoute is not. This option may be used to facilitiate successful DNS lookup in the route destination clusters. Can only be set to true if destinations are specified.
     
-The `service_networking` block supports:
+<a name="nested_serial_pipeline_stages_strategy_canary_runtime_config_kubernetes_service_networking"></a>The `service_networking` block supports:
     
 * `deployment` -
   (Required)
@@ -543,15 +543,15 @@ The `service_networking` block supports:
   (Required)
   Required. Name of the Kubernetes Service.
     
-The `standard` block supports:
+<a name="nested_serial_pipeline_stages_strategy_standard"></a>The `standard` block supports:
     
 * `postdeploy` -
   (Optional)
-  Optional. Configuration for the postdeploy job. If this is not configured, postdeploy job will not be present.
+  Optional. Configuration for the postdeploy job. If this is not configured, postdeploy job will not be present. Structure is [documented below](#nested_serial_pipeline_stages_strategy_standard_postdeploy).
     
 * `predeploy` -
   (Optional)
-  Optional. Configuration for the predeploy job. If this is not configured, predeploy job will not be present.
+  Optional. Configuration for the predeploy job. If this is not configured, predeploy job will not be present. Structure is [documented below](#nested_serial_pipeline_stages_strategy_standard_predeploy).
     
 * `verify` -
   (Optional)
@@ -559,13 +559,13 @@ The `standard` block supports:
 
 * `verify_config` -
   (Optional)
-  Optional. Configuration for the verify job.
+  Optional. Configuration for the verify job. Structure is [documented below](#nested_serial_pipeline_stages_strategy_verify_config).
 
 * `analysis` -
   (Optional)
-  Optional. Configuration for the analysis job.
+  Optional. Configuration for the analysis job. Structure is [documented below](#nested_serial_pipeline_stages_strategy_analysis).
 
-The `postdeploy` block supports:
+<a name="nested_serial_pipeline_stages_strategy_standard_postdeploy"></a>The `postdeploy` block supports:
     
 * `actions` -
   (Optional)
@@ -573,9 +573,9 @@ The `postdeploy` block supports:
     
 * `tasks` -
   (Optional)
-  Optional. The tasks that will run as a part of the postdeploy job. Only one of `actions` or `tasks` can be specified.
+  Optional. The tasks that will run as a part of the postdeploy job. Only one of `actions` or `tasks` can be specified. Structure is [documented below](#nested_serial_pipeline_stages_strategy_tasks).
 
-The `predeploy` block supports:
+<a name="nested_serial_pipeline_stages_strategy_standard_predeploy"></a>The `predeploy` block supports:
     
 * `actions` -
   (Optional)
@@ -583,15 +583,15 @@ The `predeploy` block supports:
     
 * `tasks` -
   (Optional)
-  Optional. The tasks that will run as a part of the predeploy job. Only one of `actions` or `tasks` can be specified.
+  Optional. The tasks that will run as a part of the predeploy job. Only one of `actions` or `tasks` can be specified. Structure is [documented below](#nested_serial_pipeline_stages_strategy_tasks).
 
-The `verify_config` block supports:
+<a name="nested_serial_pipeline_stages_strategy_verify_config"></a>The `verify_config` block supports:
     
 * `tasks` -
   (Optional)
-  Optional. The tasks that will run as a part of the verify job. The tasks are executed sequentially in the order specified.
+  Optional. The tasks that will run as a part of the verify job. The tasks are executed sequentially in the order specified. Structure is [documented below](#nested_serial_pipeline_stages_strategy_tasks).
 
-The `analysis` block supports:
+<a name="nested_serial_pipeline_stages_strategy_analysis"></a>The `analysis` block supports:
     
 * `duration` -
   (Required)
@@ -599,19 +599,19 @@ The `analysis` block supports:
     
 * `google_cloud` -
   (Optional)
-  Optional. Google Cloud - based analysis checks.
+  Optional. Google Cloud - based analysis checks. Structure is [documented below](#nested_serial_pipeline_stages_strategy_analysis_google_cloud).
     
 * `custom_checks` -
   (Optional)
-  Optional. Custom analysis checks from 3P metric providers.
+  Optional. Custom analysis checks from 3P metric providers. Structure is [documented below](#nested_serial_pipeline_stages_strategy_analysis_custom_checks).
 
-The `google_cloud` block supports:
+<a name="nested_serial_pipeline_stages_strategy_analysis_google_cloud"></a>The `google_cloud` block supports:
     
 * `alert_policy_checks` -
   (Optional)
-  Optional. A list of Cloud Monitoring Alert Policy checks to perform as part of the analysis.
+  Optional. A list of Cloud Monitoring Alert Policy checks to perform as part of the analysis. Structure is [documented below](#nested_serial_pipeline_stages_strategy_analysis_google_cloud_alert_policy_checks).
 
-The `alert_policy_checks` block supports:
+<a name="nested_serial_pipeline_stages_strategy_analysis_google_cloud_alert_policy_checks"></a>The `alert_policy_checks` block supports:
     
 * `id` -
   (Required)
@@ -625,7 +625,7 @@ The `alert_policy_checks` block supports:
   (Optional)
   Optional. A set of labels to filter active alerts. If set, only alerts having all of the specified labels will be considered. Otherwise, all active alerts will be considered.
 
-The `custom_checks` block supports:
+<a name="nested_serial_pipeline_stages_strategy_analysis_custom_checks"></a>The `custom_checks` block supports:
     
 * `id` -
   (Required)
@@ -637,21 +637,21 @@ The `custom_checks` block supports:
     
 * `task` -
   (Required)
-  Required. The Task to be run for this custom check.
+  Required. The Task to be run for this custom check. Structure is [documented below](#nested_serial_pipeline_stages_strategy_analysis_custom_checks_task).
 
-The `task` block supports:
+<a name="nested_serial_pipeline_stages_strategy_analysis_custom_checks_task"></a>The `task` block supports:
     
 * `container` -
   (Optional)
-  Optional. This task is represented by a container that is executed in the Cloud Build execution environment.
+  Optional. This task is represented by a container that is executed in the Cloud Build execution environment. Structure is [documented below](#nested_serial_pipeline_stages_strategy_container).
 
-The `tasks` block supports:
+<a name="nested_serial_pipeline_stages_strategy_tasks"></a>The `tasks` block supports:
     
 * `container` -
   (Optional)
-  Optional. This task is represented by a container that is executed in the Cloud Build execution environment.
+  Optional. This task is represented by a container that is executed in the Cloud Build execution environment. Structure is [documented below](#nested_serial_pipeline_stages_strategy_container).
 
-The `container` block supports:
+<a name="nested_serial_pipeline_stages_strategy_container"></a>The `container` block supports:
     
 * `image` -
   (Required)
