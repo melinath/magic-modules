@@ -299,7 +299,7 @@ The following arguments are supported:
 
 * `authorization` -
   (Required)
-  Configuration related to the cluster RBAC settings.
+  Configuration related to the cluster RBAC settings. Structure is [documented below](#nested_authorization).
   
 * `aws_region` -
   (Required)
@@ -307,11 +307,11 @@ The following arguments are supported:
   
 * `control_plane` -
   (Required)
-  Configuration related to the cluster control plane.
+  Configuration related to the cluster control plane. Structure is [documented below](#nested_control_plane).
   
 * `fleet` -
   (Required)
-  Fleet configuration.
+  Fleet configuration. Structure is [documented below](#nested_fleet).
   
 * `location` -
   (Required)
@@ -323,7 +323,7 @@ The following arguments are supported:
   
 * `networking` -
   (Required)
-  Cluster-wide networking configuration.
+  Cluster-wide networking configuration. Structure is [documented below](#nested_networking).
 
 * `deletion_policy` - (Optional) Whether Terraform will be prevented from destroying the resource. Defaults to "DELETE".
     When a 'terraform destroy' or 'terraform apply' would delete the resource,
@@ -333,29 +333,29 @@ The following arguments are supported:
     When set to "DELETE", deleting the resource is allowed.
 
 
-The `authorization` block supports:
+<a name="nested_authorization"></a>The `authorization` block supports:
     
 * `admin_groups` -
   (Optional)
-  Groups of users that can perform operations as a cluster admin. A managed ClusterRoleBinding will be created to grant the `cluster-admin` ClusterRole to the groups. Up to ten admin groups can be provided. For more info on RBAC, see https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles
+  Groups of users that can perform operations as a cluster admin. A managed ClusterRoleBinding will be created to grant the `cluster-admin` ClusterRole to the groups. Up to ten admin groups can be provided. For more info on RBAC, see https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles Structure is [documented below](#nested_authorization_admin_groups).
     
 * `admin_users` -
   (Required)
-  Users to perform operations as a cluster admin. A managed ClusterRoleBinding will be created to grant the `cluster-admin` ClusterRole to the users. Up to ten admin users can be provided. For more info on RBAC, see https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles
+  Users to perform operations as a cluster admin. A managed ClusterRoleBinding will be created to grant the `cluster-admin` ClusterRole to the users. Up to ten admin users can be provided. For more info on RBAC, see https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles Structure is [documented below](#nested_authorization_admin_users).
     
-The `control_plane` block supports:
+<a name="nested_control_plane"></a>The `control_plane` block supports:
     
 * `aws_services_authentication` -
   (Required)
-  Authentication configuration for management of AWS resources.
+  Authentication configuration for management of AWS resources. Structure is [documented below](#nested_control_plane_aws_services_authentication).
     
 * `config_encryption` -
   (Required)
-  The ARN of the AWS KMS key used to encrypt cluster configuration.
+  The ARN of the AWS KMS key used to encrypt cluster configuration. Structure is [documented below](#nested_control_plane_config_encryption).
     
 * `database_encryption` -
   (Required)
-  The ARN of the AWS KMS key used to encrypt cluster secrets.
+  The ARN of the AWS KMS key used to encrypt cluster secrets. Structure is [documented below](#nested_control_plane_database_encryption).
     
 * `iam_instance_profile` -
   (Required)
@@ -363,7 +363,7 @@ The `control_plane` block supports:
     
 * `instance_placement` -
   (Optional)
-  (Beta only) Details of placement information for an instance.
+  (Beta only) Details of placement information for an instance. Structure is [documented below](#nested_control_plane_instance_placement).
     
 * `instance_type` -
   (Optional)
@@ -371,15 +371,15 @@ The `control_plane` block supports:
     
 * `main_volume` -
   (Optional)
-  Optional. Configuration related to the main volume provisioned for each control plane replica. The main volume is in charge of storing all of the cluster's etcd state. Volumes will be provisioned in the availability zone associated with the corresponding subnet. When unspecified, it defaults to 8 GiB with the GP2 volume type.
+  Optional. Configuration related to the main volume provisioned for each control plane replica. The main volume is in charge of storing all of the cluster's etcd state. Volumes will be provisioned in the availability zone associated with the corresponding subnet. When unspecified, it defaults to 8 GiB with the GP2 volume type. Structure is [documented below](#nested_control_plane_main_volume).
     
 * `proxy_config` -
   (Optional)
-  Proxy configuration for outbound HTTP(S) traffic.
+  Proxy configuration for outbound HTTP(S) traffic. Structure is [documented below](#nested_control_plane_proxy_config).
     
 * `root_volume` -
   (Optional)
-  Optional. Configuration related to the root volume provisioned for each control plane replica. Volumes will be provisioned in the availability zone associated with the corresponding subnet. When unspecified, it defaults to 32 GiB with the GP2 volume type.
+  Optional. Configuration related to the root volume provisioned for each control plane replica. Volumes will be provisioned in the availability zone associated with the corresponding subnet. When unspecified, it defaults to 32 GiB with the GP2 volume type. Structure is [documented below](#nested_control_plane_root_volume).
     
 * `security_group_ids` -
   (Optional)
@@ -387,7 +387,7 @@ The `control_plane` block supports:
     
 * `ssh_config` -
   (Optional)
-  Optional. SSH configuration for how to access the underlying control plane machines.
+  Optional. SSH configuration for how to access the underlying control plane machines. Structure is [documented below](#nested_control_plane_ssh_config).
     
 * `subnet_ids` -
   (Required)
@@ -401,7 +401,7 @@ The `control_plane` block supports:
   (Required)
   The Kubernetes version to run on control plane replicas (e.g. `1.19.10-gke.1000`). You can list all supported versions on a given Google Cloud region by calling .
     
-The `fleet` block supports:
+<a name="nested_fleet"></a>The `fleet` block supports:
     
 * `membership` -
   The name of the managed Hub Membership resource associated to this cluster. Membership names are formatted as projects/<project-number>/locations/global/membership/<cluster-id>.
@@ -410,7 +410,7 @@ The `fleet` block supports:
   (Optional)
   The number of the Fleet host project where this cluster will be registered.
     
-The `networking` block supports:
+<a name="nested_networking"></a>The `networking` block supports:
     
 * `per_node_pool_sg_rules_disabled` -
   (Optional)
@@ -439,7 +439,7 @@ Please refer to the field `effective_annotations` for all of the annotations pre
   
 * `binary_authorization` -
   (Optional)
-  Configuration options for the Binary Authorization feature.
+  Configuration options for the Binary Authorization feature. Structure is [documented below](#nested_binary_authorization).
   
 * `description` -
   (Optional)
@@ -447,7 +447,7 @@ Please refer to the field `effective_annotations` for all of the annotations pre
   
 * `logging_config` -
   (Optional)
-  (Beta only) Logging configuration.
+  (Beta only) Logging configuration. Structure is [documented below](#nested_logging_config).
   
 * `project` -
   (Optional)
@@ -455,25 +455,25 @@ Please refer to the field `effective_annotations` for all of the annotations pre
   
 
 
-The `admin_groups` block supports:
+<a name="nested_authorization_admin_groups"></a>The `admin_groups` block supports:
     
 * `group` -
   (Required)
   The name of the group, e.g. `my-group@domain.com`.
     
-The `admin_users` block supports:
+<a name="nested_authorization_admin_users"></a>The `admin_users` block supports:
     
 * `username` -
   (Required)
   The name of the user, e.g. `my-gcp-id@gmail.com`.
     
-The `binary_authorization` block supports:
+<a name="nested_binary_authorization"></a>The `binary_authorization` block supports:
     
 * `evaluation_mode` -
   (Optional)
   Mode of operation for Binary Authorization policy evaluation. Possible values: DISABLED, PROJECT_SINGLETON_POLICY_ENFORCE
     
-The `aws_services_authentication` block supports:
+<a name="nested_control_plane_aws_services_authentication"></a>The `aws_services_authentication` block supports:
     
 * `role_arn` -
   (Required)
@@ -483,25 +483,25 @@ The `aws_services_authentication` block supports:
   (Optional)
   Optional. An identifier for the assumed role session. When unspecified, it defaults to `multicloud-service-agent`.
     
-The `config_encryption` block supports:
+<a name="nested_control_plane_config_encryption"></a>The `config_encryption` block supports:
     
 * `kms_key_arn` -
   (Required)
   The ARN of the AWS KMS key used to encrypt cluster configuration.
     
-The `database_encryption` block supports:
+<a name="nested_control_plane_database_encryption"></a>The `database_encryption` block supports:
     
 * `kms_key_arn` -
   (Required)
   The ARN of the AWS KMS key used to encrypt cluster secrets.
     
-The `instance_placement` block supports:
+<a name="nested_control_plane_instance_placement"></a>The `instance_placement` block supports:
     
 * `tenancy` -
   (Optional)
   The tenancy for the instance. Possible values: TENANCY_UNSPECIFIED, DEFAULT, DEDICATED, HOST
     
-The `main_volume` block supports:
+<a name="nested_control_plane_main_volume"></a>The `main_volume` block supports:
     
 * `iops` -
   (Optional)
@@ -523,7 +523,7 @@ The `main_volume` block supports:
   (Optional)
   Optional. Type of the EBS volume. When unspecified, it defaults to GP2 volume. Possible values: VOLUME_TYPE_UNSPECIFIED, GP2, GP3
     
-The `proxy_config` block supports:
+<a name="nested_control_plane_proxy_config"></a>The `proxy_config` block supports:
     
 * `secret_arn` -
   (Required)
@@ -533,7 +533,7 @@ The `proxy_config` block supports:
   (Required)
   The version string of the AWS Secret Manager secret that contains the HTTP(S) proxy configuration.
     
-The `root_volume` block supports:
+<a name="nested_control_plane_root_volume"></a>The `root_volume` block supports:
     
 * `iops` -
   (Optional)
@@ -555,19 +555,19 @@ The `root_volume` block supports:
   (Optional)
   Optional. Type of the EBS volume. When unspecified, it defaults to GP2 volume. Possible values: VOLUME_TYPE_UNSPECIFIED, GP2, GP3
     
-The `ssh_config` block supports:
+<a name="nested_control_plane_ssh_config"></a>The `ssh_config` block supports:
     
 * `ec2_key_pair` -
   (Required)
   The name of the EC2 key pair used to login into cluster machines.
     
-The `logging_config` block supports:
+<a name="nested_logging_config"></a>The `logging_config` block supports:
     
 * `component_config` -
   (Optional)
-  Configuration of the logging components.
+  Configuration of the logging components. Structure is [documented below](#nested_logging_config_component_config).
     
-The `component_config` block supports:
+<a name="nested_logging_config_component_config"></a>The `component_config` block supports:
     
 * `enable_components` -
   (Optional)
@@ -604,8 +604,19 @@ In addition to the arguments listed above, the following computed attributes are
   Output only. The time at which this cluster was last updated.
   
 * `workload_identity_config` -
-  Output only. Workload Identity settings.
+  Output only. Workload Identity settings. Structure is [documented below](#nested_workload_identity_config).
   
+<a name="nested_workload_identity_config"></a>The `workload_identity_config` block contains:
+
+* `identity_provider` -
+  The ID of the OIDC Identity Provider (IdP) associated to the Workload Identity Pool.
+
+* `issuer_uri` -
+  The OIDC issuer URL for this cluster.
+
+* `workload_pool` -
+  The Workload Identity Pool associated to the cluster.
+
 ## Timeouts
 
 This resource provides the following
