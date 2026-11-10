@@ -88,7 +88,7 @@ The following arguments are supported:
   
 * `discovery_spec` -
   (Required)
-  Required. Specification of the discovery feature applied to data referenced by this asset. When this spec is left unset, the asset will use the spec set on the parent zone.
+  Required. Specification of the discovery feature applied to data referenced by this asset. When this spec is left unset, the asset will use the spec set on the parent zone. Structure is [documented below](#nested_discovery_spec).
   
 * `lake` -
   (Required)
@@ -104,7 +104,7 @@ The following arguments are supported:
   
 * `resource_spec` -
   (Required)
-  Required. Immutable. Specification of the resource that is referenced by this asset.
+  Required. Immutable. Specification of the resource that is referenced by this asset. Structure is [documented below](#nested_resource_spec).
 
 * `deletion_policy` - (Optional) Whether Terraform will be prevented from destroying the resource. Defaults to "DELETE".
     When a 'terraform destroy' or 'terraform apply' would delete the resource,
@@ -114,11 +114,11 @@ The following arguments are supported:
     When set to "DELETE", deleting the resource is allowed.
 
 
-The `discovery_spec` block supports:
+<a name="nested_discovery_spec"></a>The `discovery_spec` block supports:
     
 * `csv_options` -
   (Optional)
-  Optional. Configuration for CSV data.
+  Optional. Configuration for CSV data. Structure is [documented below](#nested_discovery_spec_csv_options).
     
 * `enabled` -
   (Required)
@@ -134,13 +134,13 @@ The `discovery_spec` block supports:
     
 * `json_options` -
   (Optional)
-  Optional. Configuration for Json data.
+  Optional. Configuration for Json data. Structure is [documented below](#nested_discovery_spec_json_options).
     
 * `schedule` -
   (Optional)
   Optional. Cron schedule (https://en.wikipedia.org/wiki/Cron) for running discovery periodically. Successive discovery runs must be scheduled at least 60 minutes apart. The default value is to run discovery every 60 minutes. To explicitly set a timezone to the cron tab, apply a prefix in the cron tab: "CRON_TZ=${IANA_TIME_ZONE}" or TZ=${IANA_TIME_ZONE}". The ${IANA_TIME_ZONE} may only be a valid string from IANA time zone database. For example, "CRON_TZ=America/New_York 1 * * * *", or "TZ=America/New_York 1 * * * *".
     
-The `resource_spec` block supports:
+<a name="nested_resource_spec"></a>The `resource_spec` block supports:
     
 * `name` -
   (Optional)
@@ -177,7 +177,7 @@ Please refer to the field `effective_labels` for all of the labels present on th
   
 
 
-The `csv_options` block supports:
+<a name="nested_discovery_spec_csv_options"></a>The `csv_options` block supports:
     
 * `delimiter` -
   (Optional)
@@ -195,7 +195,7 @@ The `csv_options` block supports:
   (Optional)
   Optional. The number of rows to interpret as header rows that should be skipped when reading data rows.
     
-The `json_options` block supports:
+<a name="nested_discovery_spec_json_options"></a>The `json_options` block supports:
     
 * `disable_type_inference` -
   (Optional)
@@ -215,16 +215,16 @@ In addition to the arguments listed above, the following computed attributes are
   Output only. The time when the asset was created.
   
 * `discovery_status` -
-  Output only. Status of the discovery feature applied to data referenced by this asset.
+  Output only. Status of the discovery feature applied to data referenced by this asset. Structure is [documented below](#nested_discovery_status).
   
 * `effective_labels` -
   All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
   
 * `resource_status` -
-  Output only. Status of the resource referenced by this asset.
+  Output only. Status of the resource referenced by this asset. Structure is [documented below](#nested_resource_status).
   
 * `security_status` -
-  Output only. Status of the security policy applied to resource referenced by this asset.
+  Output only. Status of the security policy applied to resource referenced by this asset. Structure is [documented below](#nested_security_status).
   
 * `state` -
   Output only. Current state of the asset. Possible values: STATE_UNSPECIFIED, ACTIVE, CREATING, DELETING, ACTION_REQUIRED
@@ -237,7 +237,63 @@ In addition to the arguments listed above, the following computed attributes are
   
 * `update_time` -
   Output only. The time when the asset was last updated.
-  
+
+<a name="nested_discovery_status"></a>The `discovery_status` block contains:
+
+* `last_run_duration` -
+  The duration of the last discovery run.
+
+* `last_run_time` -
+  The start time of the last discovery run.
+
+* `message` -
+  Additional information about the current state.
+
+* `state` -
+  The current status of the discovery feature. Possible values: STATE_UNSPECIFIED, SCHEDULED, IN_PROGRESS, PAUSED, DISABLED
+
+* `stats` -
+  Data Stats of the asset reported by discovery. Structure is [documented below](#nested_discovery_status_stats).
+
+* `update_time` -
+  Last update time of the status.
+
+<a name="nested_discovery_status_stats"></a>The `stats` block contains:
+
+* `data_items` -
+  The count of data items within the referenced resource.
+
+* `data_size` -
+  The number of stored data bytes within the referenced resource.
+
+* `filesets` -
+  The count of fileset entities within the referenced resource.
+
+* `tables` -
+  The count of table entities within the referenced resource.
+
+<a name="nested_resource_status"></a>The `resource_status` block contains:
+
+* `message` -
+  Additional information about the current state.
+
+* `state` -
+  The current state of the managed resource. Possible values: STATE_UNSPECIFIED, READY, ERROR
+
+* `update_time` -
+  Last update time of the status.
+
+<a name="nested_security_status"></a>The `security_status` block contains:
+
+* `message` -
+  Additional information about the current state.
+
+* `state` -
+  The current state of the security policy applied to the attached resource. Possible values: STATE_UNSPECIFIED, READY, APPLYING, ERROR
+
+* `update_time` -
+  Last update time of the status.
+
 ## Timeouts
 
 This resource provides the following
