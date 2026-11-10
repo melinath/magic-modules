@@ -81,10 +81,25 @@ The following arguments are supported:
 
 - - -
 
+* `annotations` -
+  (Optional)
+  User specified annotations. See https://google.aip.dev/128#annotations for more details such as format and size limitations.
+
+  **Note**: This field is non-authoritative, and will only manage the annotations present in your configuration.
+  Please refer to the field `effective_annotations` for all of the annotations present on the resource.
+
+* `display_name` -
+  (Optional)
+  A user-specified, human-readable name for the `WorkerPool`. If provided, this value must be 1-63 characters.
+
 * `network_config` -
   (Optional)
   Network configuration for the `WorkerPool`. Structure is [documented below](#nested_network_config).
   
+* `private_service_connect` -
+  (Optional)
+  Private Service Connect configuration for the pool. Structure is [documented below](#nested_private_service_connect).
+
 * `project` -
   (Optional)
   The project for the resource
@@ -111,6 +126,16 @@ The following arguments are supported:
   (Optional)
   Immutable. Subnet IP range within the peered network. This is specified in CIDR notation with a slash and the subnet prefix size. You can optionally specify an IP address before the subnet prefix value. e.g. `192.168.0.0/29` would specify an IP range starting at 192.168.0.0 with a prefix size of 29 bits. `/16` would specify a prefix size of 16 bits, with an automatically determined IP within the peered VPC. If unspecified, a value of `/24` will be used.
     
+<a name="nested_private_service_connect"></a>The `private_service_connect` block supports:
+
+* `network_attachment` -
+  (Required)
+  Required. Immutable. The network attachment that the worker network interface is connected to. Must be in the format `projects/{project}/regions/{region}/networkAttachments/{networkAttachment}`. The region of network attachment must be the same as the worker pool. See [Network Attachments](https://cloud.google.com/vpc/docs/about-network-attachments)
+
+* `route_all_traffic` -
+  (Optional)
+  Immutable. Route all traffic through PSC interface. Enable this if you want full control of traffic in the private pool. Configure Cloud NAT for the subnet of network attachment if you need to access public Internet. If false, Only route private IPs, e.g. 10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16 through PSC interface.
+
 <a name="nested_worker_config"></a>The `worker_config` block supports:
 
 * `enable_nested_virtualization` -
@@ -142,12 +167,18 @@ In addition to the arguments listed above, the following computed attributes are
 * `create_time` -
   Output only. Time at which the request to create the `WorkerPool` was received.
   
+* `effective_annotations` -
+  All of annotations (key/value pairs) present on the resource in GCP, including the annotations configured through Terraform, other clients and services.
+
 * `delete_time` -
   Output only. Time at which the request to delete the `WorkerPool` was received.
   
 * `state` -
   Output only. WorkerPool state. Possible values: STATE_UNSPECIFIED, PENDING, APPROVED, REJECTED, CANCELLED
   
+* `uid` -
+  Output only. A unique identifier for the `WorkerPool`.
+
 * `update_time` -
   Output only. Time at which the request to update the `WorkerPool` was received.
   
