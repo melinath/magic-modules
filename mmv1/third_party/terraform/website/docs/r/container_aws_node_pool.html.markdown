@@ -504,7 +504,7 @@ The following arguments are supported:
 
 * `autoscaling` -
   (Required)
-  Autoscaler configuration for this node pool.
+  Autoscaler configuration for this node pool. Structure is [documented below](#nested_autoscaling).
   
 * `cluster` -
   (Required)
@@ -512,7 +512,7 @@ The following arguments are supported:
   
 * `config` -
   (Required)
-  The configuration of the node pool.
+  The configuration of the node pool. Structure is [documented below](#nested_aws_node_pool_config).
   
 * `location` -
   (Required)
@@ -520,7 +520,7 @@ The following arguments are supported:
   
 * `max_pods_constraint` -
   (Required)
-  The constraint on the maximum number of pods that can be run simultaneously on a node in the node pool.
+  The constraint on the maximum number of pods that can be run simultaneously on a node in the node pool. Structure is [documented below](#nested_max_pods_constraint).
   
 * `name` -
   (Required)
@@ -542,7 +542,7 @@ The following arguments are supported:
     When set to "DELETE", deleting the resource is allowed.
 
 
-The `autoscaling` block supports:
+<a name="nested_autoscaling"></a>The `autoscaling` block supports:
     
 * `max_node_count` -
   (Required)
@@ -552,15 +552,15 @@ The `autoscaling` block supports:
   (Required)
   Minimum number of nodes in the NodePool. Must be >= 1 and <= max_node_count.
     
-The `config` block supports:
+<a name="nested_aws_node_pool_config"></a>The `config` block supports:
     
 * `autoscaling_metrics_collection` -
   (Optional)
-  Optional. Configuration related to CloudWatch metrics collection on the Auto Scaling group of the node pool. When unspecified, metrics collection is disabled.
+  Optional. Configuration related to CloudWatch metrics collection on the Auto Scaling group of the node pool. When unspecified, metrics collection is disabled. Structure is [documented below](#nested_config_autoscaling_metrics_collection).
     
 * `config_encryption` -
   (Required)
-  The ARN of the AWS KMS key used to encrypt node pool configuration.
+  The ARN of the AWS KMS key used to encrypt node pool configuration. Structure is [documented below](#nested_config_config_encryption).
     
 * `iam_instance_profile` -
   (Required)
@@ -572,7 +572,7 @@ The `config` block supports:
     
 * `instance_placement` -
   (Optional)
-  (Beta only) Details of placement information for an instance.
+  (Beta only) Details of placement information for an instance. Structure is [documented below](#nested_config_instance_placement).
     
 * `instance_type` -
   (Optional)
@@ -584,11 +584,11 @@ The `config` block supports:
     
 * `proxy_config` -
   (Optional)
-  Proxy configuration for outbound HTTP(S) traffic.
+  Proxy configuration for outbound HTTP(S) traffic. Structure is [documented below](#nested_config_proxy_config).
     
 * `root_volume` -
   (Optional)
-  Optional. Template for the root volume provisioned for node pool nodes. Volumes will be provisioned in the availability zone assigned to the node pool subnet. When unspecified, it defaults to 32 GiB with the GP2 volume type.
+  Optional. Template for the root volume provisioned for node pool nodes. Volumes will be provisioned in the availability zone assigned to the node pool subnet. When unspecified, it defaults to 32 GiB with the GP2 volume type. Structure is [documented below](#nested_config_root_volume).
     
 * `security_group_ids` -
   (Optional)
@@ -596,11 +596,11 @@ The `config` block supports:
     
 * `spot_config` -
   (Optional)
-  (Beta only) Optional. When specified, the node pool will provision Spot instances from the set of spot_config.instance_types. This field is mutually exclusive with `instance_type`
+  (Beta only) Optional. When specified, the node pool will provision Spot instances from the set of spot_config.instance_types. This field is mutually exclusive with `instance_type`. Structure is [documented below](#nested_config_spot_config).
     
 * `ssh_config` -
   (Optional)
-  Optional. The SSH configuration.
+  Optional. The SSH configuration. Structure is [documented below](#nested_config_ssh_config).
     
 * `tags` -
   (Optional)
@@ -608,9 +608,9 @@ The `config` block supports:
     
 * `taints` -
   (Optional)
-  Optional. The initial taints assigned to nodes of this node pool.
+  Optional. The initial taints assigned to nodes of this node pool. Structure is [documented below](#nested_config_taints).
     
-The `max_pods_constraint` block supports:
+<a name="nested_max_pods_constraint"></a>The `max_pods_constraint` block supports:
     
 * `max_pods_per_node` -
   (Required)
@@ -627,11 +627,11 @@ Please refer to the field `effective_annotations` for all of the annotations pre
   
 * `kubelet_config` -
   (Optional)
-  The kubelet configuration for the node pool.
+  The kubelet configuration for the node pool. Structure is [documented below](#nested_kubelet_config).
   
 * `management` -
   (Optional)
-  The Management configuration for this node pool.
+  The Management configuration for this node pool. Structure is [documented below](#nested_management).
   
 * `project` -
   (Optional)
@@ -639,11 +639,11 @@ Please refer to the field `effective_annotations` for all of the annotations pre
   
 * `update_settings` -
   (Optional)
-  Optional. Update settings control the speed and disruption of the node pool update.
+  Optional. Update settings control the speed and disruption of the node pool update. Structure is [documented below](#nested_update_settings).
   
 
 
-The `autoscaling_metrics_collection` block supports:
+<a name="nested_config_autoscaling_metrics_collection"></a>The `autoscaling_metrics_collection` block supports:
     
 * `granularity` -
   (Required)
@@ -653,19 +653,19 @@ The `autoscaling_metrics_collection` block supports:
   (Optional)
   The metrics to enable. For a list of valid metrics, see https://docs.aws.amazon.com/autoscaling/ec2/APIReference/API_EnableMetricsCollection.html. If you specify granularity and don't specify any metrics, all metrics are enabled.
     
-The `config_encryption` block supports:
+<a name="nested_config_config_encryption"></a>The `config_encryption` block supports:
     
 * `kms_key_arn` -
   (Required)
   The ARN of the AWS KMS key used to encrypt node pool configuration.
     
-The `instance_placement` block supports:
+<a name="nested_config_instance_placement"></a>The `instance_placement` block supports:
     
 * `tenancy` -
   (Optional)
   The tenancy for the instance. Possible values: TENANCY_UNSPECIFIED, DEFAULT, DEDICATED, HOST
     
-The `proxy_config` block supports:
+<a name="nested_config_proxy_config"></a>The `proxy_config` block supports:
     
 * `secret_arn` -
   (Required)
@@ -675,7 +675,7 @@ The `proxy_config` block supports:
   (Required)
   The version string of the AWS Secret Manager secret that contains the HTTP(S) proxy configuration.
     
-The `root_volume` block supports:
+<a name="nested_config_root_volume"></a>The `root_volume` block supports:
     
 * `iops` -
   (Optional)
@@ -697,19 +697,19 @@ The `root_volume` block supports:
   (Optional)
   Optional. Type of the EBS volume. When unspecified, it defaults to GP2 volume. Possible values: VOLUME_TYPE_UNSPECIFIED, GP2, GP3
     
-The `spot_config` block supports:
+<a name="nested_config_spot_config"></a>The `spot_config` block supports:
     
 * `instance_types` -
   (Required)
   List of AWS EC2 instance types for creating a spot node pool's nodes. The specified instance types must have the same number of CPUs and memory. You can use the Amazon EC2 Instance Selector tool (https://github.com/aws/amazon-ec2-instance-selector) to choose instance types with matching CPU and memory
     
-The `ssh_config` block supports:
+<a name="nested_config_ssh_config"></a>The `ssh_config` block supports:
     
 * `ec2_key_pair` -
   (Required)
   The name of the EC2 key pair used to login into cluster machines.
     
-The `taints` block supports:
+<a name="nested_config_taints"></a>The `taints` block supports:
     
 * `effect` -
   (Required)
@@ -723,7 +723,7 @@ The `taints` block supports:
   (Required)
   Value for the taint.
     
-The `kubelet_config` block supports:
+<a name="nested_kubelet_config"></a>The `kubelet_config` block supports:
     
 * `cpu_cfs_quota` -
   (Optional)
@@ -741,19 +741,19 @@ The `kubelet_config` block supports:
   (Optional)
   Optional. The maximum number of PIDs in each pod running on the node. The limit scales automatically based on underlying machine size if left unset.
     
-The `management` block supports:
+<a name="nested_management"></a>The `management` block supports:
     
 * `auto_repair` -
   (Optional)
   Optional. Whether or not the nodes will be automatically repaired.
     
-The `update_settings` block supports:
+<a name="nested_update_settings"></a>The `update_settings` block supports:
     
 * `surge_settings` -
   (Optional)
-  Optional. Settings for surge update.
+  Optional. Settings for surge update. Structure is [documented below](#nested_update_settings_surge_settings).
     
-The `surge_settings` block supports:
+<a name="nested_update_settings_surge_settings"></a>The `surge_settings` block supports:
     
 * `max_surge` -
   (Optional)
