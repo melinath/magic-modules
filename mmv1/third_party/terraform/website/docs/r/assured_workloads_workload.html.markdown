@@ -164,7 +164,7 @@ The following arguments are supported:
   
 * `kms_settings` -
   (Optional)
-  **DEPRECATED** Input only. Settings used to create a CMEK crypto key. When set, a project with a KMS CMEK key is provisioned. This field is deprecated as of Feb 28, 2022. In order to create a Keyring, callers should specify, ENCRYPTION_KEYS_PROJECT or KEYRING in ResourceSettings.resource_type field.
+  **DEPRECATED** Input only. Settings used to create a CMEK crypto key. When set, a project with a KMS CMEK key is provisioned. This field is deprecated as of Feb 28, 2022. In order to create a Keyring, callers should specify, ENCRYPTION_KEYS_PROJECT or KEYRING in ResourceSettings.resource_type field. Structure is [documented below](#nested_kms_settings).
   
 * `labels` -
   (Optional)
@@ -179,7 +179,7 @@ Please refer to the field `effective_labels` for all of the labels present on th
   
 * `partner_permissions` -
   (Optional)
-  Optional. Permissions granted to the AW Partner SA account for the customer workload
+  Optional. Permissions granted to the AW Partner SA account for the customer workload Structure is [documented below](#nested_partner_permissions).
   
 * `partner_services_billing_account` -
   (Optional)
@@ -191,7 +191,7 @@ Please refer to the field `effective_labels` for all of the labels present on th
   
 * `resource_settings` -
   (Optional)
-  Input only. Resource properties that are used to customize workload resources. These properties (such as custom project id) will be used to create workload resources if possible. This field is optional.
+  Input only. Resource properties that are used to customize workload resources. These properties (such as custom project id) will be used to create workload resources if possible. This field is optional. Structure is [documented below](#nested_resource_settings).
   
 * `violation_notifications_enabled` -
   (Optional)
@@ -199,7 +199,7 @@ Please refer to the field `effective_labels` for all of the labels present on th
   
 * `workload_options` -
   (Optional)
-  Optional. Used to specify certain options for a workload during workload creation - currently only supporting KAT Optionality for Regional Controls workloads.
+  Optional. Used to specify certain options for a workload during workload creation - currently only supporting KAT Optionality for Regional Controls workloads. Structure is [documented below](#nested_workload_options).
 
 * `deletion_policy` - (Optional) Whether Terraform will be prevented from destroying the resource. Defaults to "DELETE".
   When a 'terraform destroy' or 'terraform apply' would delete the resource,
@@ -210,7 +210,7 @@ Please refer to the field `effective_labels` for all of the labels present on th
   
 
 
-The `kms_settings` block supports:
+<a name="nested_kms_settings"></a>The `kms_settings` block supports:
     
 * `next_rotation_time` -
   (Required)
@@ -220,7 +220,7 @@ The `kms_settings` block supports:
   (Required)
   Required. Input only. Immutable. will be advanced by this period when the Key Management Service automatically rotates a key. Must be at least 24 hours and at most 876,000 hours.
     
-The `partner_permissions` block supports:
+<a name="nested_partner_permissions"></a>The `partner_permissions` block supports:
     
 * `assured_workloads_monitoring` -
   (Optional)
@@ -234,7 +234,7 @@ The `partner_permissions` block supports:
   (Optional)
   Optional. Allow partner to view access approval logs.
     
-The `resource_settings` block supports:
+<a name="nested_resource_settings"></a>The `resource_settings` block supports:
     
 * `display_name` -
   (Optional)
@@ -248,7 +248,7 @@ The `resource_settings` block supports:
   (Optional)
   Indicates the type of resource. This field should be specified to correspond the id to the right project type (CONSUMER_PROJECT or ENCRYPTION_KEYS_PROJECT) Possible values: RESOURCE_TYPE_UNSPECIFIED, CONSUMER_PROJECT, ENCRYPTION_KEYS_PROJECT, KEYRING, CONSUMER_FOLDER
     
-The `workload_options` block supports:
+<a name="nested_workload_options"></a>The `workload_options` block supports:
     
 * `kaj_enrollment_type` -
   (Optional)
@@ -261,7 +261,7 @@ In addition to the arguments listed above, the following computed attributes are
 * `id` - an identifier for the resource with format `organizations/{{organization}}/locations/{{location}}/workloads/{{name}}`
 
 * `compliance_status` -
-  Output only. Count of active Violations in the Workload.
+  Output only. Count of active Violations in the Workload. Structure is [documented below](#nested_compliance_status).
   
 * `compliant_but_disallowed_services` -
   Output only. Urls for services which are compliant for this Assured Workload, but which are currently disallowed by the ResourceUsageRestriction org policy. Invoke workloads.restrictAllowedResources endpoint to allow your project developers to use these services in their environment.
@@ -273,7 +273,7 @@ In addition to the arguments listed above, the following computed attributes are
   All of labels (key/value pairs) present on the resource in GCP, including the labels configured through Terraform, other clients and services.
   
 * `ekm_provisioning_response` -
-  Optional. Represents the Ekm Provisioning State of the given workload.
+  Optional. Represents the Ekm Provisioning State of the given workload. Structure is [documented below](#nested_ekm_provisioning_response).
   
 * `kaj_enrollment_state` -
   Output only. Represents the KAJ enrollment state of the given workload. Possible values: KAJ_ENROLLMENT_STATE_UNSPECIFIED, KAJ_ENROLLMENT_STATE_PENDING, KAJ_ENROLLMENT_STATE_COMPLETE
@@ -282,14 +282,49 @@ In addition to the arguments listed above, the following computed attributes are
   Output only. The resource name of the workload.
   
 * `resources` -
-  Output only. The resources associated with this workload. These resources will be created when creating the workload. If any of the projects already exist, the workload creation will fail. Always read only.
+  Output only. The resources associated with this workload. These resources will be created when creating the workload. If any of the projects already exist, the workload creation will fail. Always read only. Structure is [documented below](#nested_resources).
   
 * `saa_enrollment_response` -
-  Output only. Represents the SAA enrollment response of the given workload. SAA enrollment response is queried during workloads.get call. In failure cases, user friendly error message is shown in SAA details page.
+  Output only. Represents the SAA enrollment response of the given workload. SAA enrollment response is queried during workloads.get call. In failure cases, user friendly error message is shown in SAA details page. Structure is [documented below](#nested_saa_enrollment_response).
   
 * `terraform_labels` -
   The combination of labels configured directly on the resource and default labels configured on the provider.
   
+<a name="nested_compliance_status"></a>The `compliance_status` block contains:
+
+* `acknowledged_violation_count` -
+  Number of current orgPolicy violations which are acknowledged.
+
+* `active_violation_count` -
+  Number of current orgPolicy violations which are not acknowledged.
+
+<a name="nested_ekm_provisioning_response"></a>The `ekm_provisioning_response` block contains:
+
+* `ekm_provisioning_error_domain` -
+  Indicates Ekm provisioning error if any. Possible values: EKM_PROVISIONING_ERROR_DOMAIN_UNSPECIFIED, UNSPECIFIED_ERROR, GOOGLE_SERVER_ERROR, EXTERNAL_USER_ERROR, EXTERNAL_PARTNER_ERROR, TIMEOUT_ERROR
+
+* `ekm_provisioning_error_mapping` -
+  Detailed error message if Ekm provisioning fails Possible values: EKM_PROVISIONING_ERROR_MAPPING_UNSPECIFIED, INVALID_SERVICE_ACCOUNT, MISSING_METRICS_SCOPE_ADMIN_PERMISSION, MISSING_EKM_CONNECTION_ADMIN_PERMISSION
+
+* `ekm_provisioning_state` -
+  Indicates Ekm enrollment Provisioning of a given workload. Possible values: EKM_PROVISIONING_STATE_UNSPECIFIED, EKM_PROVISIONING_STATE_PENDING, EKM_PROVISIONING_STATE_FAILED, EKM_PROVISIONING_STATE_COMPLETED
+
+<a name="nested_resources"></a>The `resources` block contains:
+
+* `resource_id` -
+  Resource identifier. For a project this represents project_number.
+
+* `resource_type` -
+  Indicates the type of resource. Possible values: RESOURCE_TYPE_UNSPECIFIED, CONSUMER_PROJECT, ENCRYPTION_KEYS_PROJECT, KEYRING, CONSUMER_FOLDER
+
+<a name="nested_saa_enrollment_response"></a>The `saa_enrollment_response` block contains:
+
+* `setup_errors` -
+  Indicates SAA enrollment setup error if any.
+
+* `setup_status` -
+  Indicates SAA enrollment status of a given workload. Possible values: SETUP_STATE_UNSPECIFIED, STATUS_PENDING, STATUS_COMPLETE
+
 ## Timeouts
 
 This resource provides the following
