@@ -21,6 +21,12 @@ bin/diff-processor changed-schema-labels
 # can't read and that aren't in detector.KnownUnreadableTests, and tests in
 # that list that it can now read
 bin/diff-processor detect-unreadable-tests path/to/google-beta/services compute container
+
+# Report fields of the given resources and data sources that the missing doc
+# detector can't find in their docs and that aren't in
+# detector.KnownUnreadableDocs, and fields in that list that it can now find.
+# Pass --all instead of resource names to check every resource and data source.
+bin/diff-processor detect-unreadable-docs path/to/terraform-provider-google-beta google_compute_instance
 ```
 
 ## Test
