@@ -141,15 +141,15 @@ Please refer to the field `effective_annotations` for all of the annotations pre
   
 * `anthos_cluster` -
   (Optional)
-  Information specifying an Anthos Cluster.
+  Information specifying an Anthos Cluster. Structure is [documented below](#nested_anthos_cluster).
   
 * `associated_entities` -
   (Optional)
-  Optional. Map of entity IDs to their associated entities. Associated entities allows specifying places other than the deployment target for specific features. For example, the Gateway API canary can be configured to deploy the HTTPRoute to a different cluster(s) than the deployment cluster using associated entities. An entity ID must consist of lower-case letters, numbers, and hyphens, start with a letter and end with a letter or a number, and have a max length of 63 characters. In other words, it must match the following regex: `^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$`.
+  Optional. Map of entity IDs to their associated entities. Associated entities allows specifying places other than the deployment target for specific features. For example, the Gateway API canary can be configured to deploy the HTTPRoute to a different cluster(s) than the deployment cluster using associated entities. An entity ID must consist of lower-case letters, numbers, and hyphens, start with a letter and end with a letter or a number, and have a max length of 63 characters. In other words, it must match the following regex: `^[a-z]([a-z0-9-]{0,61}[a-z0-9])?$`. Structure is [documented below](#nested_associated_entities).
   
 * `custom_target` -
   (Optional)
-  Optional. Information specifying a Custom Target.
+  Optional. Information specifying a Custom Target. Structure is [documented below](#nested_custom_target).
   
 * `deploy_parameters` -
   (Optional)
@@ -161,11 +161,11 @@ Please refer to the field `effective_annotations` for all of the annotations pre
   
 * `execution_configs` -
   (Optional)
-  Configurations for all execution that relates to this `Target`. Each `ExecutionEnvironmentUsage` value may only be used in a single configuration; using the same value multiple times is an error. When one or more configurations are specified, they must include the `RENDER` and `DEPLOY` `ExecutionEnvironmentUsage` values. When no configurations are specified, execution will use the default specified in `DefaultPool`.
+  Configurations for all execution that relates to this `Target`. Each `ExecutionEnvironmentUsage` value may only be used in a single configuration; using the same value multiple times is an error. When one or more configurations are specified, they must include the `RENDER` and `DEPLOY` `ExecutionEnvironmentUsage` values. When no configurations are specified, execution will use the default specified in `DefaultPool`. Structure is [documented below](#nested_execution_configs).
   
 * `gke` -
   (Optional)
-  Information specifying a GKE Cluster.
+  Information specifying a GKE Cluster. Structure is [documented below](#nested_gke).
   
 * `labels` -
   (Optional)
@@ -176,7 +176,7 @@ Please refer to the field `effective_labels` for all of the labels present on th
   
 * `multi_target` -
   (Optional)
-  Information specifying a multiTarget.
+  Information specifying a multiTarget. Structure is [documented below](#nested_multi_target).
   
 * `project` -
   (Optional)
@@ -188,7 +188,7 @@ Please refer to the field `effective_labels` for all of the labels present on th
   
 * `run` -
   (Optional)
-  Information specifying a Cloud Run deployment target.
+  Information specifying a Cloud Run deployment target. Structure is [documented below](#nested_run).
 
 * `deletion_policy` - (Optional) Whether Terraform will be prevented from destroying the resource. Defaults to "DELETE".
   When a 'terraform destroy' or 'terraform apply' would delete the resource,
@@ -198,17 +198,17 @@ Please refer to the field `effective_labels` for all of the labels present on th
   When set to "DELETE", deleting the resource is allowed.
 
 
-The `anthos_cluster` block supports:
+<a name="nested_anthos_cluster"></a>The `anthos_cluster` block supports:
     
 * `membership` -
   (Optional)
   Membership of the GKE Hub-registered cluster to which to apply the Skaffold configuration. Format is `projects/{project}/locations/{location}/memberships/{membership_name}`.
     
-The `associated_entities` block supports:
+<a name="nested_associated_entities"></a>The `associated_entities` block supports:
     
 * `anthos_clusters` -
   (Optional)
-  Optional. Information specifying Anthos clusters as associated entities.
+  Optional. Information specifying Anthos clusters as associated entities. Structure is [documented below](#nested_associated_entities_anthos_clusters).
     
 * `entity_id` -
   (Required)
@@ -216,15 +216,15 @@ The `associated_entities` block supports:
     
 * `gke_clusters` -
   (Optional)
-  Optional. Information specifying GKE clusters as associated entities.
+  Optional. Information specifying GKE clusters as associated entities. Structure is [documented below](#nested_associated_entities_gke_clusters).
     
-The `anthos_clusters` block supports:
+<a name="nested_associated_entities_anthos_clusters"></a>The `anthos_clusters` block supports:
     
 * `membership` -
   (Optional)
   Optional. Membership of the GKE Hub-registered cluster to which to apply the Skaffold configuration. Format is `projects/{project}/locations/{location}/memberships/{membership_name}`.
     
-The `gke_clusters` block supports:
+<a name="nested_associated_entities_gke_clusters"></a>The `gke_clusters` block supports:
     
 * `cluster` -
   (Optional)
@@ -238,13 +238,13 @@ The `gke_clusters` block supports:
   (Optional)
   Optional. If set, used to configure a [proxy](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#proxy) to the Kubernetes server.
     
-The `custom_target` block supports:
+<a name="nested_custom_target"></a>The `custom_target` block supports:
     
 * `custom_target_type` -
   (Required)
   Required. The name of the CustomTargetType. Format must be `projects/{project}/locations/{location}/customTargetTypes/{custom_target_type}`.
     
-The `execution_configs` block supports:
+<a name="nested_execution_configs"></a>The `execution_configs` block supports:
     
 * `artifact_storage` -
   (Optional)
@@ -252,7 +252,7 @@ The `execution_configs` block supports:
     
 * `default_pool` -
   (Optional)
-  Optional. Use default Cloud Build pool.
+  Optional. Use default Cloud Build pool. Structure is [documented below](#nested_execution_configs_default_pool).
     
 * `execution_timeout` -
   (Optional)
@@ -260,7 +260,7 @@ The `execution_configs` block supports:
     
 * `private_pool` -
   (Optional)
-  Optional. Use private Cloud Build pool.
+  Optional. Use private Cloud Build pool. Structure is [documented below](#nested_execution_configs_private_pool).
     
 * `service_account` -
   (Optional)
@@ -278,7 +278,7 @@ The `execution_configs` block supports:
   (Optional)
   Optional. The resource name of the `WorkerPool`, with the format `projects/{project}/locations/{location}/workerPools/{worker_pool}`. If this optional field is unspecified, the default Cloud Build pool will be used.
 
-The `default_pool` block supports:
+<a name="nested_execution_configs_default_pool"></a>The `default_pool` block supports:
     
 * `artifact_storage` -
   (Optional)
@@ -288,7 +288,7 @@ The `default_pool` block supports:
   (Optional)
   Optional. Google service account to use for execution. If unspecified, the project execution service account (-compute@developer.gserviceaccount.com) will be used.
 
-The `private_pool` block supports:
+<a name="nested_execution_configs_private_pool"></a>The `private_pool` block supports:
     
 * `artifact_storage` -
   (Optional)
@@ -302,7 +302,7 @@ The `private_pool` block supports:
   (Required)
   Required. Resource name of the Cloud Build worker pool to use. The format is `projects/{project}/locations/{location}/workerPools/{pool}`.
     
-The `gke` block supports:
+<a name="nested_gke"></a>The `gke` block supports:
     
 * `cluster` -
   (Optional)
@@ -320,13 +320,13 @@ The `gke` block supports:
   (Optional)
   Optional. If set, used to configure a [proxy](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#proxy) to the Kubernetes server.
     
-The `multi_target` block supports:
+<a name="nested_multi_target"></a>The `multi_target` block supports:
     
 * `target_ids` -
   (Required)
   Required. The target_ids of this multiTarget.
     
-The `run` block supports:
+<a name="nested_run"></a>The `run` block supports:
     
 * `location` -
   (Required)
