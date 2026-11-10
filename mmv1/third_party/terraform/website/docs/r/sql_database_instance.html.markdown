@@ -343,7 +343,7 @@ The following arguments are supported:
 - - -
 
 * `settings` - (Optional) The settings to use for the database. The
-    configuration is detailed below. Required if `clone` is not set.
+    configuration is detailed below. Required if `clone` is not set. Structure is [documented below](#nested_settings).
 
 * `database_center_integration` - (Optional) The Database Center integration control. Supported values include `ENABLED` and `DISABLED`.
 * `database_version` - (Required) The MySQL, PostgreSQL or
@@ -375,9 +375,13 @@ includes an up-to-date reference of supported versions.
     is not provided, the provider project is used.
 
 * `replica_configuration` - (Optional) The configuration for replication. The
-    configuration is detailed below.
+    configuration is detailed below. Structure is [documented below](#nested_replica_configuration).
 
 * `replica_names` - (Optional, Computed) List of replica names. Can be updated.
+
+* `node_count` - For a read pool instance, the number of nodes in the read pool. For read pools with auto scaling enabled, this field is read only.
+
+* `replication_cluster` - (Optional, Computed) A primary instance and disaster recovery replica pair. Structure is [documented below](#nested_replication_cluster).
 
 * `root_password` - (Optional) Initial root password. Can be updated. Required for MS SQL Server.
 
@@ -415,7 +419,7 @@ includes an up-to-date reference of supported versions.
 * `final_backup_description` - (Optional) The description of final backup. Only set this field when `final_backup_config.enabled` is true.
 
 * `restore_backup_context` - (optional) The context needed to restore the database to a backup run. This field will
-    cause Terraform to trigger the database to restore from the backup run indicated. The configuration is detailed below.
+    cause Terraform to trigger the database to restore from the backup run indicated. The configuration is detailed below. Structure is [documented below](#nested_restore_backup_context).
     **NOTE:** Restoring from a backup is an imperative action and not recommended via Terraform. Adding or modifying this
     block during resource creation/update will trigger the restore action after the resource is created/updated.
 
@@ -426,10 +430,10 @@ includes an up-to-date reference of supported versions.
 
 * `clone` - (Optional) The context needed to create this instance as a clone of another instance. When this field is set during
     resource creation, Terraform will attempt to clone another instance as indicated in the context. The
-    configuration is detailed below.
+    configuration is detailed below. Structure is [documented below](#nested_clone).
 
 * `point_in_time_restore_context` - (Optional) The point_in_time_restore_context needed for performing a point-in-time recovery of an instance managed by Google Cloud Backup and Disaster Recovery. This field will
-    cause Terraform to trigger the database to restore to a point in time indicated. The configuration is detailed below.
+    cause Terraform to trigger the database to restore to a point in time indicated. The configuration is detailed below. Structure is [documented below](#nested_point_in_time_restore_context).
     **NOTE:** Restoring from a backup is an imperative action and not recommended via Terraform. Adding or modifying this
     block during resource creation/update will trigger the restore action after the resource is created/updated.
 
@@ -440,10 +444,10 @@ includes an up-to-date reference of supported versions.
     management without updating or deleting the resource in the API.
     When set to "DELETE", deleting the resource is allowed.
 
-* `blue_green_deployment` - (Optional) The configuration for a Cloud SQL Blue-Green Deployment on this instance. The configuration is detailed below.
+* `blue_green_deployment` - (Optional) The configuration for a Cloud SQL Blue-Green Deployment on this instance. The configuration is detailed below. Structure is [documented below](#nested_blue_green_deployment).
   ~> **WARNING:** Because `blue_green_deployment` is authoritatively managed by Terraform on the primary instance resource, if a Blue-Green Deployment is created on this instance outside of Terraform (for example, via `gcloud` or the Cloud Console) and the `blue_green_deployment` block is not present in your Terraform configuration, running `terraform apply` will delete the out-of-band Blue-Green Deployment along with its green target instance.
     
-The `settings` block supports:
+<a name="nested_settings"></a>The `settings` block supports:
 
 * `tier` - (Required) The machine type to use. See [tiers](https://cloud.google.com/sql/docs/admin-api/v1beta4/tiers)
     for more details and supported versions. Postgres supports only shared-core machine types,
@@ -505,31 +509,63 @@ The `settings` block supports:
 
 * `replication_lag_max_seconds` - (Optional) The acceptable replication lag, in seconds, after which a read replica recreates itself. The lag must persist for at least five minutes before recreation is triggered. This is a replica level field, and must be between `300` (five minutes) and `31536000` (one year).
 
-* `node_count` - For a read pool instance, the number of nodes in the read pool. For read pools with auto scaling enabled, this field is read only.
-
 * `pricing_plan` - (Optional) Pricing plan for this instance, can only be `PER_USE`.
 
 * `time_zone` - (Optional) The time_zone to be used by the database engine (supported only for SQL Server), in SQL Server timezone format.
 
 * `retain_backups_on_delete` - (Optional) When this parameter is set to true, Cloud SQL retains backups of the instance even after the instance is deleted. The `ON_DEMAND` backup will be retained until customer deletes the backup or the project. The `AUTOMATED` backup will be retained based on the backups retention setting.
 
-The optional `final_backup_config` subblock supports:
+* `final_backup_config` - (Optional) The final backup configuration for the instance. Structure is [documented below](#nested_settings_final_backup_config).
+
+* `advanced_machine_features` - (Optional) Advanced machine features for the instance. Structure is [documented below](#nested_settings_advanced_machine_features).
+
+* `database_flags` - (Optional) List of database flags. Structure is [documented below](#nested_settings_database_flags).
+
+* `active_directory_config` - (Optional) Active Directory configuration. Can only be used with SQL Server. Structure is [documented below](#nested_settings_active_directory_config).
+
+* `entraid_config` - (Optional) The Microsoft Entra ID configuration for the SQL Server instance. Structure is [documented below](#nested_settings_entraid_config).
+
+* `data_cache_config` - (Optional, Computed) Data cache configurations. Structure is [documented below](#nested_settings_data_cache_config).
+
+* `deny_maintenance_period` - (Optional) Deny maintenance period configuration. Structure is [documented below](#nested_settings_deny_maintenance_period).
+
+* `sql_server_audit_config` - (Optional) SQL Server audit configuration. Structure is [documented below](#nested_settings_sql_server_audit_config).
+
+* `backup_configuration` - (Optional, Computed) Backup configuration. Structure is [documented below](#nested_settings_backup_configuration).
+
+* `ip_configuration` - (Optional, Computed) IP configuration. Structure is [documented below](#nested_settings_ip_configuration).
+
+* `read_pool_auto_scale_config` - (Optional, Computed) Read pool auto scale configuration. Structure is [documented below](#nested_settings_read_pool_auto_scale_config).
+
+* `location_preference` - (Optional, Computed) Location preference configuration. Structure is [documented below](#nested_settings_location_preference).
+
+* `maintenance_window` - (Optional) Maintenance window configuration. Structure is [documented below](#nested_settings_maintenance_window).
+
+* `insights_config` - (Optional, Computed) Query Insights configuration. Structure is [documented below](#nested_settings_insights_config).
+
+* `password_validation_policy` - (Optional) Password validation policy configuration. Structure is [documented below](#nested_settings_password_validation_policy).
+
+* `performance_capture_config` - (Optional, Computed, Beta) Performance Capture configuration. Structure is [documented below](#nested_settings_performance_capture_config).
+
+* `connection_pool_config` - (Optional, Computed) The managed connection pool setting for a Cloud SQL instance. Structure is [documented below](#nested_settings_connection_pool_config).
+
+<a name="nested_settings_final_backup_config"></a>The optional `final_backup_config` subblock supports:
 
 * `enabled` - (Optional) True if enabled final backup.
 
 * `retention_days` - (Optional) The number of days we retain the final backup after instance deletion. The valid range is between 1 and 365. For instances managed by BackupDR, the valid range is between 1 day and 99 years.
 
-The optional `settings.advanced_machine_features` subblock supports:
+<a name="nested_settings_advanced_machine_features"></a>The optional `settings.advanced_machine_features` subblock supports:
 
 * `threads_per_core` - (Optional) The number of threads per core. The value of this flag can be 1 or 2. To disable SMT, set this flag to 1. Only available in Cloud SQL for SQL Server instances. See [smt](https://cloud.google.com/sql/docs/sqlserver/create-instance#smt-create-instance) for more details.
 
-The optional `settings.database_flags` sublist supports:
+<a name="nested_settings_database_flags"></a>The optional `settings.database_flags` sublist supports:
 
 * `name` - (Required) Name of the flag.
 
 * `value` - (Required) Value of the flag.
 
-The optional `settings.active_directory_config` subblock supports:
+<a name="nested_settings_active_directory_config"></a>The optional `settings.active_directory_config` subblock supports:
 
 * `domain` - (Required) The domain name for the active directory (e.g., mydomain.com). Can only be used with SQL Server.
 
@@ -541,17 +577,17 @@ The optional `settings.active_directory_config` subblock supports:
 
 * `organizational_unit` - (Optional) The organizational unit distinguished name. This is the full hierarchical path to the organizational unit.
 
-The optional `settings.entraid_config` block supports:
+<a name="nested_settings_entraid_config"></a>The optional `settings.entraid_config` block supports:
 
 * `application_id` - (Optional) The application ID for the Entra ID configuration. This must be paired with a tenant_id to be valid.
 
 * `tenant_id` - (Optional) The tenant ID for the Entra ID configuration. This must be paired with an application_id to be valid.
 
-The optional `settings.data_cache_config` subblock supports:
+<a name="nested_settings_data_cache_config"></a>The optional `settings.data_cache_config` subblock supports:
 
 * `data_cache_enabled` - (Optional) Whether data cache is enabled for the instance. Defaults to `true` for MYSQL Enterprise Plus and PostgreSQL Enterprise Plus instances only. For SQL Server Enterprise Plus instances it defaults to `false`.
 
-The optional `settings.deny_maintenance_period` subblock supports:
+<a name="nested_settings_deny_maintenance_period"></a>The optional `settings.deny_maintenance_period` subblock supports:
 
 * `end_date` - (Required) "deny maintenance period" end date. If the year of the end date is empty, the year of the start date also must be empty. In this case, it means the no maintenance interval recurs every year. The date is in format yyyy-m-dd (the month is without leading zeros)i.e., 2020-1-01, or 2020-11-01, or mm-dd, i.e., 11-01
 
@@ -559,7 +595,7 @@ The optional `settings.deny_maintenance_period` subblock supports:
 
 * `time` - (Required) Time in UTC when the "deny maintenance period" starts on startDate and ends on endDate. The time is in format: HH:mm:SS, i.e., 00:00:00
 
-The optional `settings.sql_server_audit_config` subblock supports:
+<a name="nested_settings_sql_server_audit_config"></a>The optional `settings.sql_server_audit_config` subblock supports:
 
 * `bucket` - (Optional) The name of the destination bucket (e.g., gs://mybucket).
 
@@ -567,7 +603,7 @@ The optional `settings.sql_server_audit_config` subblock supports:
 
 * `retention_interval` - (Optional) How long to keep generated audit files. A duration in seconds with up to nine fractional digits, terminated by 's'. Example: "3.5s".
 
-The optional `settings.backup_configuration` subblock supports:
+<a name="nested_settings_backup_configuration"></a>The optional `settings.backup_configuration` subblock supports:
 
 * `binary_log_enabled` - (Optional) True if binary logging is enabled.
     Can only be used with MySQL.
@@ -584,16 +620,16 @@ The optional `settings.backup_configuration` subblock supports:
 
 * `transaction_log_retention_days` - (Optional) The number of days of transaction logs we retain for point in time restore, from 1-7. For PostgreSQL Enterprise Plus and SQL Server Enterprise Plus instances, the number of days of retained transaction logs can be set from 1 to 35.
 
-* `backup_retention_settings` - (Optional) Backup retention settings. The configuration is detailed below.
+* `backup_retention_settings` - (Optional) Backup retention settings. The configuration is detailed below. Structure is [documented below](#nested_settings_backup_configuration_backup_retention_settings).
 
-The optional `settings.backup_configuration.backup_retention_settings` subblock supports:
+<a name="nested_settings_backup_configuration_backup_retention_settings"></a>The optional `settings.backup_configuration.backup_retention_settings` subblock supports:
 
 * `retained_backups` - (Optional) Depending on the value of retention_unit, this is used to determine if a backup needs to be deleted. If retention_unit
   is 'COUNT', we will retain this many backups.
 
 * `retention_unit` - (Optional) The unit that 'retained_backups' represents. Defaults to `COUNT`.
 
-The optional `settings.ip_configuration` subblock supports:
+<a name="nested_settings_ip_configuration"></a>The optional `settings.ip_configuration` subblock supports:
 
 * `ipv4_enabled` - (Optional) Whether this Cloud SQL instance should be assigned
 a public IPV4 address. At least `ipv4_enabled` must be enabled or a
@@ -619,7 +655,11 @@ This setting can be updated, but it cannot be removed after it is set.
 
 * `enable_private_path_for_google_cloud_services` - (Optional) Whether Google Cloud services such as BigQuery are allowed to access data in this Cloud SQL instance over a private IP connection. SQLSERVER database type is not supported.
 
-The optional `settings.ip_configuration.authorized_networks[]` sublist supports:
+* `authorized_networks` - (Optional) List of authorized networks. Structure is [documented below](#nested_settings_ip_configuration_authorized_networks).
+
+* `psc_config` - (Optional) PSC settings for a Cloud SQL instance. Structure is [documented below](#nested_settings_ip_configuration_psc_config).
+
+<a name="nested_settings_ip_configuration_authorized_networks"></a>The optional `settings.ip_configuration.authorized_networks[]` sublist supports:
 
 * `expiration_time` - (Optional) The [RFC 3339](https://tools.ietf.org/html/rfc3339)
   formatted date time string indicating when this whitelist expires.
@@ -630,7 +670,7 @@ The optional `settings.ip_configuration.authorized_networks[]` sublist supports:
     access this instance. Must be set even if other two attributes are not for
     the whitelist to become active.
 
-The optional `settings.ip_configuration.psc_config` sublist supports:
+<a name="nested_settings_ip_configuration_psc_config"></a>The optional `settings.ip_configuration.psc_config` sublist supports:
 
 * `psc_enabled` - (Optional) Whether PSC connectivity is enabled for this instance.
 
@@ -638,19 +678,21 @@ The optional `settings.ip_configuration.psc_config` sublist supports:
 
 * `psc_write_endpoint_dns_enabled` - (Optional) Whether PSC write endpoint DNS is enabled for this instance. This is only supported for Enterprise Plus edition instances.
 
-* `settings.ip_configuration.psc_config.psc_auto_connection_policy_enabled` - (Optional) Whether a service connection policy is created for the auto connections configured for the instance.
+* `psc_auto_connection_policy_enabled` - (Optional) Whether a service connection policy is created for the auto connections configured for the instance.
 
 * `allowed_consumer_projects` - (Optional) List of consumer projects that are allow-listed for PSC connections to this instance. This instance can be connected to with PSC from any network in these projects. Each consumer project in this list may be represented by a project number (numeric) or by a project id (alphanumeric).
 
-* The optional `psc_config.psc_auto_connections` subblock - (Optional) A comma-separated list of networks or a comma-separated list of network-project pairs. Each project in this list is represented by a project number (numeric) or by a project ID (alphanumeric). This allows Private Service Connect connections to be created automatically for the specified networks.
+* `network_attachment_uri` - (Optional) Network Attachment URI in the format `projects/project1/regions/region1/networkAttachments/networkAttachment1` to enable outbound connectivity on PSC instance.
+
+* `psc_auto_connections` - (Optional) A comma-separated list of networks or a comma-separated list of network-project pairs. Each project in this list is represented by a project number (numeric) or by a project ID (alphanumeric). This allows Private Service Connect connections to be created automatically for the specified networks. Structure is [documented below](#nested_settings_ip_configuration_psc_config_psc_auto_connections).
+
+<a name="nested_settings_ip_configuration_psc_config_psc_auto_connections"></a>The `psc_auto_connections` block supports:
 
 * `consumer_network` - "The consumer network of this consumer endpoint. This must be a resource path that includes both the host project and the network name. For example, `projects/project1/global/networks/network1`. The consumer host project of this network might be different from the consumer service project."
 
-* `network_attachment_uri` - (Optional) Network Attachment URI in the format `projects/project1/regions/region1/networkAttachments/networkAttachment1` to enable outbound connectivity on PSC instance.
-
 * `consumer_service_project_id` - (Optional) The project ID of consumer service project of this consumer endpoint.
 
-The optional `settings.read_pool_auto_scale_config` subblock supports:
+<a name="nested_settings_read_pool_auto_scale_config"></a>The optional `settings.read_pool_auto_scale_config` subblock supports:
 
 * `enabled` - True if Read Pool Auto Scale is enabled.
 
@@ -666,13 +708,15 @@ The optional `settings.read_pool_auto_scale_config` subblock supports:
 
 * `scale_out_cooldown_seconds` - The cooldown period for scale out operations.
 
-* `target_metrics` - Target metrics for Read Pool Auto Scale. Must specify `target_metrics.metric` and `target_metrics.target_value` in subblock.
+* `target_metrics` - Target metrics for Read Pool Auto Scale. Must specify `target_metrics.metric` and `target_metrics.target_value` in subblock. Structure is [documented below](#nested_settings_read_pool_auto_scale_config_target_metrics).
+
+<a name="nested_settings_read_pool_auto_scale_config_target_metrics"></a>The `target_metrics` block supports:
 
 * `metric` - Metric name for Read Pool Auto Scale.
 
 * `target_value` - Target value for Read Pool Auto Scale.
 
-The optional `settings.location_preference` subblock supports:
+<a name="nested_settings_location_preference"></a>The optional `settings.location_preference` subblock supports:
 
 * `follow_gae_application` - (Optional) A GAE application whose zone to remain
     in. Must be in the same region as this instance.
@@ -682,7 +726,7 @@ The optional `settings.location_preference` subblock supports:
 
 * `secondary_zone` - (Optional) The preferred Compute Engine zone for the secondary/failover.
 
-The optional `settings.maintenance_window` subblock for instances declares a one-hour
+<a name="nested_settings_maintenance_window"></a>The optional `settings.maintenance_window` subblock for instances declares a one-hour
 [maintenance window](https://cloud.google.com/sql/docs/instance-settings?hl=en#maintenance-window-2ndgen)
 when an Instance can automatically restart to apply updates. The maintenance window is specified in UTC time. It supports:
 
@@ -692,7 +736,7 @@ when an Instance can automatically restart to apply updates. The maintenance win
 
 * `update_track` - (Optional) Receive updates after one week (`canary`) or after two weeks (`stable`) or after five weeks (`week5`) of notification.
 
-The optional `settings.insights_config` subblock for instances declares Query Insights([MySQL](https://cloud.google.com/sql/docs/mysql/using-query-insights), [PostgreSQL](https://cloud.google.com/sql/docs/postgres/using-query-insights)) configuration. It contains:
+<a name="nested_settings_insights_config"></a>The optional `settings.insights_config` subblock for instances declares Query Insights([MySQL](https://cloud.google.com/sql/docs/mysql/using-query-insights), [PostgreSQL](https://cloud.google.com/sql/docs/postgres/using-query-insights)) configuration. It contains:
 
 * `query_insights_enabled` - True if Query Insights feature is enabled.
 
@@ -706,7 +750,7 @@ The optional `settings.insights_config` subblock for instances declares Query In
 
 * `query_plans_per_minute` - Number of query execution plans captured by Insights per minute for all queries combined. Between 0 and 20. Default to 5.
 
-The optional `settings.password_validation_policy` subblock for instances declares [Password Validation Policy](https://cloud.google.com/sql/docs/postgres/built-in-authentication) configuration. It contains:
+<a name="nested_settings_password_validation_policy"></a>The optional `settings.password_validation_policy` subblock for instances declares [Password Validation Policy](https://cloud.google.com/sql/docs/postgres/built-in-authentication) configuration. It contains:
 
 * `min_length` - Specifies the minimum number of characters that the password must have.
 
@@ -720,7 +764,7 @@ The optional `settings.password_validation_policy` subblock for instances declar
 
 * `enable_password_policy` - Enables or disable the password validation policy.
 
-The optional `settings.performance_capture_config` (Beta) subblock for instances declares Performance Capture configuration. It contains:
+<a name="nested_settings_performance_capture_config"></a>The optional `settings.performance_capture_config` (Beta) subblock for instances declares Performance Capture configuration. It contains:
 
 * `enabled` - (Beta) True if the Performance Capture feature is enabled.
 
@@ -750,7 +794,7 @@ The optional `settings.performance_capture_config` (Beta) subblock for instances
 
 * `transaction_kill_excluded_user_hosts` - (Beta) A list of users to exclude from transaction termination. Entries can be in the format `user@host` or just `user`.
 
-The optional `replica_configuration` block must have `master_instance_name` set
+<a name="nested_replica_configuration"></a>The optional `replica_configuration` block must have `master_instance_name` set
 to work, cannot be updated and supports:
 
 ~> **Note:** `replica_configuration` field is not meant to be used if the master
@@ -796,7 +840,7 @@ is present when the master instance is a source representation instance, `dump_f
 * `verify_server_certificate` - (Optional) True if the master's common name
     value is checked during the SSL handshake.
 
-The optional `point_in_time_restore_context` block supports:
+<a name="nested_point_in_time_restore_context"></a>The optional `point_in_time_restore_context` block supports:
 
 * `datasource` - The Google Cloud Backup and Disaster Recovery Datasource URI.
 
@@ -820,7 +864,7 @@ The optional `point_in_time_restore_context` block supports:
 
 * `database_names` - (Optional) (SQL Server only, use with `point_in_time`) Clone only the specified databases from the source instance. Clone all databases if empty.
 
-The optional `clone` block supports:
+<a name="nested_clone"></a>The optional `clone` block supports:
 
 * `source_instance_name` - (Required) Name of the source instance which will be cloned.
 * `source_project` - (Optional) Id of source project where source instances exits, required for cross project clone scenario.
@@ -839,7 +883,7 @@ The optional `clone` block supports:
 
     A timestamp in RFC3339 UTC "Zulu" format, with nanosecond resolution and up to nine fractional digits. Examples: "2014-10-02T15:01:23Z" and "2014-10-02T15:01:23.045123456Z".
 
-The optional `restore_backup_context` block supports:
+<a name="nested_restore_backup_context"></a>The optional `restore_backup_context` block supports:
 **NOTE:** Restoring from a backup is an imperative action and not recommended via Terraform. Adding or modifying this
 block during resource creation/update will trigger the restore action after the resource is created/updated.
 
@@ -850,25 +894,27 @@ block during resource creation/update will trigger the restore action after the 
 
 * `project` - (Optional) The full project ID of the source instance.`
 
-The optional, computed `replication_cluster` block represents a primary instance and disaster recovery replica pair. Applicable to MySQL and PostgreSQL. This field can be set if the primary has psa_write_endpoint set or both the primary and replica are created. This block supports:
+<a name="nested_replication_cluster"></a>The optional, computed `replication_cluster` block represents a primary instance and disaster recovery replica pair. Applicable to MySQL and PostgreSQL. This field can be set if the primary has psa_write_endpoint set or both the primary and replica are created. This block supports:
 
-* `psa_write_endpoint`: Read-only field which if set, indicates this instance has a private service access (PSA) DNS endpoint that is pointing to the primary instance of the cluster. If this instance is the primary, then the DNS endpoint points to this instance. After a switchover or replica failover operation, this DNS endpoint points to the promoted instance. This is a read-only field, returned to the user as information. This field can exist even if a standalone instance doesn't have a DR replica yet or the DR replica is deleted.
+* `psa_write_endpoint` - Read-only field which if set, indicates this instance has a private service access (PSA) DNS endpoint that is pointing to the primary instance of the cluster. If this instance is the primary, then the DNS endpoint points to this instance. After a switchover or replica failover operation, this DNS endpoint points to the promoted instance. This is a read-only field, returned to the user as information. This field can exist even if a standalone instance doesn't have a DR replica yet or the DR replica is deleted.
 
-* `failover_dr_replica_name`: (Optional) If the instance is a primary instance, then this field identifies the disaster recovery (DR) replica. The standard format of this field is "your-project:your-instance". You can also set this field to "your-instance", but cloud SQL backend will convert it to the aforementioned standard format.
+* `failover_dr_replica_name` - (Optional) If the instance is a primary instance, then this field identifies the disaster recovery (DR) replica. The standard format of this field is "your-project:your-instance". You can also set this field to "your-instance", but cloud SQL backend will convert it to the aforementioned standard format.
 
-* `dr_replica`: Read-only field that indicates whether the replica is a DR replica.
+* `dr_replica` - Read-only field that indicates whether the replica is a DR replica.
 
-The optional `settings.connection_pool_config` subblock supports:
+<a name="nested_settings_connection_pool_config"></a>The optional `settings.connection_pool_config` subblock supports:
 
-* `connection_pooling_enabled`: (Optional) True if the manager connection pooling configuration is enabled.
+* `connection_pooling_enabled` - (Optional) True if the manager connection pooling configuration is enabled.
 
-The optional `settings.connection_pool_config.flags` sublist supports:
+* `flags` - (Optional) List of connection pool configuration flags. Structure is [documented below](#nested_settings_connection_pool_config_flags).
+
+<a name="nested_settings_connection_pool_config_flags"></a>The optional `settings.connection_pool_config.flags` sublist supports:
 
 * `name` - (Required) Name of the flag.
 
 * `value` - (Required) Value of the flag.
 
-The optional `blue_green_deployment` block supports:
+<a name="nested_blue_green_deployment"></a>The optional `blue_green_deployment` block supports:
 
 * `deployment_name` - (Required) The user-defined name for the Blue-Green Deployment. Must be 1-63 characters, start with a lowercase letter, and contain only lowercase letters, numbers, and hyphens. Cannot be changed while the deployment is active.
 
@@ -882,13 +928,13 @@ The optional `blue_green_deployment` block supports:
 
 * `target_instance_connection_name` - (Computed) The connection name of the green (target) instance.
 
-* `target_instance_ip_addresses` - (Computed) The IP addresses assigned to the green (target) instance. Structure is documented below.
+* `target_instance_ip_addresses` - (Computed) The IP addresses assigned to the green (target) instance. Structure is [documented below](#nested_blue_green_deployment_target_instance_ip_addresses).
 
 * `old_source_instance_name` - (Computed) The name of the old source (blue) instance, populated after switchover (`active_environment = "TARGET"`).
 
 * `old_source_instance_connection_name` - (Computed) The connection name of the old source (blue) instance, populated after switchover (`active_environment = "TARGET"`).
 
-The `blue_green_deployment.target_instance_ip_addresses` sublist supports:
+<a name="nested_blue_green_deployment_target_instance_ip_addresses"></a>The `blue_green_deployment.target_instance_ip_addresses` sublist supports:
 
 * `ip_address` - (Computed) The IPv4 address assigned to the target instance.
 
@@ -920,6 +966,8 @@ connection strings. For example, when connecting with [Cloud SQL Proxy](https://
 
 * `service_account_email_address` - The service account email address assigned to the
 instance.
+
+* `ip_address` - The list of IPv4 addresses assigned to the instance.
 
 * `ip_address.0.ip_address` - The IPv4 address assigned.
 
@@ -978,6 +1026,8 @@ performing filtering in a Terraform config.
   (ZONAL). This field always contains the value that is reported by the API (for
   read pools, `settings.0.effective_availability_type` may differ from
   `settings.0.availability_type`).
+
+* `server_ca_cert` - The CA certificate information used to connect to the SQL Instance via SSL.
 
 * `server_ca_cert.0.cert` - The CA Certificate used to connect to the SQL Instance via SSL.
 
