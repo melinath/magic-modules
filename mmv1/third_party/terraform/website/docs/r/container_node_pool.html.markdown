@@ -180,7 +180,7 @@ cluster.
     `version_prefix` field to approximate fuzzy versions in a Terraform-compatible way.
 
 * `placement_policy` - (Optional) Specifies a custom placement policy for the
-  nodes.
+  nodes. Structure is [documented below](#nested_placement_policy).
 
 * `queued_provisioning` - (Optional) Specifies node pool-level settings of queued provisioning.
     Structure is [documented below](#nested_queued_provisioning).
@@ -238,9 +238,9 @@ cluster.
 * `additional_pod_network_configs` - (Optional) We specify the additional pod networks for this node pool using this list. Each pod network corresponds to an additional alias IP range for the node.
     Structure is [documented below](#nested_additional_pod_network_configs)
 
-* `pod_cidr_overprovision_config` - (Optional) Configuration for node-pool level pod cidr overprovision. If not set, the cluster level setting will be inherited. Structure is [documented below](#pod_cidr_overprovision_config).
+* `pod_cidr_overprovision_config` - (Optional) Configuration for node-pool level pod cidr overprovision. If not set, the cluster level setting will be inherited. Structure is [documented below](#nested_network_config_pod_cidr_overprovision_config).
 
-* `network_performance_config` - (Optional) Network bandwidth tier configuration. Structure is [documented below](#network_performance_config).
+* `network_performance_config` - (Optional) Network bandwidth tier configuration. Structure is [documented below](#nested_network_config_network_performance_config).
 
 * `subnetwork` - (Optional) The subnetwork path for the node pool. Format: `projects/{project}/regions/{region}/subnetworks/{subnetwork}`. If the cluster is associated with multiple subnetworks, the subnetwork for the node pool is picked based on the IP utilization during node pool creation and is immutable
 
@@ -262,11 +262,11 @@ cluster.
 
 * `max_pods_per_node` - The maximum number of pods per node which use this pod network.
 
-<a name="network_performance_config"></a>The `network_performance_config` block supports:
+<a name="nested_network_config_network_performance_config"></a>The `network_performance_config` block supports:
 
 * `total_egress_bandwidth_tier` (Required) - Specifies the total network bandwidth tier for the NodePool. [Valid values](https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1/projects.locations.clusters.nodePools#NodePool.Tier) include: "TIER_1" and "TIER_UNSPECIFIED".
 
-<a name="pod_cidr_overprovision_config"></a>The `pod_cidr_overprovision_config` block supports:
+<a name="nested_network_config_pod_cidr_overprovision_config"></a>The `pod_cidr_overprovision_config` block supports:
 
 * `disabled` (Required) - Whether pod cidr overprovision is disabled.
 
