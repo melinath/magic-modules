@@ -409,6 +409,10 @@ The following arguments are supported:
 * `git` -
   (Optional) Structure is [documented below](#nested_git).
 
+* `metrics_gcp_service_account_email` -
+  (Optional, Deprecated)
+  Deprecated: If Workload Identity Federation for GKE is enabled, Google Cloud Service Account is no longer needed for exporting Config Sync metrics: https://cloud.google.com/kubernetes-engine/enterprise/config-sync/docs/how-to/monitor-config-sync-cloud-monitoring#custom-monitoring.
+
 * `oci` -
   (Optional) Supported from Config Sync versions 1.12.0 onwards. Structure is [documented below](#nested_oci).
   
@@ -568,9 +572,20 @@ The following arguments are supported:
 
 * `monitoring` -
   (Optional)
-  Specifies the backends Policy Controller should export metrics to. For example, to specify metrics should be exported to Cloud Monitoring and Prometheus, specify backends: ["cloudmonitoring", "prometheus"]. Default: ["cloudmonitoring", "prometheus"]    
+  Specifies the backends Policy Controller should export metrics to. For example, to specify metrics should be exported to Cloud Monitoring and Prometheus, specify backends: ["cloudmonitoring", "prometheus"]. Default: ["cloudmonitoring", "prometheus"]
+  Structure is [documented below](#nested_policy_controller_monitoring).
+
+<a name="nested_policy_controller_monitoring"></a>The `monitoring` block supports:
+
+* `backends` -
+  (Optional)
+  Specifies the list of backends Policy Controller will export to. Specifying an empty value `[]` disables metrics export.
 
 <a name="nested_mesh"></a>The `mesh` block supports:
+
+* `control_plane` -
+  (Optional, Deprecated)
+  **DEPRECATED** Whether to automatically manage Service Mesh control planes. Possible values: CONTROL_PLANE_MANAGEMENT_UNSPECIFIED, AUTOMATIC, MANUAL
 
 * `management` -
   (Optional)
@@ -629,7 +644,7 @@ The following arguments are supported:
 
 <a name="nested_monitoring"></a>The `monitoring` block supports:
 
-* `backends`
+* `backends` -
   (Optional)
   Specifies the list of backends Policy Controller will export to. Must be one of `CLOUD_MONITORING` or `PROMETHEUS`. Defaults to [`CLOUD_MONITORING`, `PROMETHEUS`]. Specifying an empty value `[]` disables metrics export.
 
@@ -641,7 +656,7 @@ The following arguments are supported:
     
 * `container_resources` -
   (Optional)
-  Container resource requirements.
+  Container resource requirements. Structure is [documented below](#nested_container_resources).
     
 * `pod_affinity` -
   (Optional)
@@ -649,7 +664,7 @@ The following arguments are supported:
     
 * `pod_tolerations` -
   (Optional)
-  Pod tolerations of node taints.
+  Pod tolerations of node taints. Structure is [documented below](#nested_pod_tolerations).
     
 * `replica_count` -
   (Optional)
@@ -659,13 +674,13 @@ The following arguments are supported:
     
 * `limits` -
   (Optional)
-  Limits describes the maximum amount of compute resources allowed for use by the running container.
+  Limits describes the maximum amount of compute resources allowed for use by the running container. Structure is [documented below](#nested_container_resources_limits).
     
 * `requests` -
   (Optional)
-  Requests describes the amount of compute resources reserved for the container by the kube-scheduler.
+  Requests describes the amount of compute resources reserved for the container by the kube-scheduler. Structure is [documented below](#nested_container_resources_requests).
     
-<a name="nested_limits"></a>The `limits` block supports:
+<a name="nested_container_resources_limits"></a>The `limits` block supports:
     
 * `cpu` -
   (Optional)
@@ -675,7 +690,7 @@ The following arguments are supported:
   (Optional)
   Memory requirement expressed in Kubernetes resource units.
     
-<a name="nested_requests"></a>The `requests` block supports:
+<a name="nested_container_resources_requests"></a>The `requests` block supports:
     
 * `cpu` -
   (Optional)
@@ -707,9 +722,9 @@ The following arguments are supported:
 
 * `bundles` -
   (Optional)
-  map of bundle name to BundleInstallSpec. The bundle name maps to the `bundleName` key in the `policycontroller.gke.io/constraintData` annotation on a constraint.
+  map of bundle name to BundleInstallSpec. The bundle name maps to the `bundleName` key in the `policycontroller.gke.io/constraintData` annotation on a constraint. Structure is [documented below](#nested_bundles).
 
-* `template_library`
+* `template_library` -
   (Optional)
   Configures the installation of the Template Library. Structure is [documented below](#nested_template_library).
 
@@ -725,7 +740,7 @@ The following arguments are supported:
 
 <a name="nested_template_library"></a>The `template_library` block supports:
 
-* `installation`
+* `installation` -
   (Optional)
   Configures the manner in which the template library is installed on the cluster. Must be one of `ALL`, `NOT_INSTALLED` or `INSTALLATION_UNSPECIFIED`. Defaults to `ALL`.
 
